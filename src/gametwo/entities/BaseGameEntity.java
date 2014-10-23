@@ -1,4 +1,4 @@
-package gametwo.game.entities;
+package gametwo.entities;
 
 public class BaseGameEntity extends Object {
 
