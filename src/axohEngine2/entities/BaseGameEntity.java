@@ -1,4 +1,4 @@
-package gametwo.entities;
+package axohEngine2.entities;
 
 public class BaseGameEntity extends Object {
 

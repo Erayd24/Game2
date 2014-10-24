@@ -1,4 +1,4 @@
-package gametwo.entities;
+package axohEngine2.entities;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

@@ -1,4 +1,4 @@
-package gametwo.entities;
+package axohEngine2.entities;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -17,7 +17,7 @@ public class ImageEntity extends BaseGameEntity {
 	protected Graphics2D g2d;
 	
 	//Constructor
-	ImageEntity(JFrame a) {
+	public ImageEntity(JFrame a) {
 		frame = a;
 		setImage(null);
 		setAlive(true);
