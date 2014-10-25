@@ -17,8 +17,8 @@ public class ImageEntity extends BaseGameEntity {
 	protected Graphics2D g2d;
 	
 	//Constructor
-	public ImageEntity(JFrame a) {
-		frame = a;
+	public ImageEntity(JFrame frame) {
+		this.frame = frame;
 		setImage(null);
 		setAlive(true);
 	}

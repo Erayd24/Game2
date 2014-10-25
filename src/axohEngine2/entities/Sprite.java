@@ -17,8 +17,8 @@ public class Sprite extends Object{
 	protected int currentState;
 	
 	//Constructor
-	Sprite(JFrame a, Graphics2D g2d) {
-		entity = new ImageEntity(a);
+	Sprite(JFrame frame, Graphics2D g2d) {
+		entity = new ImageEntity(frame);
 		entity.setGraphics(g2d);
 		entity.setAlive(false);
 		pos = new Point(0, 0);
@@ -61,7 +61,7 @@ public class Sprite extends Object{
 	public void setRotationRate(double rate) { rotRate = rate; }
 	
 	public void updateRotation() {
-		setFaceAngle(faceAngle() +rotRate);
+		setFaceAngle(faceAngle() + rotRate);
 		if(faceAngle() < 0)
 			setFaceAngle(360 - rotRate);
 		else if (faceAngle() > 360)

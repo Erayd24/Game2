@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import javax.swing.JFrame;
 
 import axohEngine2.entities.AnimatedSprite;
+import axohEngine2.entities.Sprite;
 
 abstract class Game extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
@@ -21,8 +22,8 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	private Thread gameloop;
 	private JFrame frame;
 	
-	private LinkedList _sprites;
-	public LinkedList sprites() { return _sprites; }
+	private LinkedList<Sprite> _sprites;
+	public LinkedList<Sprite> sprites() { return _sprites; }
 	
 	private BufferedImage backBuffer;
 	private Graphics2D g2d;
@@ -211,7 +212,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	
 	protected void updateSprites() {
 		for(int i = 0; i < _sprites.size(); i++) {
-			AnimatedSprite spr = (AnimatedSprite) _sprites.get(i);
+			AnimatedSprite spr = _sprites.get(i);
 			if(spr.alive) {
 				spr.updatePosition();
 				spr.updateRotation();

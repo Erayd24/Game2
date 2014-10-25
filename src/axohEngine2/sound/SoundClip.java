@@ -5,7 +5,7 @@ import java.io.*;
 import java. net.*;
 
 public class SoundClip {
-	
+	//WAV AIFF AU
 	//Get and audio data object
 	private AudioInputStream sample;
 	

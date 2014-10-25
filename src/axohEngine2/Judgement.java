@@ -1,18 +1,15 @@
 package axohEngine2;
 
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import javax.swing.JFrame;
 
+import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.ImageEntity;
 
-public class Judgement extends JFrame implements Runnable, KeyListener {
+public class Judgement extends Game {
 	private static final long serialVersionUID = 1L;
 	
 	static int SCREENWIDTH = 800;
@@ -39,61 +36,26 @@ public class Judgement extends JFrame implements Runnable, KeyListener {
 	
 	//Load Sound effects
 	
+	public static void main(String[] args) {
+		new Judgement();
+	}
 	
 	public Judgement() {
-		backBuffer = new BufferedImage(SCREENWIDTH, SCREENHEIGHT, BufferedImage.TYPE_INT_RGB);
-		g2d = backBuffer.createGraphics();
-		
-		background = new ImageEntity(this);
+		super(60, SCREENWIDTH, SCREENHEIGHT);
+		setVisible(true);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		addKeyListener(this);
 	}
 	
 	public void update(Graphics g) {
-		//Framerate calculator
-		
-		
-		g2d.drawImage(background.getImage(), 0, 0, SCREENWIDTH - 1, SCREENHEIGHT - 1, this);
-		
-		//Status information
-		g2d.setColor(Color.WHITE);
-		g2d.drawString("FPS: " + frameRate, 5, 10);
-		
-		if(showBounds) {
-			g2d.setColor(Color.GREEN);
-			g2d.drawString("Bounding Boxes", SCREENWIDTH - 150, 10);
-		}
-		
-		if(collisionTesting) {
-			g2d.setColor(Color.GREEN);
-			g2d.drawString("COLLISSION TESTING", SCREENWIDTH - 150, 25);
-		}
-		
 		paint(g);
 	}
 
-	public void paint(Graphics g) {
-		g.drawImage(backBuffer, 0, 0, this);
-	}
-	
 	public void run() {
-		
-			
 	}
 	
 	public void start() {
-		
-	}
-	
-	
-	
-	private void gameUpdate() {
-		checkInput();
-		if(collisionTesting) checkCollisions();
-	}
-	
-	public void checkCollisions() {
-		
 	}
 	
 	public void checkInput() {
@@ -152,5 +114,43 @@ public class Judgement extends JFrame implements Runnable, KeyListener {
 	}
 	
 	public void keyTyped(KeyEvent e) { }
-	
+
+	void gameStartUp() {		
+	}
+
+	void gameTimedUpdate() {		
+	}
+
+	void gameRefreshScreen() {		
+	}
+
+	void gameShutDown() {		
+	}
+
+	void gameKeyDown(int KeyCode) {		
+	}
+
+	void gameKeyUp(int KeyCode) {		
+	}
+
+	void gameMouseDown() {		
+	}
+
+	void gameMouseUp() {		
+	}
+
+	void gameMouseMove() {		
+	}
+
+	void spriteUpdate(AnimatedSprite sprite) {		
+	}
+
+	void spriteDraw(AnimatedSprite sprite) {		
+	}
+
+	void spriteDying(AnimatedSprite sprite) {		
+	}
+
+	void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2) {		
+	}
 }
