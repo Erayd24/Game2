@@ -1,5 +1,6 @@
 package axohEngine2;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -7,7 +8,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 
 import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.Sprite;
+import axohEngine2.util.Point2D;
 
 abstract class Game extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
@@ -29,7 +30,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	private Graphics2D g2d;
 	private int screenWidth, screenHeight;
 	
-	private Point2D mousePos = new Point2D(0,0);
+	private Point2D mousePos = new Point2D(0, 0);
 	private boolean mouseButtons[] = new boolean[4];
 	
 	private int _frameCount = 0;
@@ -62,6 +63,11 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	
 	//Constructor
 	public Game(int frameRate,int width, int height) {
+		Dimension size = new Dimension(width, height);
+		setPreferredSize(size);
+		frame().setLocationRelativeTo(null);
+
+		
 		desiredRate = frameRate;
 		screenWidth = width;
 		screenHeight = height;
@@ -88,7 +94,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		
 		gameRefreshScreen();
 		
-		if(!gamePaused) {
+		if(!gamePaused()) {
 			drawSprites();
 		}
 		
@@ -96,7 +102,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	}
 	
 	public void paint(Graphics g) {
-		g.drawImage(backbuffer, 0, 0, this);
+		g.drawImage(backBuffer, 0, 0, this);
 	}
 	
 	public void start() {
@@ -114,7 +120,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			
 			if(!gamePaused()) {
 				updateSprites();
-				testCollisions();
+				testCollision();
 			}
 			
 			gameTimedUpdate();
@@ -212,8 +218,8 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	
 	protected void updateSprites() {
 		for(int i = 0; i < _sprites.size(); i++) {
-			AnimatedSprite spr = _sprites.get(i);
-			if(spr.alive) {
+			AnimatedSprite spr = (AnimatedSprite) _sprites.get(i);
+			if(spr.alive()) {
 				spr.updatePosition();
 				spr.updateRotation();
 				spr.updateAnimation();
