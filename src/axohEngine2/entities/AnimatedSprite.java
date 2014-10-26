@@ -32,9 +32,7 @@ public class AnimatedSprite extends Sprite {
         cols = 0;
     }
 
-    public void load(String filename, int columns, int rows,
-        int width, int height)
-    {
+    public void load(String filename, int columns, int rows, int width, int height) {
         //load the tiled animation bitmap
         animImage.load(filename);
         setColumns(columns);
@@ -43,8 +41,7 @@ public class AnimatedSprite extends Sprite {
         setFrameHeight(height);
 
         //frame image is passed to parent class for drawing
-        tempImage = new BufferedImage(width, height,
-            BufferedImage.TYPE_INT_ARGB);
+        tempImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         tempSurface = tempImage.createGraphics();
         super.setImage(tempImage);
     }
@@ -111,6 +108,4 @@ public class AnimatedSprite extends Sprite {
             super.setImage(tempImage);
         }
     }
-
 }
-

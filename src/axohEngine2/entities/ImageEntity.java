@@ -5,7 +5,6 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
-import java.net.URL;
 
 import javax.swing.JFrame;
 
@@ -57,27 +56,19 @@ public class ImageEntity extends BaseGameEntity {
 		g2d = g;
 	}
 	
-	private URL getURL(String filename) {
-		URL url = null;
-		try {
-			url = this.getClass().getResource(filename);
-		} catch(Exception e) {}
-		return url;
-	}
-	
 	public void load(String filename) {
 		Toolkit tk = Toolkit.getDefaultToolkit();
-		image = tk.getImage(getURL(filename));
+		image = tk.getImage(filename);
 		
 		while(getImage().getWidth(frame) <= 0);
 		double x = frame.getSize().width / 2 - width() / 2;
-		double y = frame.getSize().height / 2 - height() /2;
+		double y = frame.getSize().height / 2 - height() / 2;
 		at = AffineTransform.getTranslateInstance(x, y);
 	}
 	
 	public void transform() {
 		at.setToIdentity();
-		at.translate((int)getX() + width() / 2, (int)getY() + height() /2);
+		at.translate((int)getX() + width() / 2, (int)getY() + height() / 2);
 		at.rotate(Math.toRadians(getFaceAngle()));
 		at.translate(-width() / 2, -height() / 2);
 	}

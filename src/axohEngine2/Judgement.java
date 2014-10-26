@@ -1,6 +1,8 @@
 package axohEngine2;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.Random;
 
@@ -12,10 +14,12 @@ import axohEngine2.entities.ImageEntity;
 public class Judgement extends Game {
 	private static final long serialVersionUID = 1L;
 	
-	static int SCREENWIDTH = 800;
-	static int SCREENHEIGHT = 600;
+	static int SCREENWIDTH = 1920;
+	static int SCREENHEIGHT = 1080;
 	static int CENTERX = SCREENWIDTH / 2;
 	static int CENTERY = SCREENHEIGHT / 2;
+	JFrame frame;
+	Color back;
 	
 	//Sprite states
 	static int SPRITE_NORMAL = 0;
@@ -35,17 +39,18 @@ public class Judgement extends Game {
 	long startTime = System.currentTimeMillis();
 	
 	//Load Sound effects
-	
-	public static void main(String[] args) {
-		new Judgement();
-	}
-	
 	public Judgement() {
-		super(60, SCREENWIDTH, SCREENHEIGHT);
+		super(60, SCREENWIDTH,SCREENHEIGHT);
+		//Setting up JFrame
+		frame = new JFrame();
+		back = new Color(1);
+		frame.setBackground(back);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		addKeyListener(this);
+		addMouseListener(this);
+		addMouseMotionListener(this);
 	}
 	
 	public void update(Graphics g) {
@@ -115,13 +120,21 @@ public class Judgement extends Game {
 	
 	public void keyTyped(KeyEvent e) { }
 
-	void gameStartUp() {		
+	void gameStartUp() {
+		background = new ImageEntity(this);
+		//background.load("GameScreen-Galaxy.png");
+		//background[0] = new ImageEntity(this);
 	}
 
 	void gameTimedUpdate() {		
 	}
 
 	void gameRefreshScreen() {		
+		Graphics2D g2d = graphics();
+
+        //draw the background
+        g2d.drawImage(background.getImage(),0,0,SCREENWIDTH-1,SCREENHEIGHT-1,this);
+        
 	}
 
 	void gameShutDown() {		
@@ -153,4 +166,9 @@ public class Judgement extends Game {
 
 	void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2) {		
 	}
+	
+	public static void main(String[] args) {
+		new Judgement();
+	}
 }
+

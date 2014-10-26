@@ -48,7 +48,7 @@ public class Sprite extends Object{
 
     //draw the image
     public void draw() {
-        entity.g2d.drawImage(entity.getImage(),entity.at,entity.frame);
+        entity.g2d.drawImage(entity.getImage(), entity.at, entity.frame);
     }
 
     //draw bounding rectangle around sprite
@@ -158,11 +158,10 @@ public class Sprite extends Object{
         //if lifespan is used, it must be > 0
         if (_lifespan > 0) {
             _lifeage++;
-            if (_lifeage > _lifespan) {
+            if (_lifeage > _lifespan) { //Set a time limit for a sprite to exist
                 setAlive(false);
                 _lifeage = 0;
             }
         }
     }
-
 }

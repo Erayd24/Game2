@@ -14,17 +14,15 @@ import java.util.LinkedList;
 import javax.swing.JFrame;
 
 import axohEngine2.entities.AnimatedSprite;
-import axohEngine2.entities.Sprite;
 import axohEngine2.util.Point2D;
 
 abstract class Game extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 	
 	private Thread gameloop;
-	private JFrame frame;
 	
-	private LinkedList<Sprite> _sprites;
-	public LinkedList<Sprite> sprites() { return _sprites; }
+	private LinkedList<AnimatedSprite> _sprites;
+	public LinkedList<AnimatedSprite> sprites() { return _sprites; }
 	
 	private BufferedImage backBuffer;
 	private Graphics2D g2d;
@@ -37,9 +35,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	private int _frameRate = 0;
 	private int desiredRate;
 	private long startTime = System.currentTimeMillis();
-	
-	public JFrame frame() { return this; }
-	
+		
 	//Pause game state
 	private boolean _gamePaused = false;
 	public boolean gamePaused() { return _gamePaused; }
@@ -65,12 +61,25 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	public Game(int frameRate,int width, int height) {
 		Dimension size = new Dimension(width, height);
 		setPreferredSize(size);
-		frame().setLocationRelativeTo(null);
-
+		this.setSize(size);
 		
 		desiredRate = frameRate;
 		screenWidth = width;
 		screenHeight = height;
+		
+		backBuffer = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_RGB);
+        g2d = backBuffer.createGraphics();
+
+        //create the internal sprite list
+        _sprites = new LinkedList<AnimatedSprite>();
+
+        //start the input listeners
+        addKeyListener(this);
+        addMouseListener(this);
+        addMouseMotionListener(this);
+
+        //this method implemented by sub-class
+        gameStartUp();
 	}
 	
 	public Graphics2D graphics() { return g2d; }
