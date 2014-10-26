@@ -3,9 +3,7 @@ package axohEngine2;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
@@ -14,10 +12,11 @@ import java.util.LinkedList;
 import javax.swing.JFrame;
 
 import axohEngine2.entities.AnimatedSprite;
+import axohEngine2.input.Keyboard;
 import axohEngine2.util.Point2D;
 
+@SuppressWarnings("serial")
 abstract class Game extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener {
-	private static final long serialVersionUID = 1L;
 	
 	private Thread gameloop;
 	
@@ -35,6 +34,8 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	private int _frameRate = 0;
 	private int desiredRate;
 	private long startTime = System.currentTimeMillis();
+	
+	private Keyboard input;
 		
 	//Pause game state
 	private boolean _gamePaused = false;
@@ -47,11 +48,6 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	abstract void gameTimedUpdate();
 	abstract void gameRefreshScreen();
 	abstract void gameShutDown();
-	abstract void gameKeyDown(int KeyCode);
-	abstract void gameKeyUp(int KeyCode);
-	abstract void gameMouseDown();
-	abstract void gameMouseUp();
-	abstract void gameMouseMove();
 	abstract void spriteUpdate(AnimatedSprite sprite);
 	abstract void spriteDraw(AnimatedSprite sprite);
 	abstract void spriteDying(AnimatedSprite sprite);
@@ -83,6 +79,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	}
 	
 	public Graphics2D graphics() { return g2d; }
+	public Keyboard input() { return input; }
 	
 	public int frameRate() { return _frameRate; }
 	
@@ -102,11 +99,10 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		}
 		
 		gameRefreshScreen();
-		
+				
 		if(!gamePaused()) {
 			drawSprites();
 		}
-		
 		paint(g);
 	}
 	
@@ -133,7 +129,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			}
 			
 			gameTimedUpdate();
-			
+			update(graphics());
 			repaint();
 		}
 	}
@@ -142,80 +138,6 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		gameloop = null;
 		gameShutDown();
 	}
-	
-	//KeyListener Events
-	public void KeyTyped(KeyEvent k) { }
-	public void KeyPressed(KeyEvent k) {
-		gameKeyDown(k.getKeyCode());
-	}
-	public void KeyReleased(KeyEvent k) {
-		gameKeyUp(k.getKeyCode());
-	}
-	
-	//Check mouse button states
-	private void checkButtons(MouseEvent e) {
-		switch(e.getButton()) {
-		case MouseEvent.BUTTON1:
-			mouseButtons[1] = true;
-			mouseButtons[2] = false;
-			mouseButtons[3] = false;
-			break;
-		case MouseEvent.BUTTON2:
-			mouseButtons[1] = false;
-			mouseButtons[2] = true;
-			mouseButtons[3] = false;
-			break;
-		case MouseEvent.BUTTON3:
-			mouseButtons[1] = false;
-			mouseButtons[2] = false;
-			mouseButtons[3] = true;
-			break;
-		}
-	}
-	
-	public void mousePressed(MouseEvent e) {
-		checkButtons(e);
-		mousePos.setX(e.getX());
-		mousePos.setY(e.getY());
-		gameMouseDown();
-	}
-	
-	public void mouseReleased(MouseEvent e) {
-		checkButtons(e);
-		mousePos.setX(e.getX());
-		mousePos.setY(e.getY());
-		gameMouseUp();
-	}
-	
-	public void mouseMoved(MouseEvent e) {
-		checkButtons(e);
-		mousePos.setX(e.getX());
-		mousePos.setY(e.getY());
-		gameMouseMove();
-	}
-	
-	public void mouseDragged(MouseEvent e) {
-		checkButtons(e);
-		mousePos.setX(e.getX());
-		mousePos.setY(e.getY());
-		gameMouseDown();
-		gameMouseMove();
-	}
-	
-	public void mouseEntered(MouseEvent e) {
-		checkButtons(e);
-		mousePos.setX(e.getX());
-		mousePos.setY(e.getY());
-		gameMouseMove();
-	}
-	
-	public void mouseExited(MouseEvent e) {
-		mousePos.setX(e.getX());
-		mousePos.setY(e.getY());
-		gameMouseMove();
-	}
-	
-	public void mouseClicked(MouseEvent e) {}
 	
 	protected double calcAngleMoveX(double angle) {
 		return (double) (Math.cos(angle * Math.PI / 180));

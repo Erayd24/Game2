@@ -3,10 +3,13 @@ package axohEngine2.entities;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+
+
 
 public class ImageEntity extends BaseGameEntity {
 	
@@ -57,13 +60,15 @@ public class ImageEntity extends BaseGameEntity {
 	}
 	
 	public void load(String filename) {
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		image = tk.getImage(filename);
-		
-		while(getImage().getWidth(frame) <= 0);
-		double x = frame.getSize().width / 2 - width() / 2;
-		double y = frame.getSize().height / 2 - height() / 2;
-		at = AffineTransform.getTranslateInstance(x, y);
+		try{	
+			System.out.print("Trying to load: " + filename + " ... ");
+			image = ImageIO.read(getClass().getResource(filename));
+			System.out.println(" succeeded!");
+		} catch  (IOException e) {
+			e.printStackTrace();
+		  } catch (Exception e) {
+			  System.err.println(" failed!");
+		  }
 	}
 	
 	public void transform() {
