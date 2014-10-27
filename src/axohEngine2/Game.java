@@ -61,7 +61,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	public Game(int frameRate,int width, int height) {
 		Dimension size = new Dimension(width, height);
 		setPreferredSize(size);
-		this.setSize(size);
+		setSize(size);
 		
 		desiredRate = frameRate;
 		screenWidth = width;
@@ -70,7 +70,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		backBuffer = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_RGB);
         g2d = backBuffer.createGraphics();
 
-        //create the internal sprite list
+        //create the internal lists
         _sprites = new LinkedList<AnimatedSprite>();
         
         addKeyListener(this);
@@ -214,6 +214,12 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	}
 	
 	public void mouseClicked(MouseEvent e) { }
+	
+	
+	//Miscelaneouse Other methods for games
+	//
+	//
+	//-------------------------------------
 	
 	protected double calcAngleMoveX(double angle) {
 		return (double) (Math.cos(angle * Math.PI / 180));

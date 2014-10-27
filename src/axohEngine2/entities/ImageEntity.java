@@ -17,6 +17,8 @@ public class ImageEntity extends BaseGameEntity {
 	protected JFrame frame;
 	protected AffineTransform at;
 	protected Graphics2D g2d;
+	protected int width;
+	protected int height;
 	
 	//Constructor
 	public ImageEntity(JFrame frame) {
@@ -29,9 +31,13 @@ public class ImageEntity extends BaseGameEntity {
 	
 	public void setImage(Image image) {
 		this.image = image;
-		double x = frame.getSize().width / 2 - width() / 2;
-		double y = frame.getSize().height / 2 - height() / 2;
-		at = AffineTransform.getTranslateInstance(x, y);
+		if(image != null) {
+			width = image.getHeight(frame);
+			height = image.getWidth(frame);
+			double x = frame.getSize().width / 2 - width() / 2;
+			double y = frame.getSize().height / 2 - height() / 2;
+			at = AffineTransform.getTranslateInstance(x, y);
+		}
 	}
 	
 	public int width() {

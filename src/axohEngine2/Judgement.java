@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 
 import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.ImageEntity;
+import axohEngine2.entities.SpriteSheet;
 
 public class Judgement extends Game {
 	private static final long serialVersionUID = 1L;
@@ -29,11 +30,14 @@ public class Judgement extends Game {
 		
 	Random random = new Random();
 	ImageEntity background;
+	AnimatedSprite grass;
+	
+	SpriteSheet sheet;
 			
 	int frameCount = 0, frameRate = 0;
 	long startTime = System.currentTimeMillis();
 	
-	boolean keyLeft, keyRight, keyUp, keyDown;
+	boolean keyLeft, keyRight, keyUp, keyDown, keyInventory, keyAction, keyBack, keyEnter;
 	
 	//Load Sound effects
 	public Judgement() {
@@ -44,8 +48,15 @@ public class Judgement extends Game {
 	
 
 	void gameStartUp() {
+		//Initialize spriteSheets
+		sheet = new SpriteSheet("/environments1.png", 16, 16, 16);
+
+		grass = new AnimatedSprite(this, graphics());
+		
 		background = new ImageEntity(this);
 		background.load("/field.png");
+		
+		grass.setSpriteAnim(sheet, 255);
 		
 		requestFocus();
 		start();
@@ -61,7 +72,11 @@ public class Judgement extends Game {
 		g2d.setColor(Color.WHITE);
 		g2d.setFont(new Font("Arial", Font.PLAIN, 48));
         g2d.drawImage(background.getImage(), 0, 0, SCREENWIDTH-1, SCREENHEIGHT-1, this);
-        if(keyLeft) g2d.drawString("Yay!", 100, 100);
+        if(keyLeft) g2d.drawString("left!", 100, 100);
+        if(keyRight) g2d.drawString("Right!", 200, 100);
+        if(keyDown) g2d.drawString("Down!", 300, 100);
+        if(keyUp) g2d.drawString("Up!", 400, 100);
+        g2d.drawImage(grass.getAnimImage(), 100, 100, this);
 	}
 
 	void gameShutDown() {		
@@ -91,7 +106,7 @@ public class Judgement extends Game {
 	 *                            
 	 ***********************************************************/
 	public void checkInput() {
-		if(keyLeft) System.out.println("It works!");
+		if(keyLeft) System.out.println("Left");
 	}
 	
 	void gameKeyDown(int keyCode) {
@@ -108,6 +123,18 @@ public class Judgement extends Game {
         case KeyEvent.VK_DOWN:
             keyDown = true;
             break;
+        case KeyEvent.VK_I:
+        	keyInventory = true;
+        	break;
+        case KeyEvent.VK_E:
+        	keyAction = true;
+        	break;
+        case KeyEvent.VK_ENTER:
+        	keyEnter = true;
+        	break;
+        case KeyEvent.VK_BACK_SPACE:
+        	keyBack = true;
+        	break;
         }
 	}
 
@@ -125,6 +152,18 @@ public class Judgement extends Game {
         case KeyEvent.VK_DOWN:
             keyDown = false;
             break;
+        case KeyEvent.VK_I:
+	    	keyInventory = false;
+	    	break;
+	    case KeyEvent.VK_E:
+	    	keyAction = false;
+	    	break;
+	    case KeyEvent.VK_ENTER:
+	    	keyEnter = false;
+	    	break;
+	    case KeyEvent.VK_BACK_SPACE:
+	    	keyBack = false;
+	    	break;
 		}
 	}
 

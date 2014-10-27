@@ -12,6 +12,7 @@ import axohEngine2.util.Point2D;
 public class Sprite extends Object{
 	
 	private ImageEntity entity;
+	private Image image;
     protected Point2D pos;
     protected Point2D vel;
     protected double rotRate;
@@ -23,6 +24,7 @@ public class Sprite extends Object{
     //constructor
     Sprite(JFrame frame, Graphics2D g2d) {
         entity = new ImageEntity(frame);
+        image = null;
         entity.setGraphics(g2d);
         entity.setAlive(false);
         pos = new Point2D(0, 0);
@@ -33,12 +35,19 @@ public class Sprite extends Object{
         _lifespan = 0;
         _lifeage = 0;
     }
-
-    //load bitmap file
+    
+    public Image setSprite(SpriteSheet sheet, int spriteNumber) {
+    	image = (Image) sheet.getSprite(spriteNumber);
+    	return image;
+    }
+    
+    public Image getImage() { return image; }
+    
+    //load bitmap file for individual sprites
     public void load(String filename) {
         entity.load(filename);
     }
-
+    
     //perform affine transformations
     public void transform() {
         entity.setX(pos.X());

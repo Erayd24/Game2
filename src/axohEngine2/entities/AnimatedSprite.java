@@ -31,7 +31,7 @@ public class AnimatedSprite extends Sprite {
         frHeight = 0;
         cols = 0;
     }
-
+        
     public void load(String filename, int columns, int rows, int width, int height) {
         //load the tiled animation bitmap
         animImage.load(filename);
@@ -69,6 +69,8 @@ public class AnimatedSprite extends Sprite {
 
     public Image getAnimImage() { return animImage.getImage(); }
     public void setAnimImage(Image image) { animImage.setImage(image); }
+    
+    public void setSpriteAnim(SpriteSheet sheet, int spriteNumber) { animImage.setImage(super.setSprite(sheet, spriteNumber)); }
 
     public void updateAnimation() {
         frCount += 1;
