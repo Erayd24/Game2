@@ -3,7 +3,9 @@ package axohEngine2;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
@@ -12,7 +14,6 @@ import java.util.LinkedList;
 import javax.swing.JFrame;
 
 import axohEngine2.entities.AnimatedSprite;
-import axohEngine2.input.Keyboard;
 import axohEngine2.util.Point2D;
 
 @SuppressWarnings("serial")
@@ -29,25 +30,28 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	
 	private Point2D mousePos = new Point2D(0, 0);
 	private boolean mouseButtons[] = new boolean[4];
-	
+		
 	private int _frameCount = 0;
 	private int _frameRate = 0;
 	private int desiredRate;
 	private long startTime = System.currentTimeMillis();
-	
-	private Keyboard input;
-		
+			
 	//Pause game state
 	private boolean _gamePaused = false;
 	public boolean gamePaused() { return _gamePaused; }
 	public void pauseGame() { _gamePaused = true; }
 	public void resumeGame() { _gamePaused = false; }
-	
+		
 	//Game event methods
 	abstract void gameStartUp();
 	abstract void gameTimedUpdate();
 	abstract void gameRefreshScreen();
 	abstract void gameShutDown();
+	abstract void gameKeyDown(int keyCode);
+    abstract void gameKeyUp(int keyCode);
+    abstract void gameMouseDown();
+    abstract void gameMouseUp();
+    abstract void gameMouseMove();
 	abstract void spriteUpdate(AnimatedSprite sprite);
 	abstract void spriteDraw(AnimatedSprite sprite);
 	abstract void spriteDying(AnimatedSprite sprite);
@@ -68,18 +72,15 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 
         //create the internal sprite list
         _sprites = new LinkedList<AnimatedSprite>();
-
-        //start the input listeners
+        
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
-
-        //this method implemented by sub-class
+        
         gameStartUp();
 	}
 	
 	public Graphics2D graphics() { return g2d; }
-	public Keyboard input() { return input; }
 	
 	public int frameRate() { return _frameRate; }
 	
@@ -138,6 +139,81 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		gameloop = null;
 		gameShutDown();
 	}
+	
+	//Key Listener Methods
+	public void keyTyped(KeyEvent k) { }
+	
+    public void keyPressed(KeyEvent k) {
+        gameKeyDown(k.getKeyCode());
+    }
+    
+    public void keyReleased(KeyEvent k) {
+        gameKeyUp(k.getKeyCode());
+    }
+    
+    //Mouse Listener events
+    private void checkButtons(MouseEvent e) {
+        switch(e.getButton()) {
+        case MouseEvent.BUTTON1:
+            mouseButtons[1] = true;
+            mouseButtons[2] = false;
+            mouseButtons[3] = false;
+            break;
+        case MouseEvent.BUTTON2:
+            mouseButtons[1] = false;
+            mouseButtons[2] = true;
+            mouseButtons[3] = false;
+            break;
+        case MouseEvent.BUTTON3:
+            mouseButtons[1] = false;
+            mouseButtons[2] = false;
+            mouseButtons[3] = true;
+            break;
+        }
+	}
+	
+	public void mousePressed(MouseEvent e) {
+	    checkButtons(e);
+	    mousePos.setX(e.getX());
+	    mousePos.setY(e.getY());
+	    gameMouseDown();
+	}
+	
+	public void mouseReleased(MouseEvent e) {
+	    checkButtons(e);
+	    mousePos.setX(e.getX());
+	    mousePos.setY(e.getY());
+	    gameMouseUp();
+	}
+	
+	public void mouseMoved(MouseEvent e) {
+	    checkButtons(e);
+	    mousePos.setX(e.getX());
+	    mousePos.setY(e.getY());
+	    gameMouseMove();
+	}
+	
+	public void mouseDragged(MouseEvent e) {
+	    checkButtons(e);
+	    mousePos.setX(e.getX());
+	    mousePos.setY(e.getY());
+	    gameMouseDown();
+	    gameMouseMove();
+	}
+	
+	public void mouseEntered(MouseEvent e) {
+	    mousePos.setX(e.getX());
+	    mousePos.setY(e.getY());
+	    gameMouseMove();
+	}
+	
+	public void mouseExited(MouseEvent e) {
+	    mousePos.setX(e.getX());
+	    mousePos.setY(e.getY());
+	    gameMouseMove();
+	}
+	
+	public void mouseClicked(MouseEvent e) { }
 	
 	protected double calcAngleMoveX(double angle) {
 		return (double) (Math.cos(angle * Math.PI / 180));
@@ -203,5 +279,4 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			}
 		}
 	}
-	
 }
