@@ -45,6 +45,13 @@ public class AnimatedSprite extends Sprite {
         tempSurface = tempImage.createGraphics();
         super.setImage(tempImage);
     }
+    
+    public void loadAnim(int columns, int rows, int width, int height) {
+    	setColumns(columns);
+        setTotalFrames(columns * rows);
+        setFrameWidth(width);
+        setFrameHeight(height);
+    }
 
     public int currentFrame() { return currFrame; }
     public void setCurrentFrame(int frame) { currFrame = frame; }
@@ -70,7 +77,9 @@ public class AnimatedSprite extends Sprite {
     public Image getAnimImage() { return animImage.getImage(); }
     public void setAnimImage(Image image) { animImage.setImage(image); }
     
-    public void setSpriteAnim(SpriteSheet sheet, int spriteNumber) { animImage.setImage(super.setSprite(sheet, spriteNumber)); }
+    public void setAnimSprite(SpriteSheet sheet, int spriteNumber) {
+    	animImage.setImage(super.setSprite(sheet, spriteNumber)); 
+    }
 
     public void updateAnimation() {
         frCount += 1;
@@ -94,8 +103,7 @@ public class AnimatedSprite extends Sprite {
             int frameY = (currentFrame() / columns()) * frameHeight();
 
             if (tempImage == null) {
-                tempImage = new BufferedImage(frameWidth(), frameHeight(),
-                                              BufferedImage.TYPE_INT_ARGB);
+                tempImage = new BufferedImage(frameWidth(), frameHeight(), BufferedImage.TYPE_INT_ARGB);
                 tempSurface = tempImage.createGraphics();
             }
 

@@ -56,8 +56,8 @@ public class Judgement extends Game {
 		background = new ImageEntity(this);
 		background.load("/field.png");
 		
-		grass.setSpriteAnim(sheet, 255);
-		
+		grass.setAnimSprite(sheet, 16);
+		grass.loadAnim(5, 1, 16, 16);
 		requestFocus();
 		start();
 	}

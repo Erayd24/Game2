@@ -27,18 +27,17 @@ public class SpriteSheet extends Object{
     
     private void buildSprites(BufferedImage spriteSheet, int columns, int rows, int spriteSize){
         sprites = new BufferedImage[rows * columns];
-        for(int x = 0; x < columns; x++){
-            for(int y = 0; y < rows; y++){
-            	for(int i = 0; i < rows * columns; i++) {
-            		sprites[i] = spriteSheet.getSubimage(x * (spriteSize), y * (spriteSize), spriteSize, spriteSize);
-            		_imageCount++;
-            	}
+	    for(int x = 0; x < columns; x++){
+	    	_imageCount++;
+	        for(int y = 0; y < rows; y++){
+	          	sprites[x + y * columns] = spriteSheet.getSubimage(x * (spriteSize), y * (spriteSize), spriteSize, spriteSize);
             }
-        }
+	    }
     }
     
     public BufferedImage getSprite(int imageNumber){
         return sprites[imageNumber];
+        
     }
 
 }

@@ -38,6 +38,7 @@ public class Sprite extends Object{
     
     public Image setSprite(SpriteSheet sheet, int spriteNumber) {
     	image = (Image) sheet.getSprite(spriteNumber);
+    	System.out.println(image);
     	return image;
     }
     
