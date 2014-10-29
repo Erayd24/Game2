@@ -17,7 +17,6 @@ public class Judgement extends Game {
 	
 	static int SCREENWIDTH = 1600;
 	static int SCREENHEIGHT = 900;
-	int scale = 4;
 	static int CENTERX = SCREENWIDTH / 2;
 	static int CENTERY = SCREENHEIGHT / 2;
 	
@@ -29,11 +28,16 @@ public class Judgement extends Game {
 	boolean collisionTesting = true;
 	long collisionTimer = 0;
 	
+	int scale = 4;
+	int xOffset = 0;
+	int yOffset = 0;
+	int playerSpeed = 5;
+	
 	Random random = new Random();
 	//Collections collection;
 	
 	ImageEntity background;
-	AnimatedSprite grass;
+	AnimatedSprite flower;
 	AnimatedSprite player1;
 	
 	SpriteSheet sheet;
@@ -57,7 +61,7 @@ public class Judgement extends Game {
 		sheet = new SpriteSheet("/textures/environments/environments1.png", 16, 16, 16);
 		player = new SpriteSheet("/textures/characters/mainCharacter.png", 8, 8, 32);
 
-		grass = new AnimatedSprite(this, graphics());
+		flower = new AnimatedSprite(this, graphics());
 		player1 = new AnimatedSprite(this, graphics());
 		
 		background = new ImageEntity(this);
@@ -67,9 +71,9 @@ public class Judgement extends Game {
 		player1.loadAnim(4, 3);
 
 		sprites().add(player1);
-		sprites().add(grass);
-		grass.setAnimSprite(sheet, 1);
-		grass.loadAnim(0, 0);
+		sprites().add(flower);
+		flower.setAnimSprite(sheet, 1);
+		flower.loadAnim(0, 0);
 		//collection = new Collections();
 		//collection.Initialize();
 		
@@ -88,13 +92,13 @@ public class Judgement extends Game {
 		g2d.setFont(new Font("Arial", Font.PLAIN, 48));
         g2d.drawImage(background.getImage(), 0, 0, SCREENWIDTH-1, SCREENHEIGHT-1, this);
         
-        if(keyLeft) g2d.drawString("left!", 100, 100);
-        if(keyRight) g2d.drawString("Right!", 200, 100);
-        if(keyDown) g2d.drawString("Down!", 300, 100);
-        if(keyUp) g2d.drawString("Up!", 400, 100);
+        if(keyLeft) xOffset = xOffset - 1 - playerSpeed;
+        if(keyRight) xOffset = xOffset + 1 + playerSpeed;
+        if(keyDown) yOffset = yOffset + 1 + playerSpeed;
+        if(keyUp) yOffset = yOffset - 1 - playerSpeed;
         
-        g2d.drawImage(grass.getAnimImage(), 100, 100, 16 * scale, 16 * scale, this);
-        g2d.drawImage(player1.getAnimImage(), 150, 150, 32 * scale, 32 * scale, this);
+        g2d.drawImage(flower.getAnimImage(), 100, 100, 16 * scale, 16 * scale, this);
+        g2d.drawImage(player1.getAnimImage(), SCREENWIDTH / 2 + xOffset, SCREENHEIGHT / 2 + yOffset, 32 * scale, 32 * scale, this);
 	}
 
 	void gameShutDown() {		
