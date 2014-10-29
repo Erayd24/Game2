@@ -10,112 +10,76 @@ public class AnimatedSprite extends Sprite {
 
 	private ImageEntity animImage;
 	
-    BufferedImage tempImage;
+    BufferedImage image;
     Graphics2D tempSurface;
     
     private int currFrame, totFrames;
-    private int animDir;
-    private int frCount, frDelay;
-    private int frWidth, frHeight;
-    private int cols;
+    
+    private SpriteSheet sheet;
+    private int spriteNumber;
+    private int delay;
+    private int tempDelay;
+    private boolean animating;
 
     public AnimatedSprite(JFrame frame, Graphics2D g2d) {
         super(frame, g2d);
         animImage = new ImageEntity(frame);
         currFrame = 0;
         totFrames = 0;
-        animDir = 1;
-        frCount = 0;
-        frDelay = 0;
-        frWidth = 0;
-        frHeight = 0;
-        cols = 0;
+        animating = false;
+        
+        delay = 1;
+        tempDelay = 1;
     }
         
-    public void load(String filename, int columns, int rows, int width, int height) {
+    public void load(String filename, int width, int height) {
         //load the tiled animation bitmap
         animImage.load(filename);
-        setColumns(columns);
-        setTotalFrames(columns * rows);
-        setFrameWidth(width);
-        setFrameHeight(height);
 
         //frame image is passed to parent class for drawing
-        tempImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        tempSurface = tempImage.createGraphics();
-        super.setImage(tempImage);
+        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        tempSurface = image.createGraphics();
+        super.setImage(image);
     }
     
-    public void loadAnim(int columns, int rows, int width, int height) {
-    	setColumns(columns);
-        setTotalFrames(columns * rows);
-        setFrameWidth(width);
-        setFrameHeight(height);
+    public void loadAnim(int frames, int delay) {
+        if(frames > 0) {
+        	setTotalFrames(frames);
+        	animating = true;
+        }
+       	if(delay > 0) setDelay(delay);
+        tempDelay = delay;
     }
 
-    public int currentFrame() { return currFrame; }
-    public void setCurrentFrame(int frame) { currFrame = frame; }
-
-    public int frameWidth() { return frWidth; }
-    public void setFrameWidth(int width) { frWidth = width; }
-
-    public int frameHeight() { return frHeight; }
-    public void setFrameHeight(int height) { frHeight = height; }
-
+    public void setDelay(int delay) { this.delay = delay; }
     public int totalFrames() { return totFrames; }
     public void setTotalFrames(int total) { totFrames = total; }
-
-    public int animationDirection() { return animDir; }
-    public void setAnimationDirection(int dir) { animDir = dir; }
-
-    public int frameDelay() { return frDelay; }
-    public void setFrameDelay(int delay) { frDelay = delay; }
-
-    public int columns() { return cols; }
-    public void setColumns(int num) { cols = num; }
-
+    public int currentFrame() { return currFrame; }
+    
     public Image getAnimImage() { return animImage.getImage(); }
     public void setAnimImage(Image image) { animImage.setImage(image); }
     
     public void setAnimSprite(SpriteSheet sheet, int spriteNumber) {
     	animImage.setImage(super.setSprite(sheet, spriteNumber)); 
-    }
-
-    public void updateAnimation() {
-        frCount += 1;
-        if (frCount > frDelay) {
-            frCount = 0;
-            //update the animation frame
-            currFrame += animDir;
-            if (currFrame > totFrames - 1) {
-                currFrame = 0;
-            }
-            else if (currFrame < 0) {
-                currFrame = totFrames - 1;
-            }
-        }
+    	this.sheet = sheet;
+    	this.spriteNumber = spriteNumber;
+    	currFrame = spriteNumber;
     }
 
     public void updateFrame() {
-        if (totFrames > 0) {
-            //calculate the current frame's X and Y position
-            int frameX = (currentFrame() % columns()) * frameWidth();
-            int frameY = (currentFrame() / columns()) * frameHeight();
-
-            if (tempImage == null) {
-                tempImage = new BufferedImage(frameWidth(), frameHeight(), BufferedImage.TYPE_INT_ARGB);
-                tempSurface = tempImage.createGraphics();
-            }
-
-            //copy the frame onto the temp image
-            if (animImage.getImage() != null) {
-                tempSurface.drawImage(animImage.getImage(), 0, 0, frameWidth() - 1,
-                frameHeight() - 1, frameX, frameY,
-                frameX + frameWidth(),
-                frameY + frameHeight(), frame());
-            }
-            //pass the temp image on to the parent class and draw it
-            super.setImage(tempImage);
-        }
+    	if(animating) {
+	    	tempDelay--;
+	    	if(tempDelay % delay == 0) {
+	    		if(currentFrame() == spriteNumber - 1 + totalFrames()) {
+	    			currFrame = spriteNumber;
+	    			animImage.setImage(super.setSprite(sheet, currentFrame()));
+			    	tempDelay = delay;
+	    			return;
+	    		}
+		    	currFrame++;
+		    	tempDelay = delay;
+		    	animImage.setImage(super.setSprite(sheet, currentFrame())); 
+	    	}
+    	}
     }
 }
