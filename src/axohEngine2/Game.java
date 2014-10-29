@@ -80,6 +80,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	}
 	
 	public Graphics2D graphics() { return g2d; }
+	public Game getGame() { return this; }
 	
 	public int frameRate() { return _frameRate; }
 	

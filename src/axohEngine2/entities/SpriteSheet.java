@@ -10,23 +10,30 @@ public class SpriteSheet extends Object{
     BufferedImage[] sprites;
     String fileName;
     
-    public SpriteSheet(String filename, int columns, int rows, int spriteSize) {
-    	setSheet(filename, columns, rows, spriteSize);
+    public int sheetHeight;
+    public int sheetWidth;
+    private int spriteSize;
+    
+    public SpriteSheet(String filename, int sheetWidth, int sheetHeight, int spriteSize) {
+    	this.spriteSize = spriteSize;
+    	this.sheetHeight = sheetHeight;
+    	this.sheetWidth = sheetWidth;
+    	setSheet(filename, sheetWidth, sheetHeight, spriteSize);
     }
     
-    public void setSheet(String filename, int columns, int rows, int spriteSize) {
+    public void setSheet(String filename, int sheetWidth, int sheetHeight, int spriteSize) {
     	fileName = filename;
     	try{
     		BufferedImage spriteSheet = ImageIO.read(getClass().getResource(filename));
-    		buildSprites(spriteSheet, columns, rows, spriteSize);
+    		buildSprites(spriteSheet, sheetWidth, sheetHeight, spriteSize);
     	}catch(IOException e){}
     }
     
-    private void buildSprites(BufferedImage spriteSheet, int columns, int rows, int spriteSize){
-        sprites = new BufferedImage[rows * columns];
-	    for(int x = 0; x < columns; x++){
-	        for(int y = 0; y < rows; y++){
-	          	sprites[x + y * columns] = spriteSheet.getSubimage(x * (spriteSize), y * (spriteSize), spriteSize, spriteSize);
+    private void buildSprites(BufferedImage spriteSheet, int sheetWidth, int sheetHeight, int spriteSize){
+        sprites = new BufferedImage[sheetHeight * sheetWidth];
+	    for(int x = 0; x < sheetWidth; x++){
+	        for(int y = 0; y < sheetHeight; y++){
+	          	sprites[x + y * sheetWidth] = spriteSheet.getSubimage(x * (spriteSize), y * (spriteSize), spriteSize, spriteSize);
             }
 	    }
     }
@@ -36,4 +43,5 @@ public class SpriteSheet extends Object{
         
     }
 
+    public int getSpriteSize() { return spriteSize; }
 }

@@ -57,6 +57,7 @@ public class AnimatedSprite extends Sprite {
     public void setTotalFrames(int total) { totFrames = total; }
     public int currentFrame() { return currFrame; }
     public void setAnimation(boolean state) { animating = state; }
+    public void setSheet(SpriteSheet sheet) { this.sheet = sheet; }
     
     public Image getAnimImage() { return animImage.getImage(); }
     public void setAnimImage(Image image) { animImage.setImage(image); }

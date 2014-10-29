@@ -11,6 +11,8 @@ import javax.swing.JFrame;
 import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.ImageEntity;
 import axohEngine2.entities.SpriteSheet;
+import axohEngine2.map.Map;
+import axohEngine2.map.Tile;
 
 public class Judgement extends Game {
 	private static final long serialVersionUID = 1L;
@@ -28,20 +30,23 @@ public class Judgement extends Game {
 	boolean collisionTesting = true;
 	long collisionTimer = 0;
 	
-	int scale = 4;
-	int xOffset = 0;
-	int yOffset = 0;
-	int playerSpeed = 5;
+	private int scale;
+	private int xOffset = 0;
+	private int yOffset = 0;
+	private int playerSpeed = 5;
 	
 	Random random = new Random();
 	//Collections collection;
 	
 	ImageEntity background;
-	AnimatedSprite flower;
 	AnimatedSprite player1;
 	
 	SpriteSheet sheet;
 	SpriteSheet player;
+	
+	Map map;
+	Tile grassTile;
+	Tile flowerTile;
 			
 	int frameCount = 0, frameRate = 0;
 	long startTime = System.currentTimeMillis();
@@ -57,25 +62,36 @@ public class Judgement extends Game {
 	
 
 	void gameStartUp() {
+		scale = 4;
 		//Initialize spriteSheets
 		sheet = new SpriteSheet("/textures/environments/environments1.png", 16, 16, 16);
 		player = new SpriteSheet("/textures/characters/mainCharacter.png", 8, 8, 32);
 
-		flower = new AnimatedSprite(this, graphics());
 		player1 = new AnimatedSprite(this, graphics());
+		flowerTile = new Tile(this, graphics(), sheet, 1);
+		grassTile = new Tile(this, graphics(), sheet, 0);
+		flowerTile.loadAnim(2, 20);
 		
 		background = new ImageEntity(this);
 		background.load("/field.png");
 		
+		//Player
 		player1.setAnimSprite(player, 40);
-		player1.loadAnim(4, 3);
-
+		player1.loadAnim(4, 20);
+				
 		sprites().add(player1);
-		sprites().add(flower);
-		flower.setAnimSprite(sheet, 1);
-		flower.loadAnim(0, 0);
+		sprites().add(flowerTile);
+		
 		//collection = new Collections();
 		//collection.Initialize();
+		
+		Tile[] mapTiles = {grassTile, grassTile, grassTile, grassTile, grassTile,
+						   grassTile, flowerTile, flowerTile, flowerTile, grassTile,
+						   grassTile, flowerTile, flowerTile, flowerTile, grassTile,
+						   grassTile, flowerTile, flowerTile, flowerTile, grassTile,
+						   grassTile, grassTile, grassTile, grassTile, grassTile};
+		
+		map = new Map(mapTiles, scale, 5, 5);
 		
 		requestFocus();
 		start();
@@ -90,14 +106,16 @@ public class Judgement extends Game {
 		
 		g2d.setColor(Color.WHITE);
 		g2d.setFont(new Font("Arial", Font.PLAIN, 48));
+		
         g2d.drawImage(background.getImage(), 0, 0, SCREENWIDTH-1, SCREENHEIGHT-1, this);
         
         if(keyLeft) xOffset = xOffset - 1 - playerSpeed;
         if(keyRight) xOffset = xOffset + 1 + playerSpeed;
         if(keyDown) yOffset = yOffset + 1 + playerSpeed;
         if(keyUp) yOffset = yOffset - 1 - playerSpeed;
+        map.render();
         
-        g2d.drawImage(flower.getAnimImage(), 100, 100, 16 * scale, 16 * scale, this);
+
         g2d.drawImage(player1.getAnimImage(), SCREENWIDTH / 2 + xOffset, SCREENHEIGHT / 2 + yOffset, 32 * scale, 32 * scale, this);
 	}
 
