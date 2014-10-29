@@ -7,10 +7,7 @@ import javax.imageio.ImageIO;
 
 public class SpriteSheet extends Object{
 
-	int _imageCount;
-    int _frameCount;
     BufferedImage[] sprites;
-    
     String fileName;
     
     public SpriteSheet(String filename, int columns, int rows, int spriteSize) {
@@ -28,7 +25,6 @@ public class SpriteSheet extends Object{
     private void buildSprites(BufferedImage spriteSheet, int columns, int rows, int spriteSize){
         sprites = new BufferedImage[rows * columns];
 	    for(int x = 0; x < columns; x++){
-	    	_imageCount++;
 	        for(int y = 0; y < rows; y++){
 	          	sprites[x + y * columns] = spriteSheet.getSubimage(x * (spriteSize), y * (spriteSize), spriteSize, spriteSize);
             }

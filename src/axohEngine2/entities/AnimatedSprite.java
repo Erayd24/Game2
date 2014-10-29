@@ -13,7 +13,8 @@ public class AnimatedSprite extends Sprite {
     BufferedImage image;
     Graphics2D tempSurface;
     
-    private int currFrame, totFrames;
+    private int currFrame;
+    private int totFrames;
     
     private SpriteSheet sheet;
     private int spriteNumber;
@@ -33,7 +34,7 @@ public class AnimatedSprite extends Sprite {
     }
         
     public void load(String filename, int width, int height) {
-        //load the tiled animation bitmap
+        //load animation bitmap
         animImage.load(filename);
 
         //frame image is passed to parent class for drawing

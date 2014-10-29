@@ -76,7 +76,6 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
-        
         gameStartUp();
 	}
 	
@@ -279,7 +278,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	private void purgeSprites() {
 		for(int i = 0; i < _sprites.size(); i++) {
 			AnimatedSprite spr = (AnimatedSprite) _sprites.get(i);
-			if(!spr.alive()) {
+			if(spr.alive() == false) {
 				_sprites.remove(i);
 			}
 		}

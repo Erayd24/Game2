@@ -64,7 +64,7 @@ public class Judgement extends Game {
 		background.load("/field.png");
 		
 		player1.setAnimSprite(player, 40);
-		player1.loadAnim(4, 0);
+		player1.loadAnim(4, 3);
 
 		sprites().add(player1);
 		sprites().add(grass);
@@ -93,7 +93,7 @@ public class Judgement extends Game {
         if(keyDown) g2d.drawString("Down!", 300, 100);
         if(keyUp) g2d.drawString("Up!", 400, 100);
         
-        g2d.drawImage(grass.getAnimImage(), 100, 100, this);
+        g2d.drawImage(grass.getAnimImage(), 100, 100, 16 * scale, 16 * scale, this);
         g2d.drawImage(player1.getAnimImage(), 150, 150, 32 * scale, 32 * scale, this);
 	}
 
