@@ -90,8 +90,9 @@ public class ImageEntity extends BaseGameEntity {
 	
 	//Bounding rectangle
 	public Rectangle getBounds() {
+		System.out.println((int)getX() + " y " + (int)getY());
 		Rectangle r;
-		r = new Rectangle((int)getX(), (int)getY(), width(), height());
+		r = new Rectangle((int)getX() + 32, (int)getY() + 32, width(), height());
 		return r;
 	}
 }

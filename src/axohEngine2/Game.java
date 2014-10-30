@@ -67,7 +67,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		Dimension size = new Dimension(width, height);
 		setPreferredSize(size);
 		setSize(size);
-		this.pack();
+		pack();
 		
 		desiredRate = frameRate;
 		screenWidth = width;
@@ -244,35 +244,23 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		for(int i = 0; i < _sprites.size(); i++) {
 			AnimatedSprite spr = (AnimatedSprite) _sprites.get(i);
 			if(spr.alive()) {
-				spr.updatePosition();
-				spr.updateRotation();
 				spriteUpdate(spr);
 				if(spr instanceof Mob) ((Mob) spr).updateMob();
-				spr.updateLifetime();
-				if(!spr.alive()) {
-					spriteDying(spr);
-				}
 			}
+			spriteDying(spr);
 		}
 	}
 	
 	protected void testCollision() {
 		for(int first = 0; first < _sprites.size(); first++) {
-			AnimatedSprite spr1 = (AnimatedSprite) _sprites.get(first);
-			if(spr1.alive()) {
+			AnimatedSprite spr1 = _sprites.get(first);
 				for(int second = 0; second < _sprites.size(); second++) {
-					if(first != second) {
-						AnimatedSprite spr2 = (AnimatedSprite) _sprites.get(second);
-						if(spr2.alive()) {
-							if(spr2.collidesWith(spr1) && spr1.solid() || spr2.solid()) {
-								spriteCollision(spr1, spr2);
-								break;
-							} else
-								spr1.setCollided(false);
-						}
-					}
+					AnimatedSprite spr2 = _sprites.get(second);
+						if(spr1.collidesWith(spr2) && spr2.solid())
+							spriteCollision(spr1, spr2);
+						else
+							spr2.setCollided(false);
 				}
-			}
 		}
 	}
 	

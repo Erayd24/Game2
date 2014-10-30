@@ -1,5 +1,6 @@
 package axohEngine2.map;
 
+
 public class Map {
 	
 	private int mapHeight;

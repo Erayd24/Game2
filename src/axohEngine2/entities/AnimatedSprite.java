@@ -15,6 +15,7 @@ public class AnimatedSprite extends Sprite {
     
     private int currFrame;
     private int totFrames;
+    public String name;
     
     private SpriteSheet sheet;
     private int spriteNumber;
@@ -22,12 +23,13 @@ public class AnimatedSprite extends Sprite {
     private int tempDelay;
     private boolean animating;
 
-    public AnimatedSprite(JFrame frame, Graphics2D g2d) {
+    public AnimatedSprite(JFrame frame, Graphics2D g2d, String name) {
         super(frame, g2d);
         animImage = new ImageEntity(frame);
         currFrame = 0;
         totFrames = 0;
         animating = false;
+        this.name = name;
         
         delay = 1;
         tempDelay = 1;
@@ -69,6 +71,12 @@ public class AnimatedSprite extends Sprite {
     	currFrame = spriteNumber;
     }
 
+    public void render(Graphics2D g2d, JFrame frame, int x, int y, int width, int height, int scale) {
+    	entity.setX(x);
+    	entity.setY(y);
+		g2d.drawImage(getAnimImage(), x, y, width * scale, height * scale, frame);	
+    }
+    
     public void updateFrame() {
     	if(animating) {
 	    	tempDelay--;

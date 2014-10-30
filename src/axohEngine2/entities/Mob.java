@@ -21,7 +21,7 @@ public class Mob extends AnimatedSprite{
 	private JFrame frame;
 	
 	public Mob(JFrame frame, Graphics2D g2d, String name, boolean hostility, SpriteSheet sheet, int spriteNumber, String ai) {
-		super(frame, g2d);
+		super(frame, g2d, name);
 		this.frame = frame;
 		this.g2d = g2d;
 		hostile = hostility;
@@ -78,5 +78,7 @@ public class Mob extends AnimatedSprite{
 	
 	public void renderMob(int x, int y, int scale) {
 		g2d.drawImage(getImage(), x + xx, y + yy, spriteSize * scale, spriteSize * scale, frame);
+		entity.setX(x + xx);
+		entity.setY(y + yy);
 	}
 }

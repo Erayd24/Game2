@@ -11,7 +11,7 @@ import axohEngine2.util.Point2D;
 
 public class Sprite extends Object{
 	
-	private ImageEntity entity;
+	protected ImageEntity entity;
 	private Image image;
     protected Point2D pos;
     protected Point2D vel;
@@ -28,7 +28,7 @@ public class Sprite extends Object{
         entity = new ImageEntity(frame);
         image = null;
         entity.setGraphics(g2d);
-        entity.setAlive(false);
+        entity.setAlive(true);
         pos = new Point2D(0, 0);
         vel = new Point2D(0, 0);
         rotRate = 0.0;
@@ -71,12 +71,6 @@ public class Sprite extends Object{
         entity.g2d.draw(getBounds());
     }
 
-    //update the position based on velocity
-    public void updatePosition() {
-        pos.setX(pos.X() + vel.X());
-        pos.setY(pos.Y() + vel.Y());
-    }
-
     //methods related to automatic rotation factor
     public double rotationRate() { return rotRate; }
     public void setRotationRate(double rate) { rotRate = rate; }
@@ -94,19 +88,6 @@ public class Sprite extends Object{
 
     //returns a bounding rectangle
     public Rectangle getBounds() { return entity.getBounds(); }
-
-    //sprite position
-    public Point2D position() { return pos; }
-    public void setPosition(Point2D pos) { this.pos = pos; }
-
-    //sprite movement velocity
-    public Point2D velocity() { return vel; }
-    public void setVelocity(Point2D vel) { this.vel = vel; }
-
-    //returns the center of the sprite as a Point2D
-    public Point2D center() {
-        return(new Point2D(entity.getCenterX(),entity.getCenterY()));
-    }
 
     //generic variable for selectively using sprites
     public boolean alive() { return entity.isAlive(); }

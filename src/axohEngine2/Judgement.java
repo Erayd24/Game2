@@ -1,5 +1,6 @@
 package axohEngine2;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.Random;
@@ -32,7 +33,6 @@ public class Judgement extends Game {
 	private int playerX;
 	private int playerY;
 	private int playerSpeed;
-	private boolean colliding = false;
 	
 	Random random = new Random();
 	//Collections collection;
@@ -46,6 +46,7 @@ public class Judgement extends Game {
 	Map map;
 	Tile gt;
 	Tile ft;
+	Tile bt;
 			
 	int frameCount = 0, frameRate = 0;
 	long startTime = System.currentTimeMillis();
@@ -62,17 +63,18 @@ public class Judgement extends Game {
 
 	void gameStartUp() {
 		scale = 4;
-		playerX = SCREENWIDTH / 2;
-		playerY = SCREENHEIGHT / 2;
+		playerX = 0;
+		playerY = 0;
 		playerSpeed = 5;
 		//Initialize spriteSheets
 		sheet = new SpriteSheet("/textures/environments/environments1.png", 16, 16, 16);
 		player = new SpriteSheet("/textures/characters/mainCharacter.png", 8, 8, 32);
 
-		player1 = new AnimatedSprite(this, graphics());
-		ft = new Tile(this, graphics(), sheet, 1);
-		gt = new Tile(this, graphics(), sheet, 0);
-		//flowerTile.loadAnim(2, 20);
+		player1 = new AnimatedSprite(this, graphics(), "player");
+		ft = new Tile(this, graphics(), "flower", sheet, 1);
+		gt = new Tile(this, graphics(), "grass", sheet, 0);
+		bt = new Tile(this, graphics(), "bricks", sheet, 16, true);
+		//ft.loadAnim(2, 20);
 		
 		//background = new ImageEntity(this);
 		//background.load("/field.png");
@@ -83,14 +85,16 @@ public class Judgement extends Game {
 				
 		sprites().add(player1);
 		sprites().add(ft);
+		sprites().add(bt);
+		sprites().add(gt);
 		
 		//collection = new Collections();
 		//collection.Initialize();
 		
 		Tile[] mapTiles = {gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
 						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, ft, ft, ft, gt, gt, gt, gt, gt, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, ft, ft, ft, gt, gt, gt, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
 						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt,
 						   gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
 						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
@@ -101,7 +105,7 @@ public class Judgement extends Game {
 						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
 						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
 						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt,
+						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, bt, bt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt,
 						   gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
 						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
 						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
@@ -133,9 +137,8 @@ public class Judgement extends Game {
 		g2d.clearRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
 				
 		map.render(playerX, playerY);
-		g2d.drawImage(player1.getAnimImage(), SCREENWIDTH / 2, SCREENHEIGHT / 2 , 32 * scale, 32 * scale, this);
-				
-		//g2d.setColor(Color.WHITE);
+		player1.render(graphics(), this, SCREENWIDTH / 2, SCREENHEIGHT / 2, 32, 32, scale);
+		bt.drawBounds(Color.RED);
 		//g2d.setFont(new Font("Arial", Font.PLAIN, 48));
 	}
 
@@ -151,18 +154,16 @@ public class Judgement extends Game {
 	void spriteDying(AnimatedSprite sprite) {		
 	}
 
-	void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2) {	
-		if(spr1.spriteType() == "wall" || spr2.spriteType() == "wall") {
-			colliding = true;
+	void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2) {
+		if(spr2.spriteType() == "wall" && spr1.name == "player") {
+			//if(keyLeft) playerX = playerX - 1 - playerSpeed;
+			//if(keyRight) playerX = playerX + 1 + playerSpeed;
+			//if(keyUp) playerY = playerY - 1 - playerSpeed;
+			//if(keyDown) playerY = playerY + 1 + playerSpeed;
 		}
 		if(spr1.spriteType() == "enemy" || spr2.spriteType() == "enemy") {
-			colliding = true;
 		}
 		if(spr1.spriteType() == "npc" || spr2.spriteType() == "npc") {
-			colliding = true;
-		}
-		if(!colliding) {
-			
 		}
 	}
 	

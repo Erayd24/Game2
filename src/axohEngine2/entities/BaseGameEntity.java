@@ -7,7 +7,7 @@ public class BaseGameEntity extends Object {
 	protected double velX, velY;
 	protected double moveAngle, faceAngle;
 	
-	public boolean isAlive() { return true; }
+	public boolean isAlive() { return alive; }
 	public double getX() { return x; }
 	public double getY() { return y; }
 	public double getVelX() { return velX; }
