@@ -1,7 +1,5 @@
 package axohEngine2;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.Random;
@@ -9,7 +7,6 @@ import java.util.Random;
 import javax.swing.JFrame;
 
 import axohEngine2.entities.AnimatedSprite;
-import axohEngine2.entities.ImageEntity;
 import axohEngine2.entities.SpriteSheet;
 import axohEngine2.map.Map;
 import axohEngine2.map.Tile;
@@ -28,25 +25,27 @@ public class Judgement extends Game {
 	
 	boolean showBounds = true;
 	boolean collisionTesting = true;
+	boolean runOnce = true;
 	long collisionTimer = 0;
 	
 	private int scale;
-	private int xOffset = 0;
-	private int yOffset = 0;
-	private int playerSpeed = 5;
+	private int playerX;
+	private int playerY;
+	private int playerSpeed;
+	private boolean colliding = false;
 	
 	Random random = new Random();
 	//Collections collection;
 	
-	ImageEntity background;
+	//ImageEntity background;
 	AnimatedSprite player1;
 	
 	SpriteSheet sheet;
 	SpriteSheet player;
 	
 	Map map;
-	Tile grassTile;
-	Tile flowerTile;
+	Tile gt;
+	Tile ft;
 			
 	int frameCount = 0, frameRate = 0;
 	long startTime = System.currentTimeMillis();
@@ -63,35 +62,63 @@ public class Judgement extends Game {
 
 	void gameStartUp() {
 		scale = 4;
+		playerX = SCREENWIDTH / 2;
+		playerY = SCREENHEIGHT / 2;
+		playerSpeed = 5;
 		//Initialize spriteSheets
 		sheet = new SpriteSheet("/textures/environments/environments1.png", 16, 16, 16);
 		player = new SpriteSheet("/textures/characters/mainCharacter.png", 8, 8, 32);
 
 		player1 = new AnimatedSprite(this, graphics());
-		flowerTile = new Tile(this, graphics(), sheet, 1);
-		grassTile = new Tile(this, graphics(), sheet, 0);
-		flowerTile.loadAnim(2, 20);
+		ft = new Tile(this, graphics(), sheet, 1);
+		gt = new Tile(this, graphics(), sheet, 0);
+		//flowerTile.loadAnim(2, 20);
 		
-		background = new ImageEntity(this);
-		background.load("/field.png");
+		//background = new ImageEntity(this);
+		//background.load("/field.png");
 		
 		//Player
 		player1.setAnimSprite(player, 40);
 		player1.loadAnim(4, 20);
 				
 		sprites().add(player1);
-		sprites().add(flowerTile);
+		sprites().add(ft);
 		
 		//collection = new Collections();
 		//collection.Initialize();
 		
-		Tile[] mapTiles = {grassTile, grassTile, grassTile, grassTile, grassTile,
-						   grassTile, flowerTile, flowerTile, flowerTile, grassTile,
-						   grassTile, flowerTile, flowerTile, flowerTile, grassTile,
-						   grassTile, flowerTile, flowerTile, flowerTile, grassTile,
-						   grassTile, grassTile, grassTile, grassTile, grassTile};
+		Tile[] mapTiles = {gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt,
+						   gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt,
+						   gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt,
+						   gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt,
+						   gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt,
+						   gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt};
 		
-		map = new Map(mapTiles, scale, 5, 5);
+		map = new Map(mapTiles, scale, 30, 30);
 		
 		requestFocus();
 		start();
@@ -100,23 +127,16 @@ public class Judgement extends Game {
 	void gameTimedUpdate() {
 		checkInput();
 	}
-
+	
 	void gameRefreshScreen() {		
 		Graphics2D g2d = graphics();
-		
-		g2d.setColor(Color.WHITE);
-		g2d.setFont(new Font("Arial", Font.PLAIN, 48));
-		
-        g2d.drawImage(background.getImage(), 0, 0, SCREENWIDTH-1, SCREENHEIGHT-1, this);
-        
-        if(keyLeft) xOffset = xOffset - 1 - playerSpeed;
-        if(keyRight) xOffset = xOffset + 1 + playerSpeed;
-        if(keyDown) yOffset = yOffset + 1 + playerSpeed;
-        if(keyUp) yOffset = yOffset - 1 - playerSpeed;
-        map.render();
-        
-
-        g2d.drawImage(player1.getAnimImage(), SCREENWIDTH / 2 + xOffset, SCREENHEIGHT / 2 + yOffset, 32 * scale, 32 * scale, this);
+		g2d.clearRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
+				
+		map.render(playerX, playerY);
+		g2d.drawImage(player1.getAnimImage(), SCREENWIDTH / 2, SCREENHEIGHT / 2 , 32 * scale, 32 * scale, this);
+				
+		//g2d.setColor(Color.WHITE);
+		//g2d.setFont(new Font("Arial", Font.PLAIN, 48));
 	}
 
 	void gameShutDown() {		
@@ -131,7 +151,19 @@ public class Judgement extends Game {
 	void spriteDying(AnimatedSprite sprite) {		
 	}
 
-	void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2) {		
+	void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2) {	
+		if(spr1.spriteType() == "wall" || spr2.spriteType() == "wall") {
+			colliding = true;
+		}
+		if(spr1.spriteType() == "enemy" || spr2.spriteType() == "enemy") {
+			colliding = true;
+		}
+		if(spr1.spriteType() == "npc" || spr2.spriteType() == "npc") {
+			colliding = true;
+		}
+		if(!colliding) {
+			
+		}
 	}
 	
 	//Main
@@ -146,7 +178,10 @@ public class Judgement extends Game {
 	 *                            
 	 ***********************************************************/
 	public void checkInput() {
-		if(keyLeft) System.out.println("Left");
+		if(keyLeft) playerX = playerX + 1 + playerSpeed;
+		if(keyRight) playerX = playerX - 1 - playerSpeed;
+		if(keyUp) playerY = playerY + 1 + playerSpeed;
+		if(keyDown) playerY = playerY - 1 - playerSpeed;
 	}
 	
 	void gameKeyDown(int keyCode) {

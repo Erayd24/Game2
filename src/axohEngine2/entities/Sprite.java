@@ -17,9 +17,11 @@ public class Sprite extends Object{
     protected Point2D vel;
     protected double rotRate;
     protected int currentState;
-    protected int sprType;
+    protected String sprType;
     protected boolean _collided;
     protected int _lifespan, _lifeage;
+    
+    private boolean solid = false;
 
     //constructor
     Sprite(JFrame frame, Graphics2D g2d) {
@@ -43,6 +45,8 @@ public class Sprite extends Object{
     }
     
     public Image getImage() { return image; }
+    public void setSolid(boolean solid) { this.solid = solid; }
+    public boolean solid() { return solid; }
     
     //load bitmap file for individual sprites
     public void load(String filename) {
@@ -154,8 +158,8 @@ public class Sprite extends Object{
     public Image image() { return entity.image; }
     public void setImage(Image image) { entity.setImage(image); }
 
-    public int spriteType() { return sprType; }
-    public void setSpriteType(int type) { sprType = type; }
+    public String spriteType() { return sprType; }
+    public void setSpriteType(String type) { sprType = type; }
 
     public boolean collided() { return _collided; }
     public void setCollided(boolean collide) { _collided = collide; }

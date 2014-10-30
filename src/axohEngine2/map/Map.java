@@ -17,15 +17,14 @@ public class Map {
 		spriteSize = tiles[0].getSpriteSize();
 	}
 	
-	public void render() {
-		int xx = 0;
-		int yy = 0;
-		for(int x = 0; x < mapWidth; x++) {
-			for(int y = 0; y < mapHeight; y++) {
+	public void render(int xx, int yy) {
+		int xt = xx;
+		for(int x = mapWidth - 1; x > -1; x--) {
+			for(int y = mapHeight - 1; y > -1; y--) {
 				mapTiles[x + y * mapWidth].renderTile(xx, yy, scale);
 				xx = xx + spriteSize * scale;
 				}
-			xx = 0;
+			xx = xt;
 			yy = yy + spriteSize * scale;
 		}
 	}

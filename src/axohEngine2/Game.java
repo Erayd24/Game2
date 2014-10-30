@@ -3,6 +3,7 @@ package axohEngine2;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -14,6 +15,7 @@ import java.util.LinkedList;
 import javax.swing.JFrame;
 
 import axohEngine2.entities.AnimatedSprite;
+import axohEngine2.entities.Mob;
 import axohEngine2.util.Point2D;
 
 @SuppressWarnings("serial")
@@ -26,7 +28,10 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	
 	private BufferedImage backBuffer;
 	private Graphics2D g2d;
+	private Toolkit tk;
 	private int screenWidth, screenHeight;
+	private double fps;
+	private long lastTime;
 	
 	private Point2D mousePos = new Point2D(0, 0);
 	private boolean mouseButtons[] = new boolean[4];
@@ -35,7 +40,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	private int _frameRate = 0;
 	private int desiredRate;
 	private long startTime = System.currentTimeMillis();
-			
+	
 	//Pause game state
 	private boolean _gamePaused = false;
 	public boolean gamePaused() { return _gamePaused; }
@@ -62,6 +67,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		Dimension size = new Dimension(width, height);
 		setPreferredSize(size);
 		setSize(size);
+		this.pack();
 		
 		desiredRate = frameRate;
 		screenWidth = width;
@@ -69,6 +75,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		
 		backBuffer = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_RGB);
         g2d = backBuffer.createGraphics();
+        tk = Toolkit.getDefaultToolkit();
 
         //create the internal lists
         _sprites = new LinkedList<AnimatedSprite>();
@@ -80,9 +87,9 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	}
 	
 	public Graphics2D graphics() { return g2d; }
-	public Game getGame() { return this; }
 	
 	public int frameRate() { return _frameRate; }
+	public double fps() { return fps; }
 	
 	//Mouse events
 	public boolean mouseButton(int btn) { return mouseButtons[btn]; }
@@ -104,11 +111,12 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		if(!gamePaused()) {
 			drawSprites();
 		}
-		paint(g);
+			paint(g);
 	}
 	
 	public void paint(Graphics g) {
 		g.drawImage(backBuffer, 0, 0, this);
+		tk.sync();
 	}
 	
 	public void start() {
@@ -120,6 +128,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		Thread t = Thread.currentThread();
 		
 		while(t == gameloop) {
+			lastTime = System.nanoTime();
 			try { 
 				Thread.sleep(1000 / desiredRate);
 			} catch(InterruptedException e) { e.printStackTrace(); }
@@ -128,7 +137,9 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 				updateSprites();
 				testCollision();
 			}
-			
+			fps = 1000000000.0 / (System.nanoTime() - lastTime); //FPS counter
+			lastTime = System.nanoTime();
+
 			gameTimedUpdate();
 			update(graphics());
 			repaint();
@@ -236,6 +247,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 				spr.updatePosition();
 				spr.updateRotation();
 				spriteUpdate(spr);
+				if(spr instanceof Mob) ((Mob) spr).updateMob();
 				spr.updateLifetime();
 				if(!spr.alive()) {
 					spriteDying(spr);
@@ -252,7 +264,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 					if(first != second) {
 						AnimatedSprite spr2 = (AnimatedSprite) _sprites.get(second);
 						if(spr2.alive()) {
-							if(spr2.collidesWith(spr1)) {
+							if(spr2.collidesWith(spr1) && spr1.solid() || spr2.solid()) {
 								spriteCollision(spr1, spr2);
 								break;
 							} else

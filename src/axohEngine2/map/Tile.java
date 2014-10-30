@@ -44,6 +44,8 @@ public class Tile extends AnimatedSprite {
 		slippery = false;
 		breakable = false;
 		
+		if(solid) setSpriteType("wall");
+		setSolid(solid);
 		setSprite(sheet, spriteNumber);
 	}
 	
@@ -59,6 +61,8 @@ public class Tile extends AnimatedSprite {
 		this.slippery = slippery;
 		this.breakable = breakable;
 		
+		if(solid) setSpriteType("wall");
+		setSolid(solid);
 		setSprite(sheet, spriteNumber);
 	}
 	
