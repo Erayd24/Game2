@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 
 import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.Mob;
+import axohEngine2.map.Tile;
 import axohEngine2.util.Point2D;
 
 @SuppressWarnings("serial")
@@ -25,6 +26,8 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	
 	private LinkedList<AnimatedSprite> _sprites;
 	public LinkedList<AnimatedSprite> sprites() { return _sprites; }
+	private LinkedList<Tile> _tiles;
+	public LinkedList<Tile> tiles() { return _tiles; }
 	
 	private BufferedImage backBuffer;
 	private Graphics2D g2d;
@@ -61,6 +64,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	abstract void spriteDraw(AnimatedSprite sprite);
 	abstract void spriteDying(AnimatedSprite sprite);
 	abstract void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2);
+	abstract void tileCollision(AnimatedSprite spr, Tile tile);
 	
 	//Constructor
 	public Game(int frameRate,int width, int height) {
@@ -79,6 +83,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 
         //create the internal lists
         _sprites = new LinkedList<AnimatedSprite>();
+        _tiles = new LinkedList<Tile>();
         
         addKeyListener(this);
         addMouseListener(this);
@@ -135,7 +140,8 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			
 			if(!gamePaused()) {
 				updateSprites();
-				testCollision();
+				spriteCollision();
+				tileCollision();
 			}
 			fps = 1000000000.0 / (System.nanoTime() - lastTime); //FPS counter
 			lastTime = System.nanoTime();
@@ -251,7 +257,13 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		}
 	}
 	
-	protected void testCollision() {
+	protected void updateTiles(int x, int y) {
+		for(int i = 0; i < _tiles.size(); i++) {
+			_tiles.get(i).update(x, y);
+		}
+	}
+	
+	protected void spriteCollision() {
 		for(int first = 0; first < _sprites.size(); first++) {
 			AnimatedSprite spr1 = _sprites.get(first);
 				for(int second = 0; second < _sprites.size(); second++) {
@@ -264,6 +276,19 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		}
 	}
 	
+	protected void tileCollision() {
+		for(int first = 0; first < _sprites.size(); first++) {
+			AnimatedSprite spr = _sprites.get(first);
+			for(int second = 0; second < _tiles.size(); second++) {
+				Tile tile = _tiles.get(second);
+				if(tile.isSolid()) {
+					if(tile.getTileBounds().intersects(spr.getBounds())) {tileCollision(spr, tile);
+					System.out.println("k"); }
+				}
+			}
+		}
+	}
+	
 	protected void drawSprites() {
 		for(int i = 0; i < _sprites.size(); i++) {
 			AnimatedSprite spr = (AnimatedSprite) _sprites.get(i);
@@ -273,6 +298,9 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 				spr.draw();
 				spriteDraw(spr);
 			}
+		}
+		for(int i = 0; i < _tiles.size(); i++) {
+			_tiles.get(i).updateFrame();
 		}
 	}
 	

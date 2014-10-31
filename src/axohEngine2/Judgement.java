@@ -29,10 +29,15 @@ public class Judgement extends Game {
 	boolean runOnce = true;
 	long collisionTimer = 0;
 	
+	//player variables and scale
 	private int scale;
 	private int playerX;
 	private int playerY;
 	private int playerSpeed;
+	private boolean upCollision = false;
+	private boolean downCollision = false;
+	private boolean leftCollision = false;
+	private boolean rightCollision = false;
 	
 	Random random = new Random();
 	//Collections collection;
@@ -74,7 +79,7 @@ public class Judgement extends Game {
 		ft = new Tile(this, graphics(), "flower", sheet, 1);
 		gt = new Tile(this, graphics(), "grass", sheet, 0);
 		bt = new Tile(this, graphics(), "bricks", sheet, 16, true);
-		//ft.loadAnim(2, 20);
+		bt.loadAnim(2,20);
 		
 		//background = new ImageEntity(this);
 		//background.load("/field.png");
@@ -84,9 +89,6 @@ public class Judgement extends Game {
 		player1.loadAnim(4, 20);
 				
 		sprites().add(player1);
-		sprites().add(ft);
-		sprites().add(bt);
-		sprites().add(gt);
 		
 		//collection = new Collections();
 		//collection.Initialize();
@@ -105,7 +107,7 @@ public class Judgement extends Game {
 						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
 						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
 						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, bt, bt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt,
+						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, bt, bt, bt, bt, bt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt,
 						   gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
 						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
 						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
@@ -122,6 +124,9 @@ public class Judgement extends Game {
 						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
 						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt};
 		
+		for(int i = 0; i < 30 * 30; i++){ //Add all map tiles to a list
+			tiles().add(mapTiles[i]);
+		}
 		map = new Map(mapTiles, scale, 30, 30);
 		
 		requestFocus();
@@ -130,6 +135,7 @@ public class Judgement extends Game {
 
 	void gameTimedUpdate() {
 		checkInput();
+		updateTiles(playerX, playerY);
 	}
 	
 	void gameRefreshScreen() {		
@@ -167,6 +173,21 @@ public class Judgement extends Game {
 		}
 	}
 	
+	void tileCollision(AnimatedSprite spr, Tile tile) {
+		upCollision = true;
+	}
+	
+	public void movePlayer(int xa, int ya) {
+		if(!leftCollision && xa > 0) playerX += xa; //left
+		if(!rightCollision && xa < 0) playerX += xa; //right
+		if(!upCollision && ya > 0) playerY += ya; //up
+		if(!downCollision && ya < 0) playerY += ya; //down
+		System.out.println("up: " + upCollision + " down: " + downCollision + " left: " + leftCollision + " right: " + rightCollision);
+		upCollision = false;
+		downCollision = false;
+		leftCollision = false;
+		rightCollision = false;
+	}
 	//Main
 	public static void main(String[] args) {
 		new Judgement();
@@ -179,10 +200,13 @@ public class Judgement extends Game {
 	 *                            
 	 ***********************************************************/
 	public void checkInput() {
-		if(keyLeft) playerX = playerX + 1 + playerSpeed;
-		if(keyRight) playerX = playerX - 1 - playerSpeed;
-		if(keyUp) playerY = playerY + 1 + playerSpeed;
-		if(keyDown) playerY = playerY - 1 - playerSpeed;
+		int xa = 0;
+		int ya = 0;
+		if(keyLeft) xa = xa + 1 + playerSpeed;
+		if(keyRight) xa = xa - 1 - playerSpeed;
+		if(keyUp) ya = ya + 1 + playerSpeed;
+		if(keyDown) ya = ya - 1 - playerSpeed;
+		movePlayer(xa, ya);
 	}
 	
 	void gameKeyDown(int keyCode) {

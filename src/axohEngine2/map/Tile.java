@@ -1,6 +1,7 @@
 package axohEngine2.map;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 import javax.swing.JFrame;
 
@@ -15,6 +16,7 @@ public class Tile extends AnimatedSprite {
 		
 	private int spriteSize;
 	public SpriteSheet sheet;
+	private int scale;
 	
 	Graphics2D g2d;
 	JFrame frame;
@@ -61,13 +63,12 @@ public class Tile extends AnimatedSprite {
 		this.slippery = slippery;
 		this.breakable = breakable;
 		
-		if(solid) setSpriteType("wall");
 		setSolid(solid);
 		setSprite(sheet, spriteNumber);
 	}
 	
 	//Getters
-	public boolean solid() { return solid; }
+	public boolean isSolid() { return solid; }
 	public boolean slippery() { return slippery; }
 	public boolean breakable() { return breakable; }
 	public int getSpriteSize() { return spriteSize; }
@@ -77,9 +78,20 @@ public class Tile extends AnimatedSprite {
 		super.loadAnim(frames, delay);
 	}
 	
-	public void renderTile(int x, int y, int scale) {
+	public void update(int x, int y) {
 		entity.setX(x);
 		entity.setY(y);
+	}
+	
+	public void renderTile(int x, int y, int scale) {
+		this.scale = scale;
+		entity.scale = scale;
 		g2d.drawImage(getImage(), x, y, spriteSize * scale, spriteSize * scale, frame);
+	}
+	
+	public Rectangle getTileBounds() {
+		Rectangle r;
+		r = new Rectangle((int)entity.getX(), (int)entity.getY(), spriteSize * scale, spriteSize * scale);
+		return r;
 	}
 }

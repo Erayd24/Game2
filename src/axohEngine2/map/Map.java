@@ -1,6 +1,7 @@
 package axohEngine2.map;
 
 
+
 public class Map {
 	
 	private int mapHeight;
@@ -20,7 +21,7 @@ public class Map {
 	
 	public void render(int xx, int yy) {
 		int xt = xx;
-		for(int x = mapWidth - 1; x > -1; x--) {
+		for(int x = 0; x < mapWidth; x++) {
 			for(int y = mapHeight - 1; y > -1; y--) {
 				mapTiles[x + y * mapWidth].renderTile(xx, yy, scale);
 				xx = xx + spriteSize * scale;
