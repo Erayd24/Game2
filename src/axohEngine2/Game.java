@@ -282,8 +282,10 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			for(int second = 0; second < _tiles.size(); second++) {
 				Tile tile = _tiles.get(second);
 				if(tile.isSolid()) {
-					if(tile.getTileBounds().intersects(spr.getBounds())) {tileCollision(spr, tile);
-					System.out.println("k"); }
+					if(tile.getTileBounds().intersects(spr.getBounds())) {
+						tileCollision(spr, tile);
+						System.out.println("k"); 
+					}
 				}
 			}
 		}

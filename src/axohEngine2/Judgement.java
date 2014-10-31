@@ -3,6 +3,7 @@ package axohEngine2;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -79,7 +80,6 @@ public class Judgement extends Game {
 		ft = new Tile(this, graphics(), "flower", sheet, 1);
 		gt = new Tile(this, graphics(), "grass", sheet, 0);
 		bt = new Tile(this, graphics(), "bricks", sheet, 16, true);
-		bt.loadAnim(2,20);
 		
 		//background = new ImageEntity(this);
 		//background.load("/field.png");
@@ -93,7 +93,8 @@ public class Judgement extends Game {
 		//collection = new Collections();
 		//collection.Initialize();
 		
-		Tile[] mapTiles = {gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
+		//Map generating
+		Tile[] mapTiles = {bt, gt, gt, gt, bt, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
 						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
 						   gt, ft, ft, ft, gt, gt, gt, gt, gt, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
 						   gt, ft, ft, ft, gt, gt, gt, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
@@ -124,15 +125,16 @@ public class Judgement extends Game {
 						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
 						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt};
 		
-		for(int i = 0; i < 30 * 30; i++){ //Add all map tiles to a list
-			tiles().add(mapTiles[i]);
-		}
 		map = new Map(mapTiles, scale, 30, 30);
+		for(int i = 0; i < 30 * 30; i++){
+			tiles().add(map.accessTile(i));
+		}
+		map.accessTile(5).loadAnim(2, 20);
 		
 		requestFocus();
 		start();
 	}
-
+	
 	void gameTimedUpdate() {
 		checkInput();
 		updateTiles(playerX, playerY);
@@ -144,7 +146,7 @@ public class Judgement extends Game {
 				
 		map.render(playerX, playerY);
 		player1.render(graphics(), this, SCREENWIDTH / 2, SCREENHEIGHT / 2, 32, 32, scale);
-		bt.drawBounds(Color.RED);
+		map.accessTile(3).drawBounds(Color.RED);
 		//g2d.setFont(new Font("Arial", Font.PLAIN, 48));
 	}
 
@@ -182,7 +184,9 @@ public class Judgement extends Game {
 		if(!rightCollision && xa < 0) playerX += xa; //right
 		if(!upCollision && ya > 0) playerY += ya; //up
 		if(!downCollision && ya < 0) playerY += ya; //down
-		System.out.println("up: " + upCollision + " down: " + downCollision + " left: " + leftCollision + " right: " + rightCollision);
+		
+		System.out.println("up: " + upCollision + "          down: " + downCollision + " left: " + leftCollision + " right: " + rightCollision);
+		
 		upCollision = false;
 		downCollision = false;
 		leftCollision = false;

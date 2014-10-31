@@ -18,7 +18,7 @@ public class AnimatedSprite extends Sprite {
     public String name;
     
     private SpriteSheet sheet;
-    private int spriteNumber;
+    protected int spriteNumber;
     private int delay;
     private int tempDelay;
     private boolean animating;
@@ -46,6 +46,7 @@ public class AnimatedSprite extends Sprite {
     }
     
     public void loadAnim(int frames, int delay) {
+    	currFrame = spriteNumber;
         if(frames > 0) {
         	setTotalFrames(frames);
         	animating = true;

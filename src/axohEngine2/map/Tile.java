@@ -17,6 +17,7 @@ public class Tile extends AnimatedSprite {
 	private int spriteSize;
 	public SpriteSheet sheet;
 	private int scale;
+	public int spriteNumber;
 	
 	Graphics2D g2d;
 	JFrame frame;
@@ -27,6 +28,8 @@ public class Tile extends AnimatedSprite {
 		this.frame = frame;
 		this.g2d = g2d;
 		this.sheet = sheet;
+		super.spriteNumber = spriteNumber;
+		this.spriteNumber = spriteNumber;
 		spriteSize = sheet.getSpriteSize();
 		solid = false;
 		slippery = false;
@@ -43,6 +46,8 @@ public class Tile extends AnimatedSprite {
 		spriteSize = sheet.getSpriteSize();
 		this.g2d = g2d;
 		this.solid = solid;
+		super.spriteNumber = spriteNumber;
+		this.spriteNumber = spriteNumber;
 		slippery = false;
 		breakable = false;
 		
@@ -58,10 +63,29 @@ public class Tile extends AnimatedSprite {
 		this.frame = frame;
 		this.g2d = g2d;
 		this.sheet = sheet;
+		super.spriteNumber = spriteNumber;
+		this.spriteNumber = spriteNumber;
 		spriteSize = sheet.getSpriteSize();
 		this.solid = solid;
 		this.slippery = slippery;
 		this.breakable = breakable;
+		
+		setSolid(solid);
+		setSprite(sheet, spriteNumber);
+	}
+	
+	//Constructor for making a new tile from an existing tile for recreation
+	public Tile(Tile tile) {
+		super(tile.frame, tile.g2d, tile.name);
+		this.frame = tile.frame;
+		this.g2d = tile.g2d;
+		this.sheet = tile.sheet;
+		super.spriteNumber = tile.spriteNumber;
+		this.spriteNumber = tile.spriteNumber;
+		spriteSize = tile.sheet.getSpriteSize();
+		this.solid = tile.solid;
+		this.slippery = tile.slippery;
+		this.breakable = tile.breakable;
 		
 		setSolid(solid);
 		setSprite(sheet, spriteNumber);
