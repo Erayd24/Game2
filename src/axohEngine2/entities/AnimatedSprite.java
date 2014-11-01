@@ -12,27 +12,27 @@ public class AnimatedSprite extends Sprite {
 	
     BufferedImage image;
     Graphics2D tempSurface;
+    public String _name;
     
     private int currFrame;
     private int totFrames;
-    public String name;
-    
-    private SpriteSheet sheet;
-    protected int spriteNumber;
     private int delay;
     private int tempDelay;
     private boolean animating;
 
-    public AnimatedSprite(JFrame frame, Graphics2D g2d, String name) {
+    public AnimatedSprite(JFrame frame, Graphics2D g2d, SpriteSheet sheet, int spriteNumber, String name) {
         super(frame, g2d);
         animImage = new ImageEntity(frame);
         currFrame = 0;
         totFrames = 0;
         animating = false;
-        this.name = name;
-        
+        _name = name;
         delay = 1;
         tempDelay = 1;
+        
+        setSheet(sheet);
+        setSpriteNumber(spriteNumber);
+        setAnimSprite();
     }
         
     public void load(String filename, int width, int height) {
@@ -56,41 +56,50 @@ public class AnimatedSprite extends Sprite {
     }
 
     public void setDelay(int delay) { this.delay = delay; }
-    public int totalFrames() { return totFrames; }
     public void setTotalFrames(int total) { totFrames = total; }
-    public int currentFrame() { return currFrame; }
-    public void setAnimation(boolean state) { animating = state; }
-    public void setSheet(SpriteSheet sheet) { this.sheet = sheet; }
-    
-    public Image getAnimImage() { return animImage.getImage(); }
+    public void setAnimating(boolean state) { animating = state; }
     public void setAnimImage(Image image) { animImage.setImage(image); }
     
-    public void setAnimSprite(SpriteSheet sheet, int spriteNumber) {
-    	animImage.setImage(super.setSprite(sheet, spriteNumber)); 
-    	this.sheet = sheet;
-    	this.spriteNumber = spriteNumber;
-    	currFrame = spriteNumber;
+    public int totalFrames() { return totFrames; }
+    public int currentFrame() { return currFrame; }
+    public Image getAnimImage() { return animImage.getImage(); }
+    
+    public SpriteSheet getSheet() { return super.sheet; }
+    public int getSpriteNumber() { return super.spriteNumber; }
+    public int getSpriteSize() { return super.spriteSize; }
+    public int getScale() { return super.scale; }
+    
+    public void setSheet(SpriteSheet sheet) { super.sheet = sheet; }
+    public void setSpriteSize(int spriteSize) { super.spriteSize = spriteSize; }
+    public void setScale(int scale) { super.scale = scale; }
+    public void setSpriteNumber(int spriteNumber) { super.spriteNumber = spriteNumber; }
+    
+    public void setAnimSprite() {
+    	animImage.setImage(super.setSprite(getSheet(), getSpriteNumber())); 
+    	setScale(getSheet().getScale());
+    	setSpriteSize(getSheet().getSpriteSize() * getScale());
+    	currFrame = getSpriteNumber();
     }
 
-    public void render(Graphics2D g2d, JFrame frame, int x, int y, int width, int height, int scale) {
+    public void render(JFrame frame, Graphics2D g2d, int x, int y) {
     	entity.setX(x);
     	entity.setY(y);
-		g2d.drawImage(getAnimImage(), x, y, width * scale, height * scale, frame);	
+		g2d.drawImage(getAnimImage(), x, y, getSpriteSize(), getSpriteSize(), frame);	
     }
     
     public void updateFrame() {
     	if(animating) {
 	    	tempDelay--;
 	    	if(tempDelay % delay == 0) {
-	    		if(currentFrame() == spriteNumber - 1 + totalFrames()) {
-	    			currFrame = spriteNumber;
-	    			animImage.setImage(super.setSprite(sheet, currentFrame()));
+	    		if(currentFrame() == getSpriteNumber() - 1 + totalFrames()) {
+	    			currFrame = getSpriteNumber();
+	    			animImage.setImage(super.setSprite(getSheet(), currentFrame()));
 			    	tempDelay = delay;
 	    			return;
 	    		}
 		    	currFrame++;
 		    	tempDelay = delay;
-		    	animImage.setImage(super.setSprite(sheet, currentFrame())); 
+		    	animImage.setImage(super.setSprite(getSheet(), currentFrame())); 
 	    	}
     	}
     }

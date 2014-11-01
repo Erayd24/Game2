@@ -3,7 +3,6 @@ package axohEngine2;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -41,14 +40,10 @@ public class Judgement extends Game {
 	private boolean rightCollision = false;
 	
 	Random random = new Random();
-	//Collections collection;
-	
-	//ImageEntity background;
-	AnimatedSprite player1;
 	
 	SpriteSheet sheet;
 	SpriteSheet player;
-	
+	AnimatedSprite player1;
 	Map map;
 	Tile gt;
 	Tile ft;
@@ -72,31 +67,24 @@ public class Judgement extends Game {
 		playerX = 0;
 		playerY = 0;
 		playerSpeed = 5;
+		
 		//Initialize spriteSheets
-		sheet = new SpriteSheet("/textures/environments/environments1.png", 16, 16, 16);
-		player = new SpriteSheet("/textures/characters/mainCharacter.png", 8, 8, 32);
+		sheet = new SpriteSheet("/textures/environments/environments1.png", 16, 16, 16, scale);
+		player = new SpriteSheet("/textures/characters/mainCharacter.png", 8, 8, 32, scale);
 
-		player1 = new AnimatedSprite(this, graphics(), "player");
+		player1 = new AnimatedSprite(this, graphics(), player, 40, "player");
 		ft = new Tile(this, graphics(), "flower", sheet, 1);
 		gt = new Tile(this, graphics(), "grass", sheet, 0);
 		bt = new Tile(this, graphics(), "bricks", sheet, 16, true);
 		
-		//background = new ImageEntity(this);
-		//background.load("/field.png");
-		
 		//Player
-		player1.setAnimSprite(player, 40);
 		player1.loadAnim(4, 20);
-				
 		sprites().add(player1);
-		
-		//collection = new Collections();
-		//collection.Initialize();
 		
 		//Map generating
 		Tile[] mapTiles = {bt, gt, gt, gt, bt, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
 						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, ft, ft, ft, gt, gt, gt, gt, gt, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
+						   bt, ft, ft, ft, gt, gt, gt, gt, gt, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
 						   gt, ft, ft, ft, gt, gt, gt, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
 						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt,
 						   gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
@@ -125,7 +113,7 @@ public class Judgement extends Game {
 						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
 						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt};
 		
-		map = new Map(mapTiles, scale, 30, 30);
+		map = new Map(mapTiles, 30, 30);
 		for(int i = 0; i < 30 * 30; i++){
 			tiles().add(map.accessTile(i));
 		}
@@ -145,9 +133,10 @@ public class Judgement extends Game {
 		g2d.clearRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
 				
 		map.render(playerX, playerY);
-		player1.render(graphics(), this, SCREENWIDTH / 2, SCREENHEIGHT / 2, 32, 32, scale);
-		map.accessTile(3).drawBounds(Color.RED);
-		//g2d.setFont(new Font("Arial", Font.PLAIN, 48));
+		player1.render(this, graphics(), SCREENWIDTH / 2, SCREENHEIGHT / 2);
+		
+		map.accessTile(0).drawTileBounds(Color.BLACK);
+		player1.drawBounds(Color.BLUE);
 	}
 
 	void gameShutDown() {		
@@ -163,7 +152,7 @@ public class Judgement extends Game {
 	}
 
 	void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2) {
-		if(spr2.spriteType() == "wall" && spr1.name == "player") {
+		if(spr2.spriteType() == "wall" && spr1._name == "player") {
 			//if(keyLeft) playerX = playerX - 1 - playerSpeed;
 			//if(keyRight) playerX = playerX + 1 + playerSpeed;
 			//if(keyUp) playerY = playerY - 1 - playerSpeed;

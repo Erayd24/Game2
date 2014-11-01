@@ -13,8 +13,10 @@ public class SpriteSheet extends Object{
     public int sheetHeight;
     public int sheetWidth;
     private int spriteSize;
+    private int scale;
     
-    public SpriteSheet(String filename, int sheetWidth, int sheetHeight, int spriteSize) {
+    public SpriteSheet(String filename, int sheetWidth, int sheetHeight, int spriteSize, int scale) {
+    	this.scale = scale;
     	this.spriteSize = spriteSize;
     	this.sheetHeight = sheetHeight;
     	this.sheetWidth = sheetWidth;
@@ -44,4 +46,6 @@ public class SpriteSheet extends Object{
     }
 
     public int getSpriteSize() { return spriteSize; }
+    public int getScale() { return scale; }
+
 }

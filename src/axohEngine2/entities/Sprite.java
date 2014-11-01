@@ -11,15 +11,20 @@ import axohEngine2.util.Point2D;
 
 public class Sprite extends Object{
 	
-	protected ImageEntity entity;
+	public ImageEntity entity;
 	private Image image;
+	
     protected Point2D pos;
     protected Point2D vel;
-    protected double rotRate;
     protected int currentState;
     protected String sprType;
     protected boolean _collided;
     protected int _lifespan, _lifeage;
+    
+    protected int spriteSize;
+    protected int spriteNumber;
+    protected SpriteSheet sheet;
+    protected int scale;
     
     private boolean solid = false;
 
@@ -31,7 +36,6 @@ public class Sprite extends Object{
         entity.setAlive(true);
         pos = new Point2D(0, 0);
         vel = new Point2D(0, 0);
-        rotRate = 0.0;
         currentState = 0;
         _collided = false;
         _lifespan = 0;
@@ -71,51 +75,16 @@ public class Sprite extends Object{
         entity.g2d.draw(getBounds());
     }
 
-    //methods related to automatic rotation factor
-    public double rotationRate() { return rotRate; }
-    public void setRotationRate(double rate) { rotRate = rate; }
-    public void updateRotation() {
-        setFaceAngle(faceAngle() + rotRate);
-        if (faceAngle() < 0)
-            setFaceAngle(360 - rotRate);
-        else if (faceAngle() > 360)
-            setFaceAngle(rotRate);
-    }
-
     //generic sprite state variable (alive, dead, collided, etc)
     public int state() { return currentState; }
     public void setState(int state) { currentState = state; }
 
     //returns a bounding rectangle
-    public Rectangle getBounds() { return entity.getBounds(); }
+    public Rectangle getBounds() { return entity.getBounds(spriteSize); }
 
     //generic variable for selectively using sprites
     public boolean alive() { return entity.isAlive(); }
     public void setAlive(boolean alive) { entity.setAlive(alive); }
-
-    //face angle indicates which direction sprite is facing
-    public double faceAngle() { return entity.getFaceAngle(); }
-    public void setFaceAngle(double angle) {
-        entity.setFaceAngle(angle);
-    }
-    public void setFaceAngle(float angle) {
-        entity.setFaceAngle((double) angle);
-    }
-    public void setFaceAngle(int angle) {
-        entity.setFaceAngle((double) angle);
-    }
-
-    //move angle indicates direction sprite is moving
-    public double moveAngle() { return entity.getMoveAngle(); }
-    public void setMoveAngle(double angle) {
-        entity.setMoveAngle(angle);
-    }
-    public void setMoveAngle(float angle) {
-        entity.setMoveAngle((double) angle);
-    }
-    public void setMoveAngle(int angle) {
-        entity.setMoveAngle((double) angle);
-    }
 
     //returns the source image width/height
     public int imageWidth() { return entity.width(); }

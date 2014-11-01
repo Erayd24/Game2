@@ -4,32 +4,30 @@ public class Map {
 	
 	private int mapHeight;
 	private int mapWidth;
-	private int scale;
 	Tile[] mapTiles;
 	
 	private int spriteSize;
 		
-	public Map(Tile[] tiles, int scale, int mapWidth, int mapHeight) {
+	public Map(Tile[] tiles, int mapWidth, int mapHeight) {
 		this.mapHeight = mapHeight;
 		this.mapWidth = mapWidth;
-		this.scale = scale;
 		mapTiles = tiles;
-		spriteSize = tiles[0].getSpriteSize();
 		
 		for(int i = 0; i < mapTiles.length; i++) {
 			mapTiles[i] = new Tile(mapTiles[i]);
 		}
+		spriteSize = tiles[0].getSpriteSize();
 	}
 	
 	public void render(int xx, int yy) {
 		int xt = xx;
 		for(int x = 0; x < mapWidth; x++) {
 			for(int y = 0; y < mapHeight; y++) {
-				mapTiles[y + x * mapWidth].renderTile(xx, yy, scale);
-				xx = xx + spriteSize * scale;
+				mapTiles[y + x * mapWidth].renderTile(xx, yy);
+				xx = xx + spriteSize;
 				}
 			xx = xt;
-			yy = yy + spriteSize * scale;
+			yy = yy + spriteSize;
 		}
 	}
 	
