@@ -24,6 +24,8 @@ public class Map {
 		for(int x = 0; x < mapWidth; x++) {
 			for(int y = 0; y < mapHeight; y++) {
 				mapTiles[y + x * mapWidth].renderTile(xx, yy);
+				mapTiles[y + x * mapWidth].getEntity().setX(xx);
+				mapTiles[y + x * mapWidth].getEntity().setY(yy);
 				xx = xx + spriteSize;
 				}
 			xx = xt;

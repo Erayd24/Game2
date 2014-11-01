@@ -81,11 +81,6 @@ public class Tile extends AnimatedSprite {
 		super.loadAnim(frames, delay);
 	}
 	
-	public void update(int x, int y) {
-		entity.setX(x);
-		entity.setY(y);
-	}
-	
 	public void renderTile(int x, int y) {
 		_g2d.drawImage(getImage(), x, y, getSpriteSize(), getSpriteSize(), _frame);
 	}

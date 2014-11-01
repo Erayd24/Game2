@@ -11,7 +11,7 @@ import axohEngine2.util.Point2D;
 
 public class Sprite extends Object{
 	
-	public ImageEntity entity;
+	protected ImageEntity entity;
 	private Image image;
 	
     protected Point2D pos;
@@ -57,18 +57,6 @@ public class Sprite extends Object{
         entity.load(filename);
     }
     
-    //perform affine transformations
-    public void transform() {
-        entity.setX(pos.X());
-        entity.setY(pos.Y());
-        entity.transform();
-    }
-
-    //draw the image
-    public void draw() {
-        entity.g2d.drawImage(entity.getImage(), entity.at, entity.frame);
-    }
-
     //draw bounding rectangle around sprite
     public void drawBounds(Color c) {
         entity.g2d.setColor(c);
@@ -107,6 +95,7 @@ public class Sprite extends Object{
     public Graphics2D graphics() { return entity.g2d; }
     public Image image() { return entity.image; }
     public void setImage(Image image) { entity.setImage(image); }
+    public ImageEntity getEntity() { return entity; }
 
     public String spriteType() { return sprType; }
     public void setSpriteType(String type) { sprType = type; }

@@ -12,8 +12,6 @@ public class BaseGameEntity extends Object {
 	public double getY() { return y; }
 	public double getVelX() { return velX; }
 	public double getVelY() { return velY; }
-	public double getMoveAngle() { return moveAngle; }
-	public double getFaceAngle() { return faceAngle; }
 	
 	public void setAlive(boolean alive) { this.alive = alive; }
 	public void setX(double x) { this.x = x; }

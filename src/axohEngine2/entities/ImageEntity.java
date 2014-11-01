@@ -77,18 +77,7 @@ public class ImageEntity extends BaseGameEntity {
 			  System.err.println(" failed!");
 		  }
 	}
-	
-	public void transform() {
-		at.setToIdentity();
-		at.translate((int)getX() + width() / 2, (int)getY() + height() / 2);
-		at.rotate(Math.toRadians(getFaceAngle()));
-		at.translate(-width() / 2, -height() / 2);
-	}
-	
-	public void draw() {
-		g2d.drawImage(getImage(), at, frame);
-	}
-	
+		
 	//Bounding rectangle
 	public Rectangle getBounds(int spriteSize) {
 		Rectangle r;

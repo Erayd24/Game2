@@ -117,7 +117,7 @@ public class Judgement extends Game {
 		for(int i = 0; i < 30 * 30; i++){
 			tiles().add(map.accessTile(i));
 		}
-		map.accessTile(5).loadAnim(2, 20);
+		map.accessTile(5).loadAnim(2, 30);
 		
 		requestFocus();
 		start();
@@ -125,7 +125,6 @@ public class Judgement extends Game {
 	
 	void gameTimedUpdate() {
 		checkInput();
-		updateTiles(playerX, playerY);
 	}
 	
 	void gameRefreshScreen() {		
@@ -135,7 +134,7 @@ public class Judgement extends Game {
 		map.render(playerX, playerY);
 		player1.render(this, graphics(), SCREENWIDTH / 2, SCREENHEIGHT / 2);
 		
-		map.accessTile(0).drawTileBounds(Color.BLACK);
+		map.accessTile(0).drawTileBounds(Color.RED);
 		player1.drawBounds(Color.BLUE);
 	}
 

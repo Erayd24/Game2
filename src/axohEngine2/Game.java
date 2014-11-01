@@ -257,12 +257,6 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		}
 	}
 	
-	protected void updateTiles(int x, int y) {
-		for(int i = 0; i < _tiles.size(); i++) {
-			_tiles.get(i).update(x, y);
-		}
-	}
-	
 	protected void spriteCollision() {
 		for(int first = 0; first < _sprites.size(); first++) {
 			AnimatedSprite spr1 = _sprites.get(first);
@@ -296,8 +290,6 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			AnimatedSprite spr = (AnimatedSprite) _sprites.get(i);
 			if(spr.alive()) {
 				spr.updateFrame();
-				spr.transform();
-				spr.draw();
 				spriteDraw(spr);
 			}
 		}
