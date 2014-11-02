@@ -87,7 +87,7 @@ public class Tile extends AnimatedSprite {
 	
 	public void drawTileBounds(Color c) {
 		_g2d.setColor(c);
-		getTileBounds();
+		_g2d.draw(getTileBounds());
 	}
 	
 	public Rectangle getTileBounds() {

@@ -31,13 +31,12 @@ public class Judgement extends Game {
 	
 	//player variables and scale
 	private int scale;
-	private int playerX;
-	private int playerY;
+	private double playerX;
+	private double playerY;
 	private int playerSpeed;
-	private boolean upCollision = false;
-	private boolean downCollision = false;
-	private boolean leftCollision = false;
-	private boolean rightCollision = false;
+	private double oldX;
+	private double oldY;
+	private boolean collision = false;
 	
 	Random random = new Random();
 	
@@ -45,9 +44,10 @@ public class Judgement extends Game {
 	SpriteSheet player;
 	AnimatedSprite player1;
 	Map map;
-	Tile gt;
-	Tile ft;
-	Tile bt;
+	Tile g;
+	Tile f;
+	Tile b;
+	Tile r;
 			
 	int frameCount = 0, frameRate = 0;
 	long startTime = System.currentTimeMillis();
@@ -66,6 +66,8 @@ public class Judgement extends Game {
 		scale = 4;
 		playerX = 0;
 		playerY = 0;
+		oldX = 0;
+		oldY = 0;
 		playerSpeed = 5;
 		
 		//Initialize spriteSheets
@@ -73,51 +75,81 @@ public class Judgement extends Game {
 		player = new SpriteSheet("/textures/characters/mainCharacter.png", 8, 8, 32, scale);
 
 		player1 = new AnimatedSprite(this, graphics(), player, 40, "player");
-		ft = new Tile(this, graphics(), "flower", sheet, 1);
-		gt = new Tile(this, graphics(), "grass", sheet, 0);
-		bt = new Tile(this, graphics(), "bricks", sheet, 16, true);
+		f = new Tile(this, graphics(), "flower", sheet, 1);
+		g = new Tile(this, graphics(), "grass", sheet, 0);
+		b = new Tile(this, graphics(), "bricks", sheet, 16, true);
+		r = new Tile(this, graphics(), "walkWay", sheet, 6);
 		
 		//Player
-		player1.loadAnim(4, 20);
+		player1.loadAnim(3, 6);
 		sprites().add(player1);
 		
-		//Map generating
-		Tile[] mapTiles = {bt, gt, gt, gt, bt, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   bt, ft, ft, ft, gt, gt, gt, gt, gt, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, ft, ft, ft, gt, gt, gt, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt,
-						   gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt,
-						   gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, bt, bt, bt, bt, bt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt,
-						   gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt,
-						   gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt,
-						   gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft, gt, gt, gt, gt, ft,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt, gt, ft, ft, ft, gt,
-						   gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt};
+		//Map generating 60 X 60
+		Tile[] mapTiles = {b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b,
+						   b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b};
 		
-		map = new Map(mapTiles, 30, 30);
+		map = new Map(mapTiles, 60, 60);
 		for(int i = 0; i < 30 * 30; i++){
 			tiles().add(map.accessTile(i));
 		}
-		map.accessTile(5).loadAnim(2, 30);
 		
 		requestFocus();
 		start();
@@ -131,10 +163,9 @@ public class Judgement extends Game {
 		Graphics2D g2d = graphics();
 		g2d.clearRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
 				
-		map.render(playerX, playerY);
+		map.render((int)playerX, (int)playerY);
 		player1.render(this, graphics(), SCREENWIDTH / 2, SCREENHEIGHT / 2);
 		
-		map.accessTile(0).drawTileBounds(Color.RED);
 		player1.drawBounds(Color.BLUE);
 	}
 
@@ -152,10 +183,7 @@ public class Judgement extends Game {
 
 	void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2) {
 		if(spr2.spriteType() == "wall" && spr1._name == "player") {
-			//if(keyLeft) playerX = playerX - 1 - playerSpeed;
-			//if(keyRight) playerX = playerX + 1 + playerSpeed;
-			//if(keyUp) playerY = playerY - 1 - playerSpeed;
-			//if(keyDown) playerY = playerY + 1 + playerSpeed;
+			
 		}
 		if(spr1.spriteType() == "enemy" || spr2.spriteType() == "enemy") {
 		}
@@ -164,21 +192,18 @@ public class Judgement extends Game {
 	}
 	
 	void tileCollision(AnimatedSprite spr, Tile tile) {
-		upCollision = true;
+		playerX = oldX;
+		playerY = oldY;
 	}
 	
 	public void movePlayer(int xa, int ya) {
-		if(!leftCollision && xa > 0) playerX += xa; //left
-		if(!rightCollision && xa < 0) playerX += xa; //right
-		if(!upCollision && ya > 0) playerY += ya; //up
-		if(!downCollision && ya < 0) playerY += ya; //down
+		oldX = playerX;
+		oldY = playerY;
 		
-		System.out.println("up: " + upCollision + "          down: " + downCollision + " left: " + leftCollision + " right: " + rightCollision);
-		
-		upCollision = false;
-		downCollision = false;
-		leftCollision = false;
-		rightCollision = false;
+		if(!collision && xa > 0) playerX += xa; //left
+		if(!collision && xa < 0) playerX += xa; //right
+		if(!collision && ya > 0) playerY += ya; //up
+		if(!collision && ya < 0) playerY += ya; //down
 	}
 	//Main
 	public static void main(String[] args) {
