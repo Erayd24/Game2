@@ -44,6 +44,7 @@ public class Judgement extends Game {
 	SpriteSheet buildings;
 	SpriteSheet player;
 	AnimatedSprite player1;
+	
 	Map city;
 	Map cityOverlay;
 	Tile g;
@@ -63,7 +64,7 @@ public class Judgement extends Game {
 	
 	//Load Sound effects
 	public Judgement() {
-		super(60, SCREENWIDTH, SCREENHEIGHT);
+		super(100, SCREENWIDTH, SCREENHEIGHT);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -94,7 +95,8 @@ public class Judgement extends Game {
 		h = new Tile(this, graphics(), "house", buildings, 0);
 		
 		//Player
-		player1.loadAnim(3, 6);
+		player1.loadMultAnim(32, 48, 40, 56, 3, 12);
+		
 		sprites().add(player1);
 		
 		//Map generating 60 X 60
@@ -144,9 +146,9 @@ public class Judgement extends Game {
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, ro, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
+							 e, e, e, e, ro, e, e, e, e, h, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, h, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
+							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
@@ -230,18 +232,32 @@ public class Judgement extends Game {
 	}
 	
 	void tileCollision(AnimatedSprite spr, Tile tile) {
-		playerX = oldX;
-		playerY = oldY;
+		if(spr._name == "player") {
+			playerX = oldX;
+			playerY = oldY;
+		}
 	}
 	
 	public void movePlayer(int xa, int ya) {
 		oldX = playerX;
 		oldY = playerY;
 		
-		if(!collision && xa > 0) playerX += xa; //left
-		if(!collision && xa < 0) playerX += xa; //right
-		if(!collision && ya > 0) playerY += ya; //up
-		if(!collision && ya < 0) playerY += ya; //down
+		if(!collision && xa > 0) {
+			playerX += xa; //left
+			player1.setFrame(player1.leftAnim);
+		}
+		if(!collision && xa < 0) {
+			playerX += xa; //right
+			player1.setFrame(player1.rightAnim);
+		}
+		if(!collision && ya > 0) {
+			playerY += ya; //up
+			player1.setFrame(player1.upAnim);
+		}
+		if(!collision && ya < 0) {
+			playerY += ya; //down
+			player1.setFrame(player1.downAnim);
+		}
 	}
 	//Main
 	public static void main(String[] args) {

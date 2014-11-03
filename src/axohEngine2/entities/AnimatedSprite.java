@@ -19,6 +19,11 @@ public class AnimatedSprite extends Sprite {
     private int delay;
     private int tempDelay;
     private boolean animating;
+    
+	public int leftAnim;
+	public int rightAnim;
+	public int upAnim;
+	public int downAnim;
 
     public AnimatedSprite(JFrame frame, Graphics2D g2d, SpriteSheet sheet, int spriteNumber, String name) {
         super(frame, g2d);
@@ -42,7 +47,7 @@ public class AnimatedSprite extends Sprite {
         //frame image is passed to parent class for drawing
         image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         tempSurface = image.createGraphics();
-        super.setImage(image);
+        setImage(image);
     }
     
     public void loadAnim(int frames, int delay) {
@@ -55,6 +60,29 @@ public class AnimatedSprite extends Sprite {
         tempDelay = delay;
     }
 
+    public void loadMultAnim(int spriteNumLeft, int spriteNumRight, int spriteNumUp, int spriteNumDown, int frames, int delay) {
+		leftAnim = spriteNumLeft;
+		rightAnim = spriteNumRight;
+		upAnim = spriteNumUp;
+		downAnim = spriteNumDown;
+		
+        if(frames > 0) {
+        	setTotalFrames(frames);
+        	animating = true;
+        }
+       	if(delay > 0) setDelay(delay);
+        tempDelay = delay;
+	}
+    
+    public void setFrame(int frame) { currFrame = frame; }
+    
+    public void stopAnim() { 
+    	animating = false; 
+    	currFrame = getSpriteNumber();
+    }
+    
+    public void startAnim() { animating = true; }
+    
     public void setDelay(int delay) { this.delay = delay; }
     public void setTotalFrames(int total) { totFrames = total; }
     public void setAnimating(boolean state) { animating = state; }
@@ -75,7 +103,7 @@ public class AnimatedSprite extends Sprite {
     public void setSpriteNumber(int spriteNumber) { super.spriteNumber = spriteNumber; }
     
     public void setAnimSprite() {
-    	animImage.setImage(super.setSprite(getSheet(), getSpriteNumber())); 
+    	animImage.setImage(setSprite(getSheet(), getSpriteNumber())); 
     	setScale(getSheet().getScale());
     	setSpriteSize(getSheet().getSpriteSize() * getScale());
     	currFrame = getSpriteNumber();
@@ -93,13 +121,13 @@ public class AnimatedSprite extends Sprite {
 	    	if(tempDelay % delay == 0) {
 	    		if(currentFrame() == getSpriteNumber() - 1 + totalFrames()) {
 	    			currFrame = getSpriteNumber();
-	    			animImage.setImage(super.setSprite(getSheet(), currentFrame()));
+	    			animImage.setImage(setSprite(getSheet(), currentFrame()));
 			    	tempDelay = delay;
 	    			return;
 	    		}
 		    	currFrame++;
 		    	tempDelay = delay;
-		    	animImage.setImage(super.setSprite(getSheet(), currentFrame())); 
+		    	animImage.setImage(setSprite(getSheet(), currentFrame())); 
 	    	}
     	}
     }

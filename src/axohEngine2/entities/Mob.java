@@ -7,7 +7,6 @@ import javax.swing.JFrame;
 public class Mob extends AnimatedSprite{
 	
 	private boolean hostile;
-	
 	private int health;
 	private String ai;
 	private int xx;
@@ -20,9 +19,10 @@ public class Mob extends AnimatedSprite{
 		super(frame, g2d, sheet, spriteNumber, name);
 		this.frame = frame;
 		this.g2d = g2d;
+		this.ai = ai;
+		
 		hostile = hostility;
 		setName(name);
-		this.ai = ai;
 		health = 0;
 		setSolid(true);
 		setAlive(true);
@@ -31,13 +31,10 @@ public class Mob extends AnimatedSprite{
 	}
 	
 	public String getName() { return super._name; }
+	
 	public void setHealth(int health) { this.health = health; }
-	
+	public void setAi(String ai) { this.ai = ai; }
 	public void setName(String name) { super._name = name; }
-	
-	public void loadAnim(int frames, int delay) {
-		super.loadAnim(frames, delay);
-	}
 	
 	public void updateMob() {
 		if(ai == "RandomPath") {
