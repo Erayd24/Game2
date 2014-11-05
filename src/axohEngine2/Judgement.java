@@ -1,6 +1,5 @@
 package axohEngine2;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.Random;
@@ -8,6 +7,7 @@ import java.util.Random;
 import javax.swing.JFrame;
 
 import axohEngine2.entities.AnimatedSprite;
+import axohEngine2.entities.Mob;
 import axohEngine2.entities.SpriteSheet;
 import axohEngine2.map.Map;
 import axohEngine2.map.Tile;
@@ -31,16 +31,14 @@ public class Judgement extends Game {
 	private double oldX;
 	private double oldY;
 	private boolean collision = false;
-	boolean left = false;
-	boolean right = false;
-	boolean up = false;
-	boolean down = false;
 	
 	//Game variables -maps/sprites/tiles ... etc
 	SpriteSheet misc;
 	SpriteSheet buildings;
 	SpriteSheet mainCharacter;
-	AnimatedSprite player;
+	SpriteSheet npcSprites;
+	Mob playerMob;
+	Mob randomNPC;
 	
 	Map city;
 	Map cityOverlay;
@@ -71,9 +69,15 @@ public class Judgement extends Game {
 		misc = new SpriteSheet("/textures/environments/environments1.png", 16, 16, 16, scale);
 		buildings = new SpriteSheet("/textures/environments/4x4buildings.png", 4, 4, 64, scale);
 		mainCharacter = new SpriteSheet("/textures/characters/mainCharacter.png", 8, 8, 32, scale);
+		npcSprites = new SpriteSheet("", 8, 8, 32, scale);
+		
 
 		//****Initialize AnimatedSprites******************************************************************
-		player = new AnimatedSprite(this, graphics(), mainCharacter, 40, "player");
+
+		
+		//****Initialize Mobs*****************************************************************************
+		playerMob = new Mob(this, graphics(), "mainC", true, mainCharacter, 40, "player");
+		randomNPC = new Mob(this, graphics(), "rando", false, npcSprites, 0, "RandomPath");
 		
 		//****Initialize Tiles****************************************************************************
 		f = new Tile(this, graphics(), "flower", misc, 1);
@@ -82,11 +86,12 @@ public class Judgement extends Game {
 		r = new Tile(this, graphics(), "walkWay", misc, 6);
 		e = new Tile(this, graphics(), "empty", misc, 7);
 		ro = new Tile(this, graphics(), "rock", misc, 2);
-		h = new Tile(this, graphics(), "house", buildings, 0);
+		h = new Tile(this, graphics(), "house", buildings, 0, true);
 		
 		//Load Animated Sprites Animations and add them to system for updating
-		player.loadMultAnim(32, 48, 40, 56, 3, 8);
-		sprites().add(player);
+		playerMob.loadMultAnim(32, 48, 40, 56, 3, 8);
+		playerMob.setHealth(35);
+		sprites().add(playerMob);
 		
 		//Map generating 40 X 40
 		Tile[] cityTiles = {b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b,
@@ -187,7 +192,6 @@ public class Judgement extends Game {
 	
 	void gameTimedUpdate() {
 		checkInput();
-		animatePlayer();
 	}
 	
 	void gameRefreshScreen() {		
@@ -199,8 +203,7 @@ public class Judgement extends Game {
 		cityOverlay.render((int)playerX, (int)playerY);
 		
 		//Render the player
-		player.render(this, graphics(), SCREENWIDTH / 2, SCREENHEIGHT / 2);
-		player.drawBounds(Color.BLUE);
+		playerMob.renderMob(SCREENWIDTH / 2, SCREENHEIGHT / 2, scale);
 	}
 
 	void gameShutDown() {		
@@ -225,9 +228,16 @@ public class Judgement extends Game {
 	}
 	
 	void tileCollision(AnimatedSprite spr, Tile tile) {
-		if(spr._name == "player") {
+		if(spr.spriteType() == "player") {
 			playerX = oldX;
 			playerY = oldY;
+		}
+
+		if(spr instanceof Mob) {
+			if(spr.spriteType() == "enemy" || spr.spriteType() == "npc") {
+				spr = (Mob) spr;
+				((Mob) spr).setLoc((int)((Mob) spr).getXLoc(), (int)((Mob) spr).getYLoc());
+			}
 		}
 	}
 	
@@ -249,35 +259,6 @@ public class Judgement extends Game {
 		}
 	}
 	
-	void animatePlayer() {
-		if(keyLeft) {
-			if(!left)player.setAnimTo(player.leftAnim);
-			player.startAnim();
-			left = true;
-		} else if (keyRight) {
-			if(!right)player.setAnimTo(player.rightAnim);
-			player.startAnim();
-			right = true;
-		} else if (keyUp) {
-			if(!up)player.setAnimTo(player.upAnim);
-			player.startAnim();
-			up = true;
-		} else if (keyDown) {
-			if(!down)player.setAnimTo(player.downAnim);
-			player.startAnim();
-			down = true;
-		}
-		
-		if(!keyLeft) left = false;
-		if(!keyUp) up = false;
-		if(!keyDown) down = false;
-		if(!keyRight) right = false;
-		
-		if(!keyLeft && !keyRight && !keyUp && !keyDown) {
-			player.stopAnim();
-		}
-	}
-	
 	//Main
 	public static void main(String[] args) {
 		new Judgement();
@@ -292,10 +273,26 @@ public class Judgement extends Game {
 	public void checkInput() {
 		int xa = 0;
 		int ya = 0;
-		if(keyLeft) xa = xa + 1 + playerSpeed;
-		if(keyRight) xa = xa - 1 - playerSpeed;
-		if(keyUp) ya = ya + 1 + playerSpeed;
-		if(keyDown) ya = ya - 1 - playerSpeed;
+		if(keyLeft) {
+			xa = xa + 1 + playerSpeed;
+			playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
+		}
+		if(keyRight) {
+			xa = xa - 1 - playerSpeed;
+			playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
+		}
+		if(keyUp) {
+			ya = ya + 1 + playerSpeed;
+			playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
+		}
+		if(keyDown) {
+			ya = ya - 1 - playerSpeed;
+			playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
+		}
+		
+		if(!keyLeft && !keyRight && !keyUp && !keyDown) {
+			playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
+		}
 		movePlayer(xa, ya);
 	}
 	
