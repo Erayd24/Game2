@@ -51,7 +51,7 @@ public class AnimatedSprite extends Sprite {
     }
     
     public void loadAnim(int frames, int delay) {
-    	currFrame = spriteNumber;
+    	currFrame = getSpriteNumber();
         if(frames > 0) {
         	setTotalFrames(frames);
         	animating = true;
@@ -66,6 +66,7 @@ public class AnimatedSprite extends Sprite {
 		upAnim = spriteNumUp;
 		downAnim = spriteNumDown;
 		
+		currFrame = getSpriteNumber();
         if(frames > 0) {
         	setTotalFrames(frames);
         	animating = true;
@@ -74,14 +75,25 @@ public class AnimatedSprite extends Sprite {
         tempDelay = delay;
 	}
     
-    public void setFrame(int frame) { currFrame = frame; }
+    public void setFrame(int frame) { 
+    	currFrame = frame; 
+		animImage.setImage(setSprite(getSheet(), currentFrame()));
+    }
+    
+    public void setAnimTo(int frame) {
+    	currFrame = frame;
+    	setSpriteNumber(frame);
+		animImage.setImage(setSprite(getSheet(), currentFrame()));
+    }
     
     public void stopAnim() { 
     	animating = false; 
     	currFrame = getSpriteNumber();
+		animImage.setImage(setSprite(getSheet(), currentFrame()));
     }
     
     public void startAnim() { animating = true; }
+    public boolean animating() { return animating; }
     
     public void setDelay(int delay) { this.delay = delay; }
     public void setTotalFrames(int total) { totFrames = total; }

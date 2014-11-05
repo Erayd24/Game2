@@ -20,14 +20,8 @@ public class Judgement extends Game {
 	static int CENTERX = SCREENWIDTH / 2;
 	static int CENTERY = SCREENHEIGHT / 2;
 	
-	//Sprite states
-	static int SPRITE_NORMAL = 0;
-	static int SPRITE_COLLIDED = 1;
-	
-	boolean showBounds = true;
-	boolean collisionTesting = true;
-	boolean runOnce = true;
-	long collisionTimer = 0;
+	boolean keyLeft, keyRight, keyUp, keyDown, keyInventory, keyAction, keyBack, keyEnter;
+	Random random = new Random();
 	
 	//player variables and scale
 	private int scale;
@@ -37,13 +31,16 @@ public class Judgement extends Game {
 	private double oldX;
 	private double oldY;
 	private boolean collision = false;
+	boolean left = false;
+	boolean right = false;
+	boolean up = false;
+	boolean down = false;
 	
-	Random random = new Random();
-	
+	//Game variables -maps/sprites/tiles ... etc
 	SpriteSheet misc;
 	SpriteSheet buildings;
-	SpriteSheet player;
-	AnimatedSprite player1;
+	SpriteSheet mainCharacter;
+	AnimatedSprite player;
 	
 	Map city;
 	Map cityOverlay;
@@ -51,17 +48,10 @@ public class Judgement extends Game {
 	Tile f;
 	Tile b;
 	Tile r;
-	
 	Tile e;
 	Tile ro;
-	
 	Tile h;
-	
-	int frameCount = 0, frameRate = 0;
-	long startTime = System.currentTimeMillis();
-	
-	boolean keyLeft, keyRight, keyUp, keyDown, keyInventory, keyAction, keyBack, keyEnter;
-	
+		
 	//Load Sound effects
 	public Judgement() {
 		super(100, SCREENWIDTH, SCREENHEIGHT);
@@ -69,7 +59,6 @@ public class Judgement extends Game {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
-
 	void gameStartUp() {
 		scale = 4;
 		playerX = -40;
@@ -78,28 +67,28 @@ public class Judgement extends Game {
 		oldY = playerY;
 		playerSpeed = 5;
 		
-		//Initialize spriteSheets
+		//****Initialize spriteSheets*********************************************************************
 		misc = new SpriteSheet("/textures/environments/environments1.png", 16, 16, 16, scale);
 		buildings = new SpriteSheet("/textures/environments/4x4buildings.png", 4, 4, 64, scale);
-		player = new SpriteSheet("/textures/characters/mainCharacter.png", 8, 8, 32, scale);
+		mainCharacter = new SpriteSheet("/textures/characters/mainCharacter.png", 8, 8, 32, scale);
 
-		player1 = new AnimatedSprite(this, graphics(), player, 40, "player");
+		//****Initialize AnimatedSprites******************************************************************
+		player = new AnimatedSprite(this, graphics(), mainCharacter, 40, "player");
+		
+		//****Initialize Tiles****************************************************************************
 		f = new Tile(this, graphics(), "flower", misc, 1);
 		g = new Tile(this, graphics(), "grass", misc, 0);
 		b = new Tile(this, graphics(), "bricks", misc, 16, true);
 		r = new Tile(this, graphics(), "walkWay", misc, 6);
-		
 		e = new Tile(this, graphics(), "empty", misc, 7);
 		ro = new Tile(this, graphics(), "rock", misc, 2);
-		
 		h = new Tile(this, graphics(), "house", buildings, 0);
 		
-		//Player
-		player1.loadMultAnim(32, 48, 40, 56, 3, 12);
+		//Load Animated Sprites Animations and add them to system for updating
+		player.loadMultAnim(32, 48, 40, 56, 3, 8);
+		sprites().add(player);
 		
-		sprites().add(player1);
-		
-		//Map generating 60 X 60
+		//Map generating 40 X 40
 		Tile[] cityTiles = {b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b,
 						    b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b,
 						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
@@ -182,9 +171,11 @@ public class Judgement extends Game {
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e};
 		
+		//*****Initialize Maps***********************************************************************
 		city = new Map(cityTiles, 40, 40);
 		cityOverlay = new Map(cityOTiles, 40, 40);
 		
+		//Add tiles to system for updating
 		for(int i = 0; i < 40 * 40; i++){
 			tiles().add(city.accessTile(i));
 			tiles().add(cityOverlay.accessTile(i));
@@ -196,17 +187,20 @@ public class Judgement extends Game {
 	
 	void gameTimedUpdate() {
 		checkInput();
+		animatePlayer();
 	}
 	
 	void gameRefreshScreen() {		
 		Graphics2D g2d = graphics();
 		g2d.clearRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
 				
+		//Render the map and it's overlays
 		city.render((int)playerX, (int)playerY);
 		cityOverlay.render((int)playerX, (int)playerY);
-		player1.render(this, graphics(), SCREENWIDTH / 2, SCREENHEIGHT / 2);
 		
-		player1.drawBounds(Color.BLUE);
+		//Render the player
+		player.render(this, graphics(), SCREENWIDTH / 2, SCREENHEIGHT / 2);
+		player.drawBounds(Color.BLUE);
 	}
 
 	void gameShutDown() {		
@@ -223,7 +217,6 @@ public class Judgement extends Game {
 
 	void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2) {
 		if(spr2.spriteType() == "wall" && spr1._name == "player") {
-			
 		}
 		if(spr1.spriteType() == "enemy" || spr2.spriteType() == "enemy") {
 		}
@@ -238,27 +231,53 @@ public class Judgement extends Game {
 		}
 	}
 	
-	public void movePlayer(int xa, int ya) {
+	void movePlayer(int xa, int ya) {
 		oldX = playerX;
 		oldY = playerY;
 		
 		if(!collision && xa > 0) {
 			playerX += xa; //left
-			player1.setFrame(player1.leftAnim);
 		}
 		if(!collision && xa < 0) {
 			playerX += xa; //right
-			player1.setFrame(player1.rightAnim);
 		}
 		if(!collision && ya > 0) {
 			playerY += ya; //up
-			player1.setFrame(player1.upAnim);
 		}
 		if(!collision && ya < 0) {
 			playerY += ya; //down
-			player1.setFrame(player1.downAnim);
 		}
 	}
+	
+	void animatePlayer() {
+		if(keyLeft) {
+			if(!left)player.setAnimTo(player.leftAnim);
+			player.startAnim();
+			left = true;
+		} else if (keyRight) {
+			if(!right)player.setAnimTo(player.rightAnim);
+			player.startAnim();
+			right = true;
+		} else if (keyUp) {
+			if(!up)player.setAnimTo(player.upAnim);
+			player.startAnim();
+			up = true;
+		} else if (keyDown) {
+			if(!down)player.setAnimTo(player.downAnim);
+			player.startAnim();
+			down = true;
+		}
+		
+		if(!keyLeft) left = false;
+		if(!keyUp) up = false;
+		if(!keyDown) down = false;
+		if(!keyRight) right = false;
+		
+		if(!keyLeft && !keyRight && !keyUp && !keyDown) {
+			player.stopAnim();
+		}
+	}
+	
 	//Main
 	public static void main(String[] args) {
 		new Judgement();
