@@ -1,11 +1,11 @@
 package axohEngine2.map;
 
+
 public class Map {
 	
 	private int mapHeight;
 	private int mapWidth;
 	Tile[] mapTiles;
-	
 	private int spriteSize;
 		
 	public Map(Tile[] tiles, int mapWidth, int mapHeight) {
@@ -27,7 +27,7 @@ public class Map {
 				mapTiles[y + x * mapWidth].getEntity().setX(xx);
 				mapTiles[y + x * mapWidth].getEntity().setY(yy);
 				xx = xx + spriteSize;
-				}
+			}
 			xx = xt;
 			yy = yy + spriteSize;
 		}
@@ -36,4 +36,7 @@ public class Map {
 	public Tile accessTile(int index) {
 		return mapTiles[index];
 	}
+	
+	public int getWidth() { return mapWidth; }
+	public int getHeight() { return mapHeight; }
 }

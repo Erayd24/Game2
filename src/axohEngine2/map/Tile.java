@@ -14,7 +14,10 @@ public class Tile extends AnimatedSprite {
 	private boolean _solid;
 	private boolean _slippery;
 	private boolean _breakable;
-			
+	private boolean hasEvent = false;
+	
+	private Event event;
+	
 	Graphics2D _g2d;
 	JFrame _frame;
 	
@@ -72,6 +75,13 @@ public class Tile extends AnimatedSprite {
 		setSprite(tile.getSheet(), tile.getSpriteNumber());
 	}
 	
+	public void addEvent(Event event) {
+		this.event = event;
+		hasEvent = true;
+	}
+	
+	public Event event() { return event; }
+	public boolean hasEvent() { return hasEvent; }
 	//Getters
 	public boolean isSolid() { return _solid; }
 	public boolean isSlippery() { return _slippery; }

@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.Mob;
 import axohEngine2.entities.SpriteSheet;
+import axohEngine2.map.Event;
 import axohEngine2.map.Map;
 import axohEngine2.map.Tile;
 
@@ -32,16 +33,21 @@ public class Judgement extends Game {
 	private double oldY;
 	private boolean collision = false;
 	
+	private Map currentMap;
+	private Map currentOverlay;
+	
 	//Game variables -maps/sprites/tiles ... etc
 	SpriteSheet misc;
 	SpriteSheet buildings;
 	SpriteSheet mainCharacter;
-	SpriteSheet npcSprites;
+	SpriteSheet environment32;
+	
 	Mob playerMob;
 	Mob randomNPC;
 	
 	Map city;
 	Map cityOverlay;
+	Tile d;
 	Tile g;
 	Tile f;
 	Tile b;
@@ -49,10 +55,12 @@ public class Judgement extends Game {
 	Tile e;
 	Tile ro;
 	Tile h;
+	
+	Event warp1;
 		
 	//Load Sound effects
 	public Judgement() {
-		super(100, SCREENWIDTH, SCREENHEIGHT);
+		super(60, SCREENWIDTH, SCREENHEIGHT);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -69,17 +77,15 @@ public class Judgement extends Game {
 		misc = new SpriteSheet("/textures/environments/environments1.png", 16, 16, 16, scale);
 		buildings = new SpriteSheet("/textures/environments/4x4buildings.png", 4, 4, 64, scale);
 		mainCharacter = new SpriteSheet("/textures/characters/mainCharacter.png", 8, 8, 32, scale);
-		npcSprites = new SpriteSheet("", 8, 8, 32, scale);
-		
+		environment32 = new SpriteSheet("/textures/environments/32SizeEnvironment.png", 8, 8, 32,scale);
 
 		//****Initialize AnimatedSprites******************************************************************
-
 		
 		//****Initialize Mobs*****************************************************************************
 		playerMob = new Mob(this, graphics(), "mainC", true, mainCharacter, 40, "player");
-		randomNPC = new Mob(this, graphics(), "rando", false, npcSprites, 0, "RandomPath");
 		
 		//****Initialize Tiles****************************************************************************
+		d = new Tile(this, graphics(), "door", environment32, 0);
 		f = new Tile(this, graphics(), "flower", misc, 1);
 		g = new Tile(this, graphics(), "grass", misc, 0);
 		b = new Tile(this, graphics(), "bricks", misc, 16, true);
@@ -87,10 +93,11 @@ public class Judgement extends Game {
 		e = new Tile(this, graphics(), "empty", misc, 7);
 		ro = new Tile(this, graphics(), "rock", misc, 2);
 		h = new Tile(this, graphics(), "house", buildings, 0, true);
-		
+
 		//Load Animated Sprites Animations and add them to system for updating
 		playerMob.loadMultAnim(32, 48, 40, 56, 3, 8);
 		playerMob.setHealth(35);
+		
 		sprites().add(playerMob);
 		
 		//Map generating 40 X 40
@@ -137,12 +144,12 @@ public class Judgement extends Game {
 		
 		Tile[] cityOTiles = {e, e, h, e, e, e, e, h, e, e, e, e, h, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
+							 e, e, e, d, e, e, e, e, d, e, e, e, e, d, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, ro, e, e, e, e, h, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
+							 e, e, e, e, e, e, e, e, e, e, d, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
@@ -179,12 +186,23 @@ public class Judgement extends Game {
 		//*****Initialize Maps***********************************************************************
 		city = new Map(cityTiles, 40, 40);
 		cityOverlay = new Map(cityOTiles, 40, 40);
-		
+				
 		//Add tiles to system for updating
 		for(int i = 0; i < 40 * 40; i++){
 			tiles().add(city.accessTile(i));
 			tiles().add(cityOverlay.accessTile(i));
 		}
+		
+		//*****Set up events**************************************************************************
+		warp1 = new Event(this, graphics(), misc, 5, "warp1", "warp");
+		warp1.setWarp(city, cityOverlay, -200, 0);
+		
+		//*****Add the events to their tile homes*****************************************************
+		city.accessTile(204).addEvent(warp1);
+		
+		//Set first map
+		currentMap = city;
+		currentOverlay = cityOverlay;
 		
 		requestFocus();
 		start();
@@ -192,6 +210,7 @@ public class Judgement extends Game {
 	
 	void gameTimedUpdate() {
 		checkInput();
+		System.out.println(frameRate());
 	}
 	
 	void gameRefreshScreen() {		
@@ -199,8 +218,8 @@ public class Judgement extends Game {
 		g2d.clearRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
 				
 		//Render the map and it's overlays
-		city.render((int)playerX, (int)playerY);
-		cityOverlay.render((int)playerX, (int)playerY);
+		currentMap.render((int)playerX, (int)playerY);
+		currentOverlay.render((int)playerX, (int)playerY);
 		
 		//Render the player
 		playerMob.renderMob(SCREENWIDTH / 2, SCREENHEIGHT / 2, scale);
@@ -238,6 +257,23 @@ public class Judgement extends Game {
 				spr = (Mob) spr;
 				((Mob) spr).setLoc((int)((Mob) spr).getXLoc(), (int)((Mob) spr).getYLoc());
 			}
+		}
+		
+		if(spr.spriteType() == "player" && tile.hasEvent()) {
+			if(tile.event().getEventType() == "warp") {
+				for(int i = 0; i < tiles().size(); i++) {
+					tiles().remove(i);
+				}
+				currentMap = tile.event().getMap();
+				currentOverlay = tile.event().getOverlay();
+				for(int i = 0; i < currentMap.getWidth() * currentMap.getHeight(); i++){
+					tiles().add(currentMap.accessTile(i));
+					tiles().add(currentOverlay.accessTile(i));
+				}
+	
+				playerX = tile.event().getNewX();
+				playerY = tile.event().getNewY();
+			}	
 		}
 	}
 	

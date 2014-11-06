@@ -33,8 +33,10 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	private Graphics2D g2d;
 	private Toolkit tk;
 	private int screenWidth, screenHeight;
-	private double fps;
+	private int fps;
+	private int lastfpsTime;
 	private long lastTime;
+	private long optimalTime;
 	
 	private Point2D mousePos = new Point2D(0, 0);
 	private boolean mouseButtons[] = new boolean[4];
@@ -131,11 +133,28 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	
 	public void run() {
 		Thread t = Thread.currentThread();
+		lastTime = System.nanoTime();
+		optimalTime = 1000000000 / desiredRate;
 		
 		while(t == gameloop) {
-			lastTime = System.nanoTime();
+			long now = System.nanoTime();
+			long updateLength = now - lastTime;
+			double delta = updateLength / ((double) optimalTime);
+			lastTime = now;
+			
+			lastfpsTime += updateLength;
+			fps++;
+			if(lastfpsTime >= 1000000000) {
+				lastfpsTime = 0;
+				fps = 0;
+			}
+			
+			gameTimedUpdate();
+			update(graphics());
+			repaint();
+			
 			try { 
-				Thread.sleep(1000 / desiredRate);
+				Thread.sleep(Math.abs((lastTime - System.nanoTime() + optimalTime)) / 1000000);
 			} catch(InterruptedException e) { e.printStackTrace(); }
 			
 			if(!gamePaused()) {
@@ -143,12 +162,6 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 				spriteCollision();
 				tileCollision();
 			}
-			fps = 1000000000.0 / (System.nanoTime() - lastTime); //FPS counter
-			lastTime = System.nanoTime();
-
-			gameTimedUpdate();
-			update(graphics());
-			repaint();
 		}
 	}
 	
@@ -276,6 +289,11 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			for(int second = 0; second < _tiles.size(); second++) {
 				Tile tile = _tiles.get(second);
 				if(tile.isSolid()) {
+					if(tile.getTileBounds().intersects(spr.getBounds())) {
+						tileCollision(spr, tile);
+					}
+				}
+				if(tile.hasEvent()) {
 					if(tile.getTileBounds().intersects(spr.getBounds())) {
 						tileCollision(spr, tile);
 					}
