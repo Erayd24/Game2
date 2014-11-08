@@ -14,7 +14,7 @@ public class Tile extends AnimatedSprite {
 	private boolean _solid;
 	private boolean _slippery;
 	private boolean _breakable;
-	private boolean hasEvent = false;
+	private boolean hasEvent;
 	
 	private Event event;
 	
@@ -29,6 +29,7 @@ public class Tile extends AnimatedSprite {
 		_solid = false;
 		_slippery = false;
 		_breakable = false;
+		hasEvent = false;
 		
 		setSprite(sheet, spriteNumber);
 	}
@@ -41,6 +42,7 @@ public class Tile extends AnimatedSprite {
 		_solid = solid;
 		_slippery = false;
 		_breakable = false;
+		hasEvent = false;
 		
 		if(solid) setSpriteType("wall");
 		setSolid(solid); //Sprite super class solid
@@ -57,6 +59,7 @@ public class Tile extends AnimatedSprite {
 		_solid = solid;
 		_slippery = slippery;
 		_breakable = breakable;
+		hasEvent = false;
 		
 		setSolid(_solid);
 		setSprite(getSheet(), getSpriteNumber());
@@ -82,7 +85,11 @@ public class Tile extends AnimatedSprite {
 	
 	public Event event() { return event; }
 	public boolean hasEvent() { return hasEvent; }
-	//Getters
+	public void endEvent() {
+		event = null; 
+		hasEvent = false;
+	}
+	
 	public boolean isSolid() { return _solid; }
 	public boolean isSlippery() { return _slippery; }
 	public boolean isBreakable() { return _breakable; }

@@ -12,6 +12,7 @@ import axohEngine2.entities.SpriteSheet;
 import axohEngine2.map.Event;
 import axohEngine2.map.Map;
 import axohEngine2.map.Tile;
+import axohEngine2.project.State;
 
 public class Judgement extends Game {
 	private static final long serialVersionUID = 1L;
@@ -23,6 +24,7 @@ public class Judgement extends Game {
 	
 	boolean keyLeft, keyRight, keyUp, keyDown, keyInventory, keyAction, keyBack, keyEnter;
 	Random random = new Random();
+	State state;
 	
 	//player variables and scale
 	private int scale;
@@ -60,12 +62,13 @@ public class Judgement extends Game {
 		
 	//Load Sound effects
 	public Judgement() {
-		super(60, SCREENWIDTH, SCREENHEIGHT);
+		super(100, SCREENWIDTH, SCREENHEIGHT);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	void gameStartUp() {
+		state = new State("Game");
 		scale = 4;
 		playerX = -40;
 		playerY = 0;
@@ -187,18 +190,18 @@ public class Judgement extends Game {
 		city = new Map(cityTiles, 40, 40);
 		cityOverlay = new Map(cityOTiles, 40, 40);
 				
-		//Add tiles to system for updating
+		//Add initial tiles to system for updating
 		for(int i = 0; i < 40 * 40; i++){
 			tiles().add(city.accessTile(i));
 			tiles().add(cityOverlay.accessTile(i));
 		}
 		
 		//*****Set up events**************************************************************************
-		warp1 = new Event(this, graphics(), misc, 5, "warp1", "warp");
-		warp1.setWarp(city, cityOverlay, -200, 0);
+		warp1 = new Event("testWarp", "warp");
+		warp1.setWarp(city, cityOverlay, (int)city.accessTile(240).getEntity().getX(), (int)city.accessTile(240).getEntity().getY());
 		
 		//*****Add the events to their tile homes*****************************************************
-		city.accessTile(204).addEvent(warp1);
+		city.accessTile(1).addEvent(warp1);
 		
 		//Set first map
 		currentMap = city;
@@ -216,13 +219,12 @@ public class Judgement extends Game {
 	void gameRefreshScreen() {		
 		Graphics2D g2d = graphics();
 		g2d.clearRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
-				
-		//Render the map and it's overlays
-		currentMap.render((int)playerX, (int)playerY);
-		currentOverlay.render((int)playerX, (int)playerY);
 		
-		//Render the player
-		playerMob.renderMob(SCREENWIDTH / 2, SCREENHEIGHT / 2, scale);
+		if(state.getState() == "Game") {
+			currentMap.render((int)playerX, (int)playerY);
+			currentOverlay.render((int)playerX, (int)playerY);
+			playerMob.renderMob(SCREENWIDTH / 2, SCREENHEIGHT / 2, scale);
+		}
 	}
 
 	void gameShutDown() {		
@@ -258,21 +260,21 @@ public class Judgement extends Game {
 				((Mob) spr).setLoc((int)((Mob) spr).getXLoc(), (int)((Mob) spr).getYLoc());
 			}
 		}
-		
+
+		//Event handling in tiles
 		if(spr.spriteType() == "player" && tile.hasEvent()) {
 			if(tile.event().getEventType() == "warp") {
-				for(int i = 0; i < tiles().size(); i++) {
-					tiles().remove(i);
-				}
+				System.out.println("in");
+				tiles().clear();
 				currentMap = tile.event().getMap();
 				currentOverlay = tile.event().getOverlay();
 				for(int i = 0; i < currentMap.getWidth() * currentMap.getHeight(); i++){
 					tiles().add(currentMap.accessTile(i));
 					tiles().add(currentOverlay.accessTile(i));
 				}
-	
 				playerX = tile.event().getNewX();
 				playerY = tile.event().getNewY();
+				tile.endEvent();
 			}	
 		}
 	}
