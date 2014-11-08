@@ -33,10 +33,6 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	private Graphics2D g2d;
 	private Toolkit tk;
 	private int screenWidth, screenHeight;
-	private int fps;
-	private int lastfpsTime;
-	private long lastTime;
-	private long optimalTime;
 	
 	private Point2D mousePos = new Point2D(0, 0);
 	private boolean mouseButtons[] = new boolean[4];
@@ -96,7 +92,6 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	public Graphics2D graphics() { return g2d; }
 	
 	public int frameRate() { return _frameRate; }
-	public double fps() { return fps; }
 	
 	//Mouse events
 	public boolean mouseButton(int btn) { return mouseButtons[btn]; }
@@ -132,29 +127,11 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	}
 	
 	public void run() {
-		Thread t = Thread.currentThread();
-		lastTime = System.nanoTime();
-		optimalTime = 1000000000 / desiredRate;
+		 Thread t = Thread.currentThread();
 		
 		while(t == gameloop) {
-			long now = System.nanoTime();
-			long updateLength = now - lastTime;
-			double delta = updateLength / ((double) optimalTime);
-			lastTime = now;
-			
-			lastfpsTime += updateLength;
-			fps++;
-			if(lastfpsTime >= 1000000000) {
-				lastfpsTime = 0;
-				fps = 0;
-			}
-			
-			gameTimedUpdate();
-			update(graphics());
-			repaint();
-			
 			try { 
-				Thread.sleep(Math.abs((lastTime - System.nanoTime() + optimalTime)) / 1000000);
+				Thread.sleep(1000 / desiredRate);
 			} catch(InterruptedException e) { e.printStackTrace(); }
 			
 			if(!gamePaused()) {
@@ -162,6 +139,11 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 				spriteCollision();
 				tileCollision();
 			}
+			
+			gameTimedUpdate();
+			update(graphics());
+			repaint();
+			
 		}
 	}
 	
@@ -288,12 +270,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			AnimatedSprite spr = _sprites.get(first);
 			for(int second = 0; second < _tiles.size(); second++) {
 				Tile tile = _tiles.get(second);
-				if(tile.isSolid()) {
-					if(tile.getTileBounds().intersects(spr.getBounds())) {
-						tileCollision(spr, tile);
-					}
-				}
-				if(tile.hasEvent()) {
+				if(tile.isSolid() || tile.hasEvent()) {
 					if(tile.getTileBounds().intersects(spr.getBounds())) {
 						tileCollision(spr, tile);
 					}
