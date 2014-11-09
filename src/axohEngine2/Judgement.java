@@ -34,7 +34,6 @@ public class Judgement extends Game {
 	private double oldX;
 	private double oldY;
 	private boolean collision = false;
-	
 	private Map currentMap;
 	private Map currentOverlay;
 	
@@ -48,9 +47,9 @@ public class Judgement extends Game {
 	Mob randomNPC;
 	
 	Map city;
-	Map cityOverlay;
+	Map cityO;
 	Map houses;
-	Map housesOverlay;
+	Map housesO;
 	Tile d;
 	Tile g;
 	Tile f;
@@ -78,7 +77,7 @@ public class Judgement extends Game {
 		playerY = 0;
 		oldX = playerX;
 		oldY = playerY;
-		playerSpeed = 5;
+		playerSpeed = 3;
 		
 		//****Initialize spriteSheets*********************************************************************
 		misc = new SpriteSheet("/textures/environments/environments1.png", 16, 16, 16, scale);
@@ -150,17 +149,15 @@ public class Judgement extends Game {
 						    b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b,
 						    b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b};
 		
-		Tile[] cityOTiles = {e, e, h, e, e, e, e, h, e, e, e, e, h, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
+		Tile[] cityOTiles = {e, e, h, e, e, e, e, h, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, d, e, e, e, e, d, e, e, e, e, d, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, ro, e, e, e, e, h, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, d, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
+							 e, e, e, d, e, e, e, e, d, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
+							 e, e, e, e, ro, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
+							 e, e, e, e, e, e, e, e, e, ro, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
+							 e, e, e, e, e, e, e, e, e, ro, ro, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
@@ -175,7 +172,9 @@ public class Judgement extends Game {
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-						 	 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
+							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
+							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
+							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
@@ -198,39 +197,39 @@ public class Judgement extends Game {
 							 hf, hf, hf, hf, hf, hf,
 							 hf, hf, hf, hf, hf, hf};
 		
-		Tile[] houseOTiles = {e, e, e, e, e, e,
-				 			  e, e, e, e, e, e,
-				 			  e, e, e, e, e, e,
-				 			  e, e, e, e, e, e,
-				 			  e, e, e, e, e, e,
-				 			  e, e, e, e, e, e};
+		Tile[] houseOTiles = {hf, hf, hf, hf, hf, hf,
+						 	  hf, hf, hf, hf, hf, hf,
+						 	  hf, hf, hf, hf, hf, hf,
+						 	  hf, hf, hf, hf, hf, hf,
+						 	  hf, hf, hf, hf, hf, hf,
+						 	  hf, hf, hf, hf, hf, hf};	
+		
 		//*****Initialize Maps***********************************************************************
 		city = new Map(cityTiles, 40, 40);
-		cityOverlay = new Map(cityOTiles, 40, 40);
-		houses = new Map(houseTiles, 5, 5);
-		housesOverlay = new Map(houseOTiles, 5, 5);
+		cityO = new Map(cityOTiles, 40, 40);
+		houses = new Map(houseTiles, 6, 6);
+		housesO = new Map(houseOTiles, 6, 6);
 				
-		//Add initial tiles to system for updating
-		for(int i = 0; i < 40 * 40; i++){
-			tiles().add(city.accessTile(i));
-			tiles().add(cityOverlay.accessTile(i));
-		}
 		
 		//*****Set up events**************************************************************************
 		warp1 = new Event("fromHouse", "warp");
-		warp1.setWarp(city, cityOverlay, 200, -50);
+		warp1.setWarp(city, cityO, 200, -50);
 		warp2 = new Event("toHouse", "warp");
-		warp2.setWarp(houses, housesOverlay, 620, 250);
+		warp2.setWarp(houses, housesO, 620, 250);
 		
 		//*****Add the events to their tile homes*****************************************************
-		houses.accessTile(32
-				).addEvent(warp1);
+		houses.accessTile(5).addEvent(warp1);
 		city.accessTile(331).addEvent(warp2);
-
+		
+		//Add initial tiles to system for updating
+		for(int i = 0; i < 40 * 40; i++){
+			addTile(city.accessTile(i));
+			addTile(cityO.accessTile(i));
+		}
 		
 		//Set first map
 		currentMap = city;
-		currentOverlay = cityOverlay;
+		currentOverlay = cityO;
 		
 		requestFocus();
 		start();
@@ -239,6 +238,7 @@ public class Judgement extends Game {
 	void gameTimedUpdate() {
 		checkInput();
 		System.out.println(frameRate());
+		System.out.println(tiles().size());
 	}
 	
 	void gameRefreshScreen() {		
@@ -252,6 +252,12 @@ public class Judgement extends Game {
 		}
 	}
 
+	void addTile(Tile tile) {
+		if(tile.hasProperty()){
+			tiles().add(tile);
+		}
+	}
+	
 	void gameShutDown() {		
 	}
 
@@ -279,14 +285,12 @@ public class Judgement extends Game {
 				tiles().clear();
 				currentMap = tile.event().getMap();
 				currentOverlay = tile.event().getOverlay();
-				
-				for(int i = 0; i < currentMap.getWidth() * currentMap.getHeight(); i++){
-					tiles().add(currentMap.accessTile(i));
-					tiles().add(currentOverlay.accessTile(i));
+				for(int i = 0; i < currentMap.getWidth() * currentMap.getHeight(); i++){ //For differing widths and height of each map
+					addTile(currentMap.accessTile(i));
+					addTile(currentOverlay.accessTile(i));
 				}
 				playerX = tile.event().getNewX();
 				playerY = tile.event().getNewY();
-				tile.endEvent();
 				return;
 			}	
 		}
@@ -302,8 +306,6 @@ public class Judgement extends Game {
 				((Mob) spr).setLoc((int)((Mob) spr).getXLoc(), (int)((Mob) spr).getYLoc());
 			}
 		}
-
-		//Event handling in tiles
 	}
 	
 	void movePlayer(int xa, int ya) {

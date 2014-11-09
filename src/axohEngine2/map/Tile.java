@@ -17,6 +17,7 @@ public class Tile extends AnimatedSprite {
 	private boolean hasEvent = false;
 	
 	private Event event;
+	private boolean hasProperty = false;
 	
 	Graphics2D _g2d;
 	JFrame _frame;
@@ -43,8 +44,8 @@ public class Tile extends AnimatedSprite {
 		_breakable = false;
 		
 		if(solid) setSpriteType("wall");
+		if(solid) hasProperty = true;
 		setSolid(solid); //Sprite super class solid
-		
 		setSprite(sheet, spriteNumber);
 	}
 	
@@ -59,6 +60,7 @@ public class Tile extends AnimatedSprite {
 		_breakable = breakable;
 		
 		setSolid(solid);
+		if(solid || slippery || breakable) hasProperty = true;
 		setSprite(getSheet(), getSpriteNumber());
 	}
 	
@@ -70,12 +72,16 @@ public class Tile extends AnimatedSprite {
 		_solid = tile.isSolid();
 		_slippery = tile.isSlippery();
 		_breakable = tile.isBreakable();
+		hasEvent = tile.hasEvent();
+		hasProperty = tile.hasProperty();
+		event = tile.event();
 		
 		setSolid(_solid);
 		setSprite(tile.getSheet(), tile.getSpriteNumber());
 	}
 	
 	public void addEvent(Event event) {
+		hasProperty = true;
 		this.event = event;
 		hasEvent = true;
 	}
@@ -90,6 +96,7 @@ public class Tile extends AnimatedSprite {
 	public boolean isSolid() { return _solid; }
 	public boolean isSlippery() { return _slippery; }
 	public boolean isBreakable() { return _breakable; }
+	public boolean hasProperty() { return hasProperty; }
 	
 	public void loadAnim(int frames, int delay) {
 		super.loadAnim(frames, delay);

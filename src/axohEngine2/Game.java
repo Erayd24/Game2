@@ -105,7 +105,6 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			_frameRate = _frameCount;
 			_frameCount = 0;
 			
-			//Delete all dead sprites
 			purgeSprites(); 
 		}
 		
