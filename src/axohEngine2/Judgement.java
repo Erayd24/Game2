@@ -49,6 +49,8 @@ public class Judgement extends Game {
 	
 	Map city;
 	Map cityOverlay;
+	Map houses;
+	Map housesOverlay;
 	Tile d;
 	Tile g;
 	Tile f;
@@ -57,8 +59,10 @@ public class Judgement extends Game {
 	Tile e;
 	Tile ro;
 	Tile h;
+	Tile hf;
 	
 	Event warp1;
+	Event warp2;
 		
 	//Load Sound effects
 	public Judgement() {
@@ -96,6 +100,7 @@ public class Judgement extends Game {
 		e = new Tile(this, graphics(), "empty", misc, 7);
 		ro = new Tile(this, graphics(), "rock", misc, 2);
 		h = new Tile(this, graphics(), "house", buildings, 0, true);
+		hf = new Tile(this, graphics(), "floor", misc, 8);
 
 		//Load Animated Sprites Animations and add them to system for updating
 		playerMob.loadMultAnim(32, 48, 40, 56, 3, 8);
@@ -186,9 +191,24 @@ public class Judgement extends Game {
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e};
 		
+		Tile[] houseTiles = {hf, hf, hf, hf, hf, hf,
+							 hf, hf, hf, hf, hf, hf,
+							 hf, hf, hf, hf, hf, hf,
+							 hf, hf, hf, hf, hf, hf,
+							 hf, hf, hf, hf, hf, hf,
+							 hf, hf, hf, hf, hf, hf};
+		
+		Tile[] houseOTiles = {e, e, e, e, e, e,
+				 			  e, e, e, e, e, e,
+				 			  e, e, e, e, e, e,
+				 			  e, e, e, e, e, e,
+				 			  e, e, e, e, e, e,
+				 			  e, e, e, e, e, e};
 		//*****Initialize Maps***********************************************************************
 		city = new Map(cityTiles, 40, 40);
 		cityOverlay = new Map(cityOTiles, 40, 40);
+		houses = new Map(houseTiles, 5, 5);
+		housesOverlay = new Map(houseOTiles, 5, 5);
 				
 		//Add initial tiles to system for updating
 		for(int i = 0; i < 40 * 40; i++){
@@ -197,11 +217,16 @@ public class Judgement extends Game {
 		}
 		
 		//*****Set up events**************************************************************************
-		warp1 = new Event("testWarp", "warp");
-		warp1.setWarp(city, cityOverlay, (int)city.accessTile(240).getEntity().getX(), (int)city.accessTile(240).getEntity().getY());
+		warp1 = new Event("fromHouse", "warp");
+		warp1.setWarp(city, cityOverlay, 200, -50);
+		warp2 = new Event("toHouse", "warp");
+		warp2.setWarp(houses, housesOverlay, 620, 250);
 		
 		//*****Add the events to their tile homes*****************************************************
-		city.accessTile(1).addEvent(warp1);
+		houses.accessTile(32
+				).addEvent(warp1);
+		city.accessTile(331).addEvent(warp2);
+
 		
 		//Set first map
 		currentMap = city;
@@ -249,6 +274,23 @@ public class Judgement extends Game {
 	}
 	
 	void tileCollision(AnimatedSprite spr, Tile tile) {
+		if(spr.spriteType() == "player" && tile.hasEvent()) {
+			if(tile.event().getEventType().equals("warp")) {
+				tiles().clear();
+				currentMap = tile.event().getMap();
+				currentOverlay = tile.event().getOverlay();
+				
+				for(int i = 0; i < currentMap.getWidth() * currentMap.getHeight(); i++){
+					tiles().add(currentMap.accessTile(i));
+					tiles().add(currentOverlay.accessTile(i));
+				}
+				playerX = tile.event().getNewX();
+				playerY = tile.event().getNewY();
+				tile.endEvent();
+				return;
+			}	
+		}
+		
 		if(spr.spriteType() == "player") {
 			playerX = oldX;
 			playerY = oldY;
@@ -262,21 +304,6 @@ public class Judgement extends Game {
 		}
 
 		//Event handling in tiles
-		if(spr.spriteType() == "player" && tile.hasEvent()) {
-			if(tile.event().getEventType() == "warp") {
-				System.out.println("in");
-				tiles().clear();
-				currentMap = tile.event().getMap();
-				currentOverlay = tile.event().getOverlay();
-				for(int i = 0; i < currentMap.getWidth() * currentMap.getHeight(); i++){
-					tiles().add(currentMap.accessTile(i));
-					tiles().add(currentOverlay.accessTile(i));
-				}
-				playerX = tile.event().getNewX();
-				playerY = tile.event().getNewY();
-				tile.endEvent();
-			}	
-		}
 	}
 	
 	void movePlayer(int xa, int ya) {
