@@ -134,15 +134,14 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 				Thread.sleep(1000 / desiredRate);
 			} catch(InterruptedException e) { e.printStackTrace(); }
 			
-			
 			if(!gamePaused()) {
+				gameTimedUpdate();
 				updateSprites();
 				if(!initWait){
 					spriteCollision();
 					tileCollision();
 				}
 			}
-			gameTimedUpdate();
 				
 			update(graphics());
 			repaint();

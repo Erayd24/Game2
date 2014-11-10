@@ -65,7 +65,7 @@ public class Judgement extends Game {
 		
 	//Load Sound effects
 	public Judgement() {
-		super(100, SCREENWIDTH, SCREENHEIGHT);
+		super(95, SCREENWIDTH, SCREENHEIGHT);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -238,7 +238,6 @@ public class Judgement extends Game {
 	void gameTimedUpdate() {
 		checkInput();
 		System.out.println(frameRate());
-		System.out.println(tiles().size());
 	}
 	
 	void gameRefreshScreen() {		
@@ -296,8 +295,8 @@ public class Judgement extends Game {
 		}
 		
 		if(spr.spriteType() == "player") {
-			playerX = oldX;
-			playerY = oldY;
+			playerX = oldX - 0.5;
+			playerY = oldY - 0.5;
 		}
 
 		if(spr instanceof Mob) {
