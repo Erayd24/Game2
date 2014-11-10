@@ -7,6 +7,7 @@ import java.util.Random;
 import javax.swing.JFrame;
 
 import axohEngine2.entities.AnimatedSprite;
+import axohEngine2.entities.ImageEntity;
 import axohEngine2.entities.Mob;
 import axohEngine2.entities.SpriteSheet;
 import axohEngine2.map.Event;
@@ -36,12 +37,15 @@ public class Judgement extends Game {
 	private boolean collision = false;
 	private Map currentMap;
 	private Map currentOverlay;
+	private int inputWait = 5;
 	
 	//Game variables -maps/sprites/tiles ... etc
 	SpriteSheet misc;
 	SpriteSheet buildings;
 	SpriteSheet mainCharacter;
 	SpriteSheet environment32;
+	
+	ImageEntity inGameMenu;
 	
 	Mob playerMob;
 	Mob randomNPC;
@@ -86,6 +90,10 @@ public class Judgement extends Game {
 		environment32 = new SpriteSheet("/textures/environments/32SizeEnvironment.png", 8, 8, 32,scale);
 
 		//****Initialize AnimatedSprites******************************************************************
+		
+		//****Initialize image entities*******************************************************************
+		inGameMenu = new ImageEntity(this);
+		inGameMenu.load("/menus/ingamemenu");
 		
 		//****Initialize Mobs*****************************************************************************
 		playerMob = new Mob(this, graphics(), "mainC", true, mainCharacter, 40, "player");
@@ -209,7 +217,6 @@ public class Judgement extends Game {
 		cityO = new Map(cityOTiles, 40, 40);
 		houses = new Map(houseTiles, 6, 6);
 		housesO = new Map(houseOTiles, 6, 6);
-				
 		
 		//*****Set up events**************************************************************************
 		warp1 = new Event("fromHouse", "warp");
@@ -248,6 +255,9 @@ public class Judgement extends Game {
 			currentMap.render((int)playerX, (int)playerY);
 			currentOverlay.render((int)playerX, (int)playerY);
 			playerMob.renderMob(SCREENWIDTH / 2, SCREENHEIGHT / 2, scale);
+		}
+		if(state.getState() == "InGameMenu"){
+			g2d.drawImage(inGameMenu.getImage(), 0, 0, SCREENWIDTH, SCREENHEIGHT, this);
 		}
 	}
 
@@ -360,6 +370,20 @@ public class Judgement extends Game {
 			playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
 		}
 		movePlayer(xa, ya);
+		
+		if(inputWait < 0) {
+			if(keyInventory) {
+				state.changeState("InGameMenu");
+				inputWait = 5;
+				return;
+			}
+			if(state.getState() == "InGameMenu") {
+				if(keyInventory) state.changeState("Game");
+				inputWait = 5;
+				return;
+			}
+		}
+		inputWait--;
 	}
 	
 	void gameKeyDown(int keyCode) {

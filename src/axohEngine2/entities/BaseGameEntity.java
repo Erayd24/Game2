@@ -28,7 +28,7 @@ public class BaseGameEntity extends Object {
 	public void inFaceAngle(double i) { this.faceAngle += i; }
 	
 	//Constructor
-	BaseGameEntity() {
+	protected BaseGameEntity() {
 		setAlive(false);
 		setX(0.0);
 		setY(0.0);

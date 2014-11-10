@@ -1,4 +1,4 @@
-package axohEngine2.entities;
+package axohEngine2.util;
 
 import java.awt.Rectangle;
 
