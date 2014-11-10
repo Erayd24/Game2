@@ -108,12 +108,11 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			purgeSprites(); 
 		}
 		
-		gameRefreshScreen();
-		
 		if(!gamePaused()) {
 			drawSprites();
 		}
 			paint(g);
+			gameRefreshScreen();
 	}
 	
 	public void paint(Graphics g) {
