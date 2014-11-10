@@ -349,33 +349,37 @@ public class Judgement extends Game {
 	public void checkInput() {
 		int xa = 0;
 		int ya = 0;
-		if(keyLeft) {
-			xa = xa + 1 + playerSpeed;
-			playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
+		if(state.getState() == "Game") {
+			if(keyLeft) {
+				xa = xa + 1 + playerSpeed;
+				playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
+			}
+			if(keyRight) {
+				xa = xa - 1 - playerSpeed;
+				playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
+			}
+			if(keyUp) {
+				ya = ya + 1 + playerSpeed;
+				playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
+			}
+			if(keyDown) {
+				ya = ya - 1 - playerSpeed;
+				playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
+			}
+			
+			if(!keyLeft && !keyRight && !keyUp && !keyDown) {
+				playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
+			}
+			movePlayer(xa, ya);
 		}
-		if(keyRight) {
-			xa = xa - 1 - playerSpeed;
-			playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
-		}
-		if(keyUp) {
-			ya = ya + 1 + playerSpeed;
-			playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
-		}
-		if(keyDown) {
-			ya = ya - 1 - playerSpeed;
-			playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
-		}
-		
-		if(!keyLeft && !keyRight && !keyUp && !keyDown) {
-			playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
-		}
-		movePlayer(xa, ya);
 		
 		if(inputWait < 0) {
-			if(keyInventory) {
-				state.changeState("InGameMenu");
-				inputWait = 5;
-				return;
+			if(state.getState() == "Game") {
+				if(keyInventory) {
+					state.changeState("InGameMenu");
+					inputWait = 5;
+					return;
+				}
 			}
 			if(state.getState() == "InGameMenu") {
 				if(keyInventory) state.changeState("Game");
