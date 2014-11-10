@@ -1,5 +1,7 @@
 package axohEngine2;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.Random;
@@ -13,7 +15,8 @@ import axohEngine2.entities.SpriteSheet;
 import axohEngine2.map.Event;
 import axohEngine2.map.Map;
 import axohEngine2.map.Tile;
-import axohEngine2.project.State;
+import axohEngine2.project.OPTION;
+import axohEngine2.project.STATE;
 
 public class Judgement extends Game {
 	private static final long serialVersionUID = 1L;
@@ -25,7 +28,8 @@ public class Judgement extends Game {
 	
 	boolean keyLeft, keyRight, keyUp, keyDown, keyInventory, keyAction, keyBack, keyEnter;
 	Random random = new Random();
-	State state;
+	STATE state;
+	OPTION option;
 	
 	//player variables and scale
 	private int scale;
@@ -38,6 +42,10 @@ public class Judgement extends Game {
 	private Map currentMap;
 	private Map currentOverlay;
 	private int inputWait = 5;
+	
+	//Menu variables
+	private int inX = 90, inY = 90;
+	private int inLocation;
 	
 	//Game variables -maps/sprites/tiles ... etc
 	SpriteSheet misc;
@@ -75,7 +83,8 @@ public class Judgement extends Game {
 	}
 	
 	void gameStartUp() {
-		state = new State("Game");
+		state = STATE.GAME;
+		option = OPTION.NONE;
 		scale = 4;
 		playerX = -40;
 		playerY = 0;
@@ -93,7 +102,7 @@ public class Judgement extends Game {
 		
 		//****Initialize image entities*******************************************************************
 		inGameMenu = new ImageEntity(this);
-		inGameMenu.load("/menus/ingamemenu");
+		inGameMenu.load("/menus/ingamemenu.png");
 		
 		//****Initialize Mobs*****************************************************************************
 		playerMob = new Mob(this, graphics(), "mainC", true, mainCharacter, 40, "player");
@@ -250,14 +259,44 @@ public class Judgement extends Game {
 	void gameRefreshScreen() {		
 		Graphics2D g2d = graphics();
 		g2d.clearRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
+		g2d.setFont(new Font("Arial", Font.PLAIN, 72));
 		
-		if(state.getState() == "Game") {
+		if(state == STATE.GAME) {
 			currentMap.render((int)playerX, (int)playerY);
 			currentOverlay.render((int)playerX, (int)playerY);
 			playerMob.renderMob(SCREENWIDTH / 2, SCREENHEIGHT / 2, scale);
 		}
-		if(state.getState() == "InGameMenu"){
+		if(state == STATE.INGAMEMENU){
 			g2d.drawImage(inGameMenu.getImage(), 0, 0, SCREENWIDTH, SCREENHEIGHT, this);
+			g2d.setColor(Color.BLACK);
+			g2d.drawString("Items", 120, 170);
+			g2d.drawString("Equipment", 120, 275);
+			g2d.drawString("Magic", 120, 385);
+			g2d.drawString("Status", 120, 490);
+			g2d.drawString("Save Game", 120, 600);
+			g2d.setColor(Color.YELLOW);
+			g2d.drawRect(inX, inY, 435, 104);
+		}
+		
+		if(option == OPTION.ITEMS){
+			g2d.setColor(Color.BLACK);
+			g2d.drawString("Items", 920, 200);
+		}
+		if(option == OPTION.EQUIPMENT){
+			g2d.setColor(Color.BLACK);
+			g2d.drawString("Equipment", 900, 200);		
+		}
+		if(option == OPTION.MAGIC){
+			g2d.setColor(Color.BLACK);
+			g2d.drawString("Magic", 880, 200);
+		}
+		if(option == OPTION.STATUS){
+			g2d.setColor(Color.BLACK);
+			g2d.drawString("Status", 920, 200);
+		}
+		if(option == OPTION.SAVE){
+			g2d.setColor(Color.BLACK);
+			g2d.drawString("Save Game", 880, 200);
 		}
 	}
 
@@ -349,7 +388,7 @@ public class Judgement extends Game {
 	public void checkInput() {
 		int xa = 0;
 		int ya = 0;
-		if(state.getState() == "Game") {
+		if(state == STATE.GAME) {
 			if(keyLeft) {
 				xa = xa + 1 + playerSpeed;
 				playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
@@ -373,18 +412,61 @@ public class Judgement extends Game {
 			movePlayer(xa, ya);
 		}
 		
-		if(inputWait < 0) {
-			if(state.getState() == "Game") {
-				if(keyInventory) {
-					state.changeState("InGameMenu");
-					inputWait = 5;
-					return;
+		if(state == STATE.GAME && inputWait < 0) { //Special actions for in game
+			if(keyInventory) {
+				state = STATE.INGAMEMENU;
+				inputWait = 5;
+			}
+		}
+		if(state == STATE.INGAMEMENU && inputWait < 0) { //Special actions for game menu
+			if(keyInventory) {
+				state = STATE.GAME;
+				option = OPTION.NONE;
+				inLocation = 0;
+				inY = 90;
+				inputWait = 5;
+			}
+			if(option == OPTION.NONE){ 
+				if(keyUp) {
+					if(inLocation > 0) {
+						inY -= 108;
+						inLocation--;
+						inputWait = 5;
+					}
+				}
+				if(keyDown) {
+					if(inLocation < 4) {
+						inY += 108;
+						inLocation++;
+						inputWait = 5;
+					}
+				}
+			
+				if(keyEnter) {
+					if(inLocation == 0){ //Items
+						option = OPTION.ITEMS;
+						inputWait = 5;
+					}
+					if(inLocation == 1){ //Equipment
+						option = OPTION.EQUIPMENT;
+						inputWait = 5;
+					}
+					if(inLocation == 2){ //Magic
+						option = OPTION.MAGIC;
+						inputWait = 5;
+					}
+					if(inLocation == 3){ //Status
+						option = OPTION.STATUS;
+						inputWait = 5;
+					}
+					if(inLocation == 4){ //SaveGame
+						option = OPTION.SAVE;
+						inputWait = 5;
+					}
 				}
 			}
-			if(state.getState() == "InGameMenu") {
-				if(keyInventory) state.changeState("Game");
-				inputWait = 5;
-				return;
+			if(keyBack) {
+				option = OPTION.NONE;
 			}
 		}
 		inputWait--;
