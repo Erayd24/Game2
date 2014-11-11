@@ -111,7 +111,7 @@ public class Mob extends AnimatedSprite{
 		yy = yy + y;
 	}
 
-	public void renderMob(int x, int y, int scale) {
+	public void renderMob(int x, int y) {
 		g2d.drawImage(getImage(), x + xx, y + yy, getSpriteSize(), getSpriteSize(), frame);
 		entity.setX(x + xx);
 		entity.setY(y + yy);

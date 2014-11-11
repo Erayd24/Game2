@@ -30,6 +30,9 @@ public class Judgement extends Game {
 	Random random = new Random();
 	STATE state;
 	OPTION option;
+	private Font simple = new Font("Arial", Font.PLAIN, 72);
+	private Font bold = new Font("Arial", Font.BOLD, 72);
+	private Font bigBold = new Font("Arial", Font.BOLD, 96);
 	
 	//player variables and scale
 	private int scale;
@@ -46,14 +49,21 @@ public class Judgement extends Game {
 	//Menu variables
 	private int inX = 90, inY = 90;
 	private int inLocation;
+	private int titleX = 530, titleY = 610;
+	private int titleLocation;
 	
 	//Game variables -maps/sprites/tiles ... etc
 	SpriteSheet misc;
 	SpriteSheet buildings;
 	SpriteSheet mainCharacter;
 	SpriteSheet environment32;
+	SpriteSheet extras1;
 	
 	ImageEntity inGameMenu;
+	ImageEntity titleMenu;
+	ImageEntity titleMenu2;
+	
+	AnimatedSprite titleArrow;
 	
 	Mob playerMob;
 	Mob randomNPC;
@@ -83,7 +93,7 @@ public class Judgement extends Game {
 	}
 	
 	void gameStartUp() {
-		state = STATE.GAME;
+		state = STATE.TITLE;
 		option = OPTION.NONE;
 		scale = 4;
 		playerX = -40;
@@ -97,12 +107,18 @@ public class Judgement extends Game {
 		buildings = new SpriteSheet("/textures/environments/4x4buildings.png", 4, 4, 64, scale);
 		mainCharacter = new SpriteSheet("/textures/characters/mainCharacter.png", 8, 8, 32, scale);
 		environment32 = new SpriteSheet("/textures/environments/32SizeEnvironment.png", 8, 8, 32,scale);
+		extras1 = new SpriteSheet("/textures/extras/extras1.png", 8, 8, 32, scale);
 
 		//****Initialize AnimatedSprites******************************************************************
+		titleArrow = new AnimatedSprite(this, graphics(), extras1, 0, "arrow");
 		
 		//****Initialize image entities*******************************************************************
 		inGameMenu = new ImageEntity(this);
 		inGameMenu.load("/menus/ingamemenu.png");
+		titleMenu = new ImageEntity(this);
+		titleMenu.load("/menus/titlemenu1.png");
+		titleMenu2 = new ImageEntity(this);
+		titleMenu2.load("/menus/titlemenu2.png");
 		
 		//****Initialize Mobs*****************************************************************************
 		playerMob = new Mob(this, graphics(), "mainC", true, mainCharacter, 40, "player");
@@ -121,8 +137,10 @@ public class Judgement extends Game {
 		//Load Animated Sprites Animations and add them to system for updating
 		playerMob.loadMultAnim(32, 48, 40, 56, 3, 8);
 		playerMob.setHealth(35);
+		titleArrow.loadAnim(4, 9);
 		
 		sprites().add(playerMob);
+		sprites().add(titleArrow);
 		
 		//Map generating 40 X 40
 		Tile[] cityTiles = {b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b,
@@ -259,12 +277,12 @@ public class Judgement extends Game {
 	void gameRefreshScreen() {		
 		Graphics2D g2d = graphics();
 		g2d.clearRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
-		g2d.setFont(new Font("Arial", Font.PLAIN, 72));
+		g2d.setFont(simple);
 		
 		if(state == STATE.GAME) {
 			currentMap.render((int)playerX, (int)playerY);
 			currentOverlay.render((int)playerX, (int)playerY);
-			playerMob.renderMob(SCREENWIDTH / 2, SCREENHEIGHT / 2, scale);
+			playerMob.renderMob(SCREENWIDTH / 2, SCREENHEIGHT / 2);
 		}
 		if(state == STATE.INGAMEMENU){
 			g2d.drawImage(inGameMenu.getImage(), 0, 0, SCREENWIDTH, SCREENHEIGHT, this);
@@ -276,6 +294,24 @@ public class Judgement extends Game {
 			g2d.drawString("Save Game", 120, 600);
 			g2d.setColor(Color.YELLOW);
 			g2d.drawRect(inX, inY, 435, 104);
+		}
+		if(state == STATE.TITLE) {
+			g2d.drawImage(titleMenu.getImage(), 0, 0, SCREENWIDTH, SCREENHEIGHT, this);
+			g2d.setColor(Color.BLACK);
+			g2d.setFont(bold);
+			g2d.drawString("New Game", 660, 700);
+			g2d.drawString("Load Game", 560, 800);
+			g2d.setColor(Color.YELLOW);
+			g2d.setFont(bigBold);
+			drawString(g2d, "The\n   Judgement", 500, 100);
+			g2d.drawImage(titleArrow.getImage(), titleX, titleY, titleArrow.getSpriteSize(), titleArrow.getSpriteSize(), this);
+			if(option == OPTION.NEWGAME || option == OPTION.LOADGAME){
+				g2d.setColor(Color.BLACK);
+				g2d.setFont(simple);
+				g2d.drawImage(titleMenu2.getImage(), 0, 0, SCREENWIDTH, SCREENHEIGHT, this);
+				if(option == OPTION.NEWGAME) g2d.drawString("New Game", 620, 190); 
+				if(option == OPTION.LOADGAME) g2d.drawString("Load Game", 620, 190); 
+			}
 		}
 		
 		if(option == OPTION.ITEMS){
@@ -418,6 +454,36 @@ public class Judgement extends Game {
 				inputWait = 5;
 			}
 		}
+		if(state == STATE.TITLE && inputWait < 0){ //Special actions for the title menu
+			if(option == OPTION.NONE){
+				if(keyDown && titleLocation < 1) {
+					titleX -= 105;
+					titleY += 100;
+					titleLocation++;
+					inputWait = 5;
+				}
+				if(keyUp && titleLocation > 0){
+					titleX += 105;
+					titleY -= 100;
+					titleLocation--;
+					inputWait = 5;
+				}
+				if(keyEnter) {
+					if(titleLocation == 0){
+						option = OPTION.NEWGAME;
+					}
+					if(titleLocation == 1){
+						option = OPTION.LOADGAME;
+					}
+				}
+			}
+			if(option == OPTION.NEWGAME || option == OPTION.LOADGAME){
+				if(keyBack){
+					option = OPTION.NONE;
+					inputWait = 5;
+				}
+			}
+		}
 		if(state == STATE.INGAMEMENU && inputWait < 0) { //Special actions for game menu
 			if(keyInventory) {
 				state = STATE.GAME;
@@ -538,4 +604,9 @@ public class Judgement extends Game {
 
 	void gameMouseMove() {
 	}
+	
+	 void drawString(Graphics2D g2d, String text, int x, int y) {
+         for (String line : text.split("\n"))
+             g2d.drawString(line, x, y += g2d.getFontMetrics().getHeight());
+     }
 }
