@@ -8,6 +8,8 @@ import java.util.Random;
 
 import javax.swing.JFrame;
 
+import axohEngine2.data.Data;
+import axohEngine2.data.Save;
 import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.ImageEntity;
 import axohEngine2.entities.Mob;
@@ -28,6 +30,8 @@ public class Judgement extends Game {
 	
 	boolean keyLeft, keyRight, keyUp, keyDown, keyInventory, keyAction, keyBack, keyEnter;
 	Random random = new Random();
+	Data data;
+	Save save;
 	STATE state;
 	OPTION option;
 	private Font simple = new Font("Arial", Font.PLAIN, 72);
@@ -50,7 +54,9 @@ public class Judgement extends Game {
 	private int inX = 90, inY = 90;
 	private int inLocation;
 	private int titleX = 530, titleY = 610;
+	private int titleX2 = 340, titleY2 = 310;
 	private int titleLocation;
+	private String fileName = "";
 	
 	//Game variables -maps/sprites/tiles ... etc
 	SpriteSheet misc;
@@ -95,6 +101,8 @@ public class Judgement extends Game {
 	void gameStartUp() {
 		state = STATE.TITLE;
 		option = OPTION.NONE;
+		data = new Data();
+		save = new Save();
 		scale = 4;
 		playerX = -40;
 		playerY = 0;
@@ -137,7 +145,7 @@ public class Judgement extends Game {
 		//Load Animated Sprites Animations and add them to system for updating
 		playerMob.loadMultAnim(32, 48, 40, 56, 3, 8);
 		playerMob.setHealth(35);
-		titleArrow.loadAnim(4, 9);
+		titleArrow.loadAnim(4, 11);
 		
 		sprites().add(playerMob);
 		sprites().add(titleArrow);
@@ -271,6 +279,7 @@ public class Judgement extends Game {
 	
 	void gameTimedUpdate() {
 		checkInput();
+		data.update(currentMap, currentOverlay, playerX, playerY);
 		System.out.println(frameRate());
 	}
 	
@@ -311,6 +320,7 @@ public class Judgement extends Game {
 				g2d.drawImage(titleMenu2.getImage(), 0, 0, SCREENWIDTH, SCREENHEIGHT, this);
 				if(option == OPTION.NEWGAME) g2d.drawString("New Game", 620, 190); 
 				if(option == OPTION.LOADGAME) g2d.drawString("Load Game", 620, 190); 
+				g2d.drawImage(titleArrow.getImage(), titleX2, titleY2, titleArrow.getSpriteSize(), titleArrow.getSpriteSize(), this);
 			}
 		}
 		
@@ -471,16 +481,37 @@ public class Judgement extends Game {
 				if(keyEnter) {
 					if(titleLocation == 0){
 						option = OPTION.NEWGAME;
+						titleLocation = 0;
 					}
 					if(titleLocation == 1){
 						option = OPTION.LOADGAME;
+						titleLocation = 0;
 					}
 				}
 			}
 			if(option == OPTION.NEWGAME || option == OPTION.LOADGAME){
 				if(keyBack){
 					option = OPTION.NONE;
+					titleLocation = 0;
 					inputWait = 5;
+				}
+				if(keyDown && titleLocation < 2) {
+					titleLocation++;
+					titleY2 += 160;
+					inputWait = 7;
+				}
+				if(keyUp && titleLocation > 0) {
+					titleLocation--;
+					titleY2 -= 160;
+					inputWait = 7;
+				}
+				if(keyEnter) {
+					if(option == OPTION.NEWGAME){
+						//Get characters entered from user 10-char max
+					}
+					if(option == OPTION.LOADGAME) {
+						//If the file exists, open it
+					}
 				}
 			}
 		}
