@@ -246,10 +246,10 @@ public class Judgement extends Game {
 						 	  hf, hf, hf, hf, hf, hf};	
 		
 		//*****Initialize Maps***********************************************************************
-		city = new Map(cityTiles, 40, 40);
-		cityO = new Map(cityOTiles, 40, 40);
-		houses = new Map(houseTiles, 6, 6);
-		housesO = new Map(houseOTiles, 6, 6);
+		city = new Map(this, graphics(), cityTiles, 40, 40);
+		cityO = new Map(this, graphics(), cityOTiles, 40, 40);
+		houses = new Map(this, graphics(), houseTiles, 6, 6);
+		housesO = new Map(this, graphics(), houseOTiles, 6, 6);
 		
 		//*****Set up events**************************************************************************
 		warp1 = new Event("fromHouse", "warp");
@@ -261,10 +261,12 @@ public class Judgement extends Game {
 		houses.accessTile(5).addEvent(warp1);
 		city.accessTile(331).addEvent(warp2);
 		
-		//Add initial tiles to system for updating
+		//Add initial tiles to system for updating and set all initial locations before starting
 		for(int i = 0; i < 40 * 40; i++){
 			addTile(city.accessTile(i));
 			addTile(cityO.accessTile(i));
+			city.accessTile(i).getEntity().setX(-300);
+			cityO.accessTile(i).getEntity().setX(-300);
 		}
 		
 		//Set first map
@@ -288,8 +290,8 @@ public class Judgement extends Game {
 		g2d.setFont(simple);
 		
 		if(state == STATE.GAME) {
-			currentMap.render((int)playerX, (int)playerY);
-			currentOverlay.render((int)playerX, (int)playerY);
+			currentMap.render((int)playerX, (int)playerY, graphics(), this);
+			currentOverlay.render((int)playerX, (int)playerY, graphics(), this);
 			playerMob.renderMob(SCREENWIDTH / 2, SCREENHEIGHT / 2);
 		}
 		
@@ -466,11 +468,13 @@ public class Judgement extends Game {
 						option = OPTION.NEWGAME;
 						titleLocation = 0;
 						inputWait = 5;
+						keyEnter = false;
 					}
 					if(titleLocation == 1){
 						option = OPTION.LOADGAME;
 						titleLocation = 0;
 						inputWait = 5;
+						keyEnter = false;
 					}
 				}
 			}
@@ -501,11 +505,12 @@ public class Judgement extends Game {
 					}
 					if(option == OPTION.LOADGAME) {
 						currentFile = title.enter();
-						loadGame();
-						System.out.println("inside");
-						inputWait = 5;
-						option = OPTION.NONE;
-						state = STATE.GAME;
+						if(currentFile != "") {
+							loadGame();
+							inputWait = 5;
+							option = OPTION.NONE;
+							state = STATE.GAME;
+						}
 					}
 				}
 				//For type setting
@@ -665,7 +670,10 @@ public class Judgement extends Game {
 			 currentOverlay = data().getOverlay();
 			 playerX = data().getPlayerX();
 			 playerY = data().getPlayerY();
-			 
+			 for(int i = 0; i < currentMap.getWidth() * currentMap.getHeight(); i++){
+					addTile(currentMap.accessTile(i));
+					addTile(currentOverlay.accessTile(i));
+			}
 		 }
 	 }
 }

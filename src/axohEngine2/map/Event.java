@@ -1,8 +1,11 @@
 package axohEngine2.map;
 
+import java.io.Serializable;
 
-public class Event {
 
+public class Event implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	//Warping variables
 	private int newX, newY;
 	private Map _map;

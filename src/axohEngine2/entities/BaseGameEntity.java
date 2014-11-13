@@ -1,7 +1,10 @@
 package axohEngine2.entities;
 
-public class BaseGameEntity extends Object {
+import java.io.Serializable;
 
+public class BaseGameEntity extends Object implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	protected boolean alive;
 	protected double x, y;
 	protected double velX, velY;

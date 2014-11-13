@@ -3,14 +3,16 @@ package axohEngine2.map;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.io.Serializable;
 
 import javax.swing.JFrame;
 
 import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.SpriteSheet;
 
-public class Tile extends AnimatedSprite {
-
+public class Tile extends AnimatedSprite implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	private boolean _solid;
 	private boolean _slippery;
 	private boolean _breakable;
@@ -18,15 +20,10 @@ public class Tile extends AnimatedSprite {
 	
 	private Event event;
 	private boolean hasProperty = false;
-	
-	Graphics2D _g2d;
-	JFrame _frame;
-	
+		
 	//Default constructor
 	public Tile(JFrame frame, Graphics2D g2d, String name, SpriteSheet sheet, int spriteNumber) {
 		super(frame, g2d, sheet, spriteNumber, name);
-		_frame = frame;
-		_g2d = g2d;
 		_solid = false;
 		_slippery = false;
 		_breakable = false;
@@ -37,8 +34,6 @@ public class Tile extends AnimatedSprite {
 	//Second constructor used for the most common element of solid
 	public Tile(JFrame frame, Graphics2D g2d, String name, SpriteSheet sheet, int spriteNumber, boolean solid) {
 		super(frame, g2d, sheet, spriteNumber, name);
-		_frame = frame;
-		_g2d = g2d;
 		_solid = solid;
 		_slippery = false;
 		_breakable = false;
@@ -53,8 +48,6 @@ public class Tile extends AnimatedSprite {
 	//Third constructor for less commn elements
 	public Tile(JFrame frame, Graphics2D g2d, String name, SpriteSheet sheet, int spriteNumber, boolean solid, boolean slippery, boolean breakable) {
 		super(frame, g2d, sheet, spriteNumber, name);
-		_frame = frame;
-		_g2d = g2d;
 		_solid = solid;
 		_slippery = slippery;
 		_breakable = breakable;
@@ -65,10 +58,8 @@ public class Tile extends AnimatedSprite {
 	}
 	
 	//Constructor for making a new tile from an existing tile for recreation
-	public Tile(Tile tile) {
-		super(tile._frame, tile._g2d, tile.getSheet(), tile.getSpriteNumber(), tile._name);
-		_frame = tile._frame;
-		_g2d = tile._g2d;
+	public Tile(Tile tile, JFrame frame, Graphics2D g2d) {
+		super(frame, g2d, tile.getSheet(), tile.getSpriteNumber(), tile._name);
 		_solid = tile.isSolid();
 		_slippery = tile.isSlippery();
 		_breakable = tile.isBreakable();
@@ -102,13 +93,13 @@ public class Tile extends AnimatedSprite {
 		super.loadAnim(frames, delay);
 	}
 	
-	public void renderTile(int x, int y) {
-		_g2d.drawImage(getImage(), x, y, getSpriteSize(), getSpriteSize(), _frame);
+	public void renderTile(int x, int y, Graphics2D g2d, JFrame frame) {
+		g2d.drawImage(getImage(), x, y, getSpriteSize(), getSpriteSize(), frame);
 	}
 	
-	public void drawTileBounds(Color c) {
-		_g2d.setColor(c);
-		_g2d.draw(getTileBounds());
+	public void drawTileBounds(Color c, Graphics2D g2d) {
+		g2d.setColor(c);
+		g2d.draw(getTileBounds());
 	}
 	
 	public Rectangle getTileBounds() {

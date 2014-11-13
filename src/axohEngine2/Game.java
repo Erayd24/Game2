@@ -11,7 +11,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.LinkedList;
@@ -29,19 +28,19 @@ import axohEngine2.util.Point2D;
 @SuppressWarnings("serial")
 abstract class Game extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 	
-	private Thread gameloop;
+	private transient Thread gameloop;
 	
 	private LinkedList<AnimatedSprite> _sprites;
 	public LinkedList<AnimatedSprite> sprites() { return _sprites; }
 	private LinkedList<Tile> _tiles;
 	public LinkedList<Tile> tiles() { return _tiles; }
 	
-	private BufferedImage backBuffer;
-	private Graphics2D g2d;
-	private Toolkit tk;
+	private transient BufferedImage backBuffer;
+	private transient Graphics2D g2d;
+	private transient Toolkit tk;
 	private int screenWidth, screenHeight;
 	
-	private Point2D mousePos = new Point2D(0, 0);
+	private transient Point2D mousePos = new Point2D(0, 0);
 	private boolean mouseButtons[] = new boolean[4];
 	protected char currentChar;
 	
@@ -52,7 +51,6 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	private int _frameRate = 0;
 	private int desiredRate;
 	private long startTime = System.currentTimeMillis();
-	private boolean initWait = true;
 	
 	//Pause game state
 	private boolean _gamePaused = false;
@@ -150,16 +148,11 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			if(!gamePaused()) {
 				gameTimedUpdate();
 				updateSprites();
-				if(!initWait){
-					spriteCollision();
-					tileCollision();
-				}
+				spriteCollision();
+				tileCollision();
 			}
-				
 			update(graphics());
 			repaint();
-			
-			initWait = false;
 		}
 	}
 	
@@ -174,7 +167,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		Object obj = null;
 		
 		try {
-			file_in = new FileInputStream("/gamedata/saves/" + fileName);
+			file_in = new FileInputStream("C:/gamedata/saves/" + fileName);
 			reader = new ObjectInputStream (file_in);
 			System.out.println("Load successful.");
 	

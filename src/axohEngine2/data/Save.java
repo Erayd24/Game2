@@ -12,12 +12,12 @@ public class Save implements Serializable {
 	
 	private transient FileOutputStream file_out;
 	private transient ObjectOutputStream obj_out;
-	private PrintWriter writer;
+	private transient PrintWriter writer;
 	private File newfile; 
 	
 	public void saveState(String fileName, Data data) {
 		try {
-			file_out = new FileOutputStream("C:/ProgramFiles(x86)/gamedata/saves/" + fileName);
+			file_out = new FileOutputStream("C:/gamedata/saves/" + fileName);
 			obj_out = new ObjectOutputStream(file_out);
 			obj_out.writeObject(data);
 			obj_out.close();
@@ -27,7 +27,7 @@ public class Save implements Serializable {
 	}
 	
 	public void newFile(String file) {
-		newfile = new File("C:/Program Files (x86)/gamedata/saves/" + file);
+		newfile = new File("C:/gamedata/saves/" + file);
 		newfile.getParentFile().mkdirs();
 		
 		try {

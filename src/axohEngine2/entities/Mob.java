@@ -17,7 +17,7 @@ public class Mob extends AnimatedSprite{
 	boolean _up = false;
 	boolean _down = false;
 	
-	private Graphics2D g2d;
+	private transient Graphics2D g2d;
 	private JFrame frame;
 	
 	public Mob(JFrame frame, Graphics2D g2d, String name, boolean hostility, SpriteSheet sheet, int spriteNumber, String ai) {

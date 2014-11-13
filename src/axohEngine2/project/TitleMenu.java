@@ -4,14 +4,16 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.io.File;
+import java.io.Serializable;
 
 import javax.swing.JFrame;
 
 import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.ImageEntity;
 
-public class TitleMenu {
-
+public class TitleMenu implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	private String[] files;
 	private File existingFiles;
 	private int location;
@@ -31,7 +33,7 @@ public class TitleMenu {
 	private int SCREENHEIGHT;
 	
 	public TitleMenu(ImageEntity mainImage, ImageEntity secondary,AnimatedSprite titleArrow, int width, int height, Font simple, Font bold, Font bigBold) {
-		existingFiles = new File("C:/users/gamedata/saves/");
+		existingFiles = new File("C:/gamedata/saves/");
 		titleMenu = mainImage;
 		titleMenu2 = secondary;
 		this.titleArrow = titleArrow;
@@ -97,9 +99,11 @@ public class TitleMenu {
 			return "";
 		}
 		if(_option == OPTION.LOADGAME) {
-			if(files.length == 3) return (files[location]); 
-			if(files.length == 2 && location <= 1) return (files[location]); 
-			if(files.length == 1 && location == 0) return (files[location]); 
+			if(location <= files.length  - 1){
+				if(files.length == 3) return (files[location]); 
+				if(files.length == 2 && location <= 1) return (files[location]); 
+				if(files.length == 1 && location == 0) return (files[location]); 
+			}
 		}
 		return "";
 	}

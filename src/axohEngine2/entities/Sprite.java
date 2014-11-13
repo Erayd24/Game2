@@ -4,18 +4,18 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.io.Serializable;
 
 import javax.swing.JFrame;
 
 import axohEngine2.util.Point2D;
 
-public class Sprite extends Object{
+public class Sprite extends Object implements Serializable{
+	private static final long serialVersionUID = 1L;
 	
 	protected ImageEntity entity;
-	private Image image;
+	private transient Image image;
 	
-    protected Point2D pos;
-    protected Point2D vel;
     protected int currentState;
     protected String sprType;
     protected boolean _collided;
@@ -34,8 +34,6 @@ public class Sprite extends Object{
         image = null;
         entity.setGraphics(g2d);
         entity.setAlive(true);
-        pos = new Point2D(0, 0);
-        vel = new Point2D(0, 0);
         currentState = 0;
         _collided = false;
         _lifespan = 0;

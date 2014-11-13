@@ -7,11 +7,12 @@ import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 
 public class AnimatedSprite extends Sprite {
+	private static final long serialVersionUID = 1L;
 
 	private ImageEntity animImage;
 	
-    BufferedImage image;
-    Graphics2D tempSurface;
+    transient BufferedImage image;
+    transient Graphics2D tempSurface;
     public String _name;
     
     private int currFrame;
