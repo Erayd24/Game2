@@ -10,12 +10,19 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.LinkedList;
 
 import javax.swing.JFrame;
 
+import axohEngine2.data.Data;
+import axohEngine2.data.Save;
 import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.Mob;
+import axohEngine2.map.Map;
 import axohEngine2.map.Tile;
 import axohEngine2.util.Point2D;
 
@@ -36,6 +43,10 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	
 	private Point2D mousePos = new Point2D(0, 0);
 	private boolean mouseButtons[] = new boolean[4];
+	protected char currentChar;
+	
+	private Data data;
+	protected Save save;
 		
 	private int _frameCount = 0;
 	private int _frameRate = 0;
@@ -83,6 +94,9 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
         //create the internal lists
         _sprites = new LinkedList<AnimatedSprite>();
         _tiles = new LinkedList<Tile>();
+        
+        data = new Data();
+		save = new Save();
         
         addKeyListener(this);
         addMouseListener(this);
@@ -154,8 +168,32 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		gameShutDown();
 	}
 	
+	public void loadData(String fileName) {
+		FileInputStream file_in = null;
+		ObjectInputStream reader = null;
+		Object obj = null;
+		
+		try {
+			file_in = new FileInputStream("/gamedata/saves/" + fileName);
+			reader = new ObjectInputStream (file_in);
+			System.out.println("Load successful.");
+	
+			obj = reader.readObject();
+		} catch(IOException | ClassNotFoundException e) {}
+			
+		if(obj instanceof Data) {
+			data = (Data) obj;
+		}
+	}
+	
+	public Data data() {
+		return data;
+	}
+	
 	//Key Listener Methods
-	public void keyTyped(KeyEvent k) { }
+	public void keyTyped(KeyEvent k) { 
+		setKeyChar(k.getKeyChar());
+	}
 	
     public void keyPressed(KeyEvent k) {
         gameKeyDown(k.getKeyCode());
@@ -229,6 +267,9 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	
 	public void mouseClicked(MouseEvent e) { }
 	
+	public void setKeyChar(char keyChar) {
+		currentChar = keyChar;
+	}
 	
 	//Miscelaneouse Other methods for games
 	//
@@ -252,6 +293,10 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			}
 			spriteDying(spr);
 		}
+	}
+	
+	protected void updateData(Map currentMap, Map currentOverlay, double playerX, double playerY) {
+		data.update(currentMap, currentOverlay, playerX, playerY);
 	}
 	
 	protected void spriteCollision() {

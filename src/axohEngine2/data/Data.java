@@ -5,7 +5,7 @@ import java.io.Serializable;
 import axohEngine2.map.Map;
 
 public class Data implements Serializable {	
-	private static final long serialVersionUID = -3008487369798218205L;
+	private static final long serialVersionUID = -4668422157233446222L;
 	
 	private Map _currentMap;
 	private Map _currentOverlay;
