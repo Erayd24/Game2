@@ -17,11 +17,11 @@ public class Data implements Serializable {
 		_playerY = playerY;
 	}
 	
-	public String getMap() {
+	public String getMapName() {
 		return _currentMapName;
 	}
 	
-	public String getOverlay() {
+	public String getOverlayName() {
 		return _currentOverlayName;
 	}
 	

@@ -27,7 +27,7 @@ public class Judgement extends Game {
 	static int CENTERX = SCREENWIDTH / 2;
 	static int CENTERY = SCREENHEIGHT / 2;
 	
-	//enums, keys, saves, and fonts variables
+	//enums, keys, and fonts variables
 	boolean keyLeft, keyRight, keyUp, keyDown, keyInventory, keyAction, keyBack, keyEnter;
 	Random random = new Random();
 	STATE state;
@@ -35,8 +35,6 @@ public class Judgement extends Game {
 	private Font simple = new Font("Arial", Font.PLAIN, 72);
 	private Font bold = new Font("Arial", Font.BOLD, 72);
 	private Font bigBold = new Font("Arial", Font.BOLD, 96);
-	private String currentFile;
-	private MapDatabase mapBase;
 	
 	//player variables and scale
 	private int scale;
@@ -45,10 +43,13 @@ public class Judgement extends Game {
 	private int playerSpeed;
 	private double oldX;
 	private double oldY;
+	
+	//Map and collision variables
 	private boolean collision = false;
 	private Map currentMap;
 	private Map currentOverlay;
 	private int inputWait = 5;
+	private MapDatabase mapBase;
 	
 	//Menu variables
 	private int inX = 90, inY = 90;
@@ -56,12 +57,9 @@ public class Judgement extends Game {
 	private int titleX = 530, titleY = 610;
 	private int titleX2 = 340, titleY2 = 310;
 	private int titleLocation;
+	private String currentFile;
 	
 	//Game variables -maps/sprites/tiles ... etc
-	/*SpriteSheet misc;
-	SpriteSheet buildings;
-	SpriteSheet environment32;
-	*/
 	SpriteSheet extras1;
 	SpriteSheet mainCharacter;
 	
@@ -74,25 +72,6 @@ public class Judgement extends Game {
 	
 	Mob playerMob;
 	Mob randomNPC;
-	
-	/*Map city;
-	Map cityO;
-	Map houses;
-	Map housesO;
-	Tile d;
-	Tile g;
-	Tile f;
-	Tile b;
-	Tile r;
-	Tile e;
-	Tile ro;
-	Tile h;
-	Tile hf;
-	
-	Event warp1;
-	Event warp2;
-	*/
-		
 	//Load Sound effects
 	public Judgement() {
 		super(95, SCREENWIDTH, SCREENHEIGHT);
@@ -101,7 +80,7 @@ public class Judgement extends Game {
 	}
 	
 	void gameStartUp() {
-		state = STATE.GAME;
+		state = STATE.TITLE;
 		option = OPTION.NONE;
 		scale = 4;
 		playerX = -40;
@@ -111,9 +90,6 @@ public class Judgement extends Game {
 		playerSpeed = 3;
 		
 		//****Initialize spriteSheets*********************************************************************
-		/*misc = new SpriteSheet("/textures/environments/environments1.png", 16, 16, 16, scale);
-		buildings = new SpriteSheet("/textures/environments/4x4buildings.png", 4, 4, 64, scale);
-		environment32 = new SpriteSheet("/textures/environments/32SizeEnvironment.png", 8, 8, 32,scale);*/
 		extras1 = new SpriteSheet("/textures/extras/extras1.png", 8, 8, 32, scale);
 		mainCharacter = new SpriteSheet("/textures/characters/mainCharacter.png", 8, 8, 32, scale);
 
@@ -134,147 +110,19 @@ public class Judgement extends Game {
 		title = new TitleMenu(titleMenu, titleMenu2, titleArrow, SCREENWIDTH, SCREENHEIGHT, simple, bold, bigBold);
 		
 		//****Initialize Mobs*****************************************************************************
-		playerMob = new Mob(this, graphics(), "mainC", true, mainCharacter, 40, "player");
+		playerMob = new Mob(this, graphics(), mainCharacter, 40, "player", "mainC", true);
 		playerMob.loadMultAnim(32, 48, 40, 56, 3, 8);
 		playerMob.setHealth(35);
 		sprites().add(playerMob);
 		
-		//****Initialize Tiles****************************************************************************
-		/*d = new Tile(this, graphics(), "door", environment32, 0);
-		f = new Tile(this, graphics(), "flower", misc, 1);
-		g = new Tile(this, graphics(), "grass", misc, 0);
-		b = new Tile(this, graphics(), "bricks", misc, 16, true);
-		r = new Tile(this, graphics(), "walkWay", misc, 6);
-		e = new Tile(this, graphics(), "empty", misc, 7);
-		ro = new Tile(this, graphics(), "rock", misc, 2);
-		h = new Tile(this, graphics(), "house", buildings, 0, true);
-		hf = new Tile(this, graphics(), "floor", misc, 8);
-
-		
-		//Map generating 40 X 40
-		Tile[] cityTiles = {b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b,
-						    b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, r, b, b,
-						    b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b,
-						    b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b};
-		
-		Tile[] cityOTiles = {e, e, h, e, e, e, e, h, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, d, e, e, e, e, d, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, ro, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, ro, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, ro, ro, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e};
-		
-		Tile[] houseTiles = {hf, hf, hf, hf, hf, hf,
-							 hf, hf, hf, hf, hf, hf,
-							 hf, hf, hf, hf, hf, hf,
-							 hf, hf, hf, hf, hf, hf,
-							 hf, hf, hf, hf, hf, hf,
-							 hf, hf, hf, hf, hf, hf};
-		
-		Tile[] houseOTiles = {hf, hf, hf, hf, hf, hf,
-						 	  hf, hf, hf, hf, hf, hf,
-						 	  hf, hf, hf, hf, hf, hf,
-						 	  hf, hf, hf, hf, hf, hf,
-						 	  hf, hf, hf, hf, hf, hf,
-						 	  hf, hf, hf, hf, hf, hf};	
-		
-		//*****Initialize Maps***********************************************************************
-		city = new Map(this, graphics(), cityTiles, 40, 40, "city");
-		cityO = new Map(this, graphics(), cityOTiles, 40, 40, "cityO");
-		houses = new Map(this, graphics(), houseTiles, 6, 6, "houses");
-		housesO = new Map(this, graphics(), houseOTiles, 6, 6, "housesO");
-		
-		//*****Set up events**************************************************************************
-		warp1 = new Event("fromHouse", "warp");
-		warp1.setWarp(city, cityO, 200, -50);
-		warp2 = new Event("toHouse", "warp");
-		warp2.setWarp(houses, housesO, 620, 250);
-		
-		//*****Add the events to their tile homes*****************************************************
-		houses.accessTile(5).addEvent(warp1);
-		city.accessTile(331).addEvent(warp2);
-		*/
-		
-		//Add initial tiles to system for updating and set all initial locations before starting
-		//Set first map
+		//Set up first map and tiles
 		mapBase = new MapDatabase(this, graphics(), scale);
 		for(int i = 0; i < mapBase.maps.length; i++){
 			if(mapBase.getMap(i) == null) continue;
 			if(mapBase.getMap(i).mapName() == "city") currentMap = mapBase.getMap(i);
 			if(mapBase.getMap(i).mapName() == "cityO") currentOverlay = mapBase.getMap(i);
 		}
-		
-		for(int i = 0; i < 40 * 40; i++){
+		for(int i = 0; i < currentMap.getHeight() * currentMap.getHeight(); i++){
 			addTile(currentMap.accessTile(i));
 			addTile(currentOverlay.accessTile(i));
 			currentMap.accessTile(i).getEntity().setX(-300);
@@ -289,8 +137,7 @@ public class Judgement extends Game {
 		checkInput();
 		title.update(option, titleLocation);
 		updateData(currentMap, currentOverlay, playerX, playerY);
-		//System.out.println(frameRate());
-		//System.out.println(currentMap.accessTile(0).getSpriteSize());
+		System.out.println(frameRate());
 	}
 	
 	void gameRefreshScreen() {		
@@ -299,9 +146,9 @@ public class Judgement extends Game {
 		g2d.setFont(simple);
 		
 		if(state == STATE.GAME) {
-			currentMap.render((int)playerX, (int)playerY, graphics(), this);
-			currentOverlay.render((int)playerX, (int)playerY, graphics(), this);
-			playerMob.renderMob(SCREENWIDTH / 2, SCREENHEIGHT / 2);
+			currentMap.render(this, graphics(), (int)playerX, (int)playerY);
+			currentOverlay.render(this, graphics(), (int)playerX, (int)playerY);
+			playerMob.renderMob(CENTERX, CENTERY);
 		}
 		
 		if(state == STATE.INGAMEMENU){
@@ -337,7 +184,7 @@ public class Judgement extends Game {
 		}
 		
 		if(state == STATE.TITLE) {
-			title.renderTitleScreen(g2d, this, titleX, titleY, titleX2, titleY2);
+			title.renderTitleScreen(this, g2d, titleX, titleY, titleX2, titleY2);
 		}
 	}
 
@@ -372,8 +219,11 @@ public class Judgement extends Game {
 		if(spr.spriteType() == "player" && tile.hasEvent()) {
 			if(tile.event().getEventType().equals("warp")) {
 				tiles().clear();
-				currentMap = tile.event().getMap();
-				currentOverlay = tile.event().getOverlay();
+				for(int i = 0; i < mapBase.maps.length; i++){
+					 if(mapBase.getMap(i) == null) continue;
+					 if(tile.event().getMapName() == mapBase.getMap(i).mapName()) currentMap = mapBase.getMap(i);
+					 if(tile.event().getOverlayName() == mapBase.getMap(i).mapName()) currentOverlay = mapBase.getMap(i);
+				}
 				for(int i = 0; i < currentMap.getWidth() * currentMap.getHeight(); i++){ //For differing widths and height of each map
 					addTile(currentMap.accessTile(i));
 					addTile(currentOverlay.accessTile(i));
@@ -429,7 +279,8 @@ public class Judgement extends Game {
 	public void checkInput() {
 		int xa = 0;
 		int ya = 0;
-		if(state == STATE.GAME && inputWait < 0) { //Special actions for in game
+		//Special actions for in game
+		if(state == STATE.GAME && inputWait < 0) { 
 			if(keyLeft) {
 				xa = xa + 1 + playerSpeed;
 				playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
@@ -458,7 +309,8 @@ public class Judgement extends Game {
 			}
 		}
 		
-		if(state == STATE.TITLE && inputWait < 0){ //Special actions for the title menu
+		 //Special actions for the title menu
+		if(state == STATE.TITLE && inputWait < 0){
 			if(option == OPTION.NONE){
 				if(keyDown && titleLocation < 1) {
 					titleX -= 105;
@@ -522,7 +374,7 @@ public class Judgement extends Game {
 						}
 					}
 				}
-				//For type setting
+				//For typeSetting
 				if(title.getName == true) {
 					title.setFileName(currentChar);
 					currentChar = '\0';
@@ -546,7 +398,8 @@ public class Judgement extends Game {
 			}
 		}
 		
-		if(state == STATE.INGAMEMENU && inputWait < 0) { //Special actions for in game menu
+		 //Special actions for in game menu
+		if(state == STATE.INGAMEMENU && inputWait < 0) {
 			if(keyInventory) {
 				state = STATE.GAME;
 				option = OPTION.NONE;
@@ -570,23 +423,23 @@ public class Judgement extends Game {
 					}
 				}
 				if(keyEnter) {
-					if(inLocation == 0){ //Items
+					if(inLocation == 0){
 						option = OPTION.ITEMS;
 						inputWait = 5;
 					}
-					if(inLocation == 1){ //Equipment
+					if(inLocation == 1){
 						option = OPTION.EQUIPMENT;
 						inputWait = 5;
 					}
-					if(inLocation == 2){ //Magic
+					if(inLocation == 2){
 						option = OPTION.MAGIC;
 						inputWait = 5;
 					}
-					if(inLocation == 3){ //Status
+					if(inLocation == 3){
 						option = OPTION.STATUS;
 						inputWait = 5;
 					}
-					if(inLocation == 4){ //SaveGame
+					if(inLocation == 4){
 						option = OPTION.SAVE;
 						inputWait = 5;
 						save.saveState(currentFile, data());
@@ -675,10 +528,12 @@ public class Judgement extends Game {
 	 void loadGame() {
 		 if(currentFile != "") {
 			 loadData(currentFile);
-			 
-			 /*currentMap = data().getMap();
-			 currentOverlay = data().getOverlay();*/
-			 
+			 tiles().clear();
+			 for(int i = 0; i < mapBase.maps.length; i++){
+				 if(mapBase.getMap(i) == null) continue;
+				 if(data().getMapName() == mapBase.getMap(i).mapName()) currentMap = mapBase.getMap(i);
+				 if(data().getOverlayName() == mapBase.getMap(i).mapName()) currentOverlay = mapBase.getMap(i);
+			 }
 			 playerX = data().getPlayerX();
 			 playerY = data().getPlayerY();
 			 for(int i = 0; i < currentMap.getWidth() * currentMap.getHeight(); i++){

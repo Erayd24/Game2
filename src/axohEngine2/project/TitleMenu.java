@@ -43,7 +43,7 @@ public class TitleMenu {
 		_option = OPTION.NONE;
 	}
 	
-	public void renderTitleScreen(Graphics2D g2d, JFrame frame, int titleX, int titleY, int titleX2, int titleY2) {
+	public void renderTitleScreen(JFrame frame, Graphics2D g2d, int titleX, int titleY, int titleX2, int titleY2) {
 		g2d.drawImage(titleMenu.getImage(), 0, 0, SCREENWIDTH, SCREENHEIGHT, frame);
 		g2d.setColor(Color.BLACK);
 		g2d.setFont(bold);

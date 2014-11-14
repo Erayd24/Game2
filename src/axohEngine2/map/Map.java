@@ -25,7 +25,7 @@ public class Map {
 		spriteSize = tiles[0].getSpriteSize();
 	}
 	
-	public void render(int xx, int yy, Graphics2D g2d, JFrame frame) {
+	public void render(JFrame frame, Graphics2D g2d, int xx, int yy) {
 		int xt = xx;
 			for(int y = 0; y < mapHeight; y++) {
 				for(int x = 0; x < mapWidth; x++) {

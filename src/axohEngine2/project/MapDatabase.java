@@ -168,9 +168,9 @@ public class MapDatabase {
 		
 		//Put together all events
 		warp1 = new Event("fromHouse", "warp");
-		warp1.setWarp(city, cityO, 200, -50);
+		warp1.setWarp("city", "cityO", 200, -50);
 		warp2 = new Event("toHouse", "warp");
-		warp2.setWarp(houses, housesO, 620, 250);
+		warp2.setWarp("houses", "housesO", 620, 250);
 		
 		//Add the events to their specific tiles and maps
 		houses.accessTile(5).addEvent(warp1);

@@ -20,7 +20,7 @@ public class Mob extends AnimatedSprite{
 	private transient Graphics2D g2d;
 	private JFrame frame;
 	
-	public Mob(JFrame frame, Graphics2D g2d, String name, boolean hostility, SpriteSheet sheet, int spriteNumber, String ai) {
+	public Mob(JFrame frame, Graphics2D g2d, SpriteSheet sheet, int spriteNumber, String ai, String name, boolean hostility) {
 		super(frame, g2d, sheet, spriteNumber, name);
 		this.frame = frame;
 		this.g2d = g2d;
