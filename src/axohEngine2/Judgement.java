@@ -360,9 +360,11 @@ public class Judgement extends Game {
 				}
 				if(keyEnter && !title.getName) {
 					if(option == OPTION.NEWGAME) {
-						title.enter();
-						titleX2 += 40;
-						inputWait = 5;
+						if(title.files().length - 1 < titleLocation) {
+							title.enter();
+							titleX2 += 40;
+							inputWait = 5;
+						}
 					}
 					if(option == OPTION.LOADGAME) {
 						currentFile = title.enter();

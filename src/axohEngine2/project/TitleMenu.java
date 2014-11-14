@@ -110,6 +110,8 @@ public class TitleMenu {
 		return _fileName;
 	}
 	
+	public String[] files() { return files; }
+	
 	void drawString(Graphics2D g2d, String text, int x, int y) {
        for (String line : text.split("\n"))
            g2d.drawString(line, x, y += g2d.getFontMetrics().getHeight());
