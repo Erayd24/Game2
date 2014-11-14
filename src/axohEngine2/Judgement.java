@@ -12,9 +12,9 @@ import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.ImageEntity;
 import axohEngine2.entities.Mob;
 import axohEngine2.entities.SpriteSheet;
-import axohEngine2.map.Event;
 import axohEngine2.map.Map;
 import axohEngine2.map.Tile;
+import axohEngine2.project.MapDatabase;
 import axohEngine2.project.OPTION;
 import axohEngine2.project.STATE;
 import axohEngine2.project.TitleMenu;
@@ -36,6 +36,7 @@ public class Judgement extends Game {
 	private Font bold = new Font("Arial", Font.BOLD, 72);
 	private Font bigBold = new Font("Arial", Font.BOLD, 96);
 	private String currentFile;
+	private MapDatabase mapBase;
 	
 	//player variables and scale
 	private int scale;
@@ -57,11 +58,12 @@ public class Judgement extends Game {
 	private int titleLocation;
 	
 	//Game variables -maps/sprites/tiles ... etc
-	SpriteSheet misc;
+	/*SpriteSheet misc;
 	SpriteSheet buildings;
-	SpriteSheet mainCharacter;
 	SpriteSheet environment32;
+	*/
 	SpriteSheet extras1;
+	SpriteSheet mainCharacter;
 	
 	ImageEntity inGameMenu;
 	ImageEntity titleMenu;
@@ -73,7 +75,7 @@ public class Judgement extends Game {
 	Mob playerMob;
 	Mob randomNPC;
 	
-	Map city;
+	/*Map city;
 	Map cityO;
 	Map houses;
 	Map housesO;
@@ -89,6 +91,7 @@ public class Judgement extends Game {
 	
 	Event warp1;
 	Event warp2;
+	*/
 		
 	//Load Sound effects
 	public Judgement() {
@@ -98,7 +101,7 @@ public class Judgement extends Game {
 	}
 	
 	void gameStartUp() {
-		state = STATE.TITLE;
+		state = STATE.GAME;
 		option = OPTION.NONE;
 		scale = 4;
 		playerX = -40;
@@ -108,11 +111,11 @@ public class Judgement extends Game {
 		playerSpeed = 3;
 		
 		//****Initialize spriteSheets*********************************************************************
-		misc = new SpriteSheet("/textures/environments/environments1.png", 16, 16, 16, scale);
+		/*misc = new SpriteSheet("/textures/environments/environments1.png", 16, 16, 16, scale);
 		buildings = new SpriteSheet("/textures/environments/4x4buildings.png", 4, 4, 64, scale);
-		mainCharacter = new SpriteSheet("/textures/characters/mainCharacter.png", 8, 8, 32, scale);
-		environment32 = new SpriteSheet("/textures/environments/32SizeEnvironment.png", 8, 8, 32,scale);
+		environment32 = new SpriteSheet("/textures/environments/32SizeEnvironment.png", 8, 8, 32,scale);*/
 		extras1 = new SpriteSheet("/textures/extras/extras1.png", 8, 8, 32, scale);
+		mainCharacter = new SpriteSheet("/textures/characters/mainCharacter.png", 8, 8, 32, scale);
 
 		//****Initialize AnimatedSprites******************************************************************
 		titleArrow = new AnimatedSprite(this, graphics(), extras1, 0, "arrow");
@@ -137,7 +140,7 @@ public class Judgement extends Game {
 		sprites().add(playerMob);
 		
 		//****Initialize Tiles****************************************************************************
-		d = new Tile(this, graphics(), "door", environment32, 0);
+		/*d = new Tile(this, graphics(), "door", environment32, 0);
 		f = new Tile(this, graphics(), "flower", misc, 1);
 		g = new Tile(this, graphics(), "grass", misc, 0);
 		b = new Tile(this, graphics(), "bricks", misc, 16, true);
@@ -246,10 +249,10 @@ public class Judgement extends Game {
 						 	  hf, hf, hf, hf, hf, hf};	
 		
 		//*****Initialize Maps***********************************************************************
-		city = new Map(this, graphics(), cityTiles, 40, 40);
-		cityO = new Map(this, graphics(), cityOTiles, 40, 40);
-		houses = new Map(this, graphics(), houseTiles, 6, 6);
-		housesO = new Map(this, graphics(), houseOTiles, 6, 6);
+		city = new Map(this, graphics(), cityTiles, 40, 40, "city");
+		cityO = new Map(this, graphics(), cityOTiles, 40, 40, "cityO");
+		houses = new Map(this, graphics(), houseTiles, 6, 6, "houses");
+		housesO = new Map(this, graphics(), houseOTiles, 6, 6, "housesO");
 		
 		//*****Set up events**************************************************************************
 		warp1 = new Event("fromHouse", "warp");
@@ -260,18 +263,23 @@ public class Judgement extends Game {
 		//*****Add the events to their tile homes*****************************************************
 		houses.accessTile(5).addEvent(warp1);
 		city.accessTile(331).addEvent(warp2);
+		*/
 		
 		//Add initial tiles to system for updating and set all initial locations before starting
-		for(int i = 0; i < 40 * 40; i++){
-			addTile(city.accessTile(i));
-			addTile(cityO.accessTile(i));
-			city.accessTile(i).getEntity().setX(-300);
-			cityO.accessTile(i).getEntity().setX(-300);
+		//Set first map
+		mapBase = new MapDatabase(this, graphics(), scale);
+		for(int i = 0; i < mapBase.maps.length; i++){
+			if(mapBase.getMap(i) == null) continue;
+			if(mapBase.getMap(i).mapName() == "city") currentMap = mapBase.getMap(i);
+			if(mapBase.getMap(i).mapName() == "cityO") currentOverlay = mapBase.getMap(i);
 		}
 		
-		//Set first map
-		currentMap = city;
-		currentOverlay = cityO;
+		for(int i = 0; i < 40 * 40; i++){
+			addTile(currentMap.accessTile(i));
+			addTile(currentOverlay.accessTile(i));
+			currentMap.accessTile(i).getEntity().setX(-300);
+			currentOverlay.accessTile(i).getEntity().setX(-300);
+		}
 		
 		requestFocus();
 		start();
@@ -281,7 +289,8 @@ public class Judgement extends Game {
 		checkInput();
 		title.update(option, titleLocation);
 		updateData(currentMap, currentOverlay, playerX, playerY);
-		System.out.println(frameRate());
+		//System.out.println(frameRate());
+		//System.out.println(currentMap.accessTile(0).getSpriteSize());
 	}
 	
 	void gameRefreshScreen() {		
@@ -666,8 +675,10 @@ public class Judgement extends Game {
 	 void loadGame() {
 		 if(currentFile != "") {
 			 loadData(currentFile);
-			 currentMap = data().getMap();
-			 currentOverlay = data().getOverlay();
+			 
+			 /*currentMap = data().getMap();
+			 currentOverlay = data().getOverlay();*/
+			 
 			 playerX = data().getPlayerX();
 			 playerY = data().getPlayerY();
 			 for(int i = 0; i < currentMap.getWidth() * currentMap.getHeight(); i++){

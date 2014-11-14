@@ -4,15 +4,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.io.File;
-import java.io.Serializable;
 
 import javax.swing.JFrame;
 
 import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.ImageEntity;
 
-public class TitleMenu implements Serializable{
-	private static final long serialVersionUID = 1L;
+public class TitleMenu {
 	
 	private String[] files;
 	private File existingFiles;

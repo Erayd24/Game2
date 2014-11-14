@@ -3,15 +3,13 @@ package axohEngine2.map;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.io.Serializable;
 
 import javax.swing.JFrame;
 
 import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.SpriteSheet;
 
-public class Tile extends AnimatedSprite implements Serializable{
-	private static final long serialVersionUID = 1L;
+public class Tile extends AnimatedSprite {
 	
 	private boolean _solid;
 	private boolean _slippery;

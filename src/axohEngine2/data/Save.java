@@ -5,10 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
-import java.io.Serializable;
 
-public class Save implements Serializable {
-	private static final long serialVersionUID = 5719848248859586331L;
+public class Save {
 	
 	private transient FileOutputStream file_out;
 	private transient ObjectOutputStream obj_out;

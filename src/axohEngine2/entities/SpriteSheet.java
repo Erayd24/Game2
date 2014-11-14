@@ -2,14 +2,12 @@ package axohEngine2.entities;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.Serializable;
 
 import javax.imageio.ImageIO;
 
-public class SpriteSheet extends Object implements Serializable{
-	private static final long serialVersionUID = 1L;
+public class SpriteSheet extends Object {
 	
-	transient BufferedImage[] sprites;
+	BufferedImage[] sprites;
     String fileName;
     
     public int sheetHeight;

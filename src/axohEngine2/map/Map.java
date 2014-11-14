@@ -1,23 +1,23 @@
 package axohEngine2.map;
 
 import java.awt.Graphics2D;
-import java.io.Serializable;
 
 import javax.swing.JFrame;
 
 
-public class Map implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class Map {
 	
 	private int mapHeight;
 	private int mapWidth;
 	Tile[] mapTiles;
 	private int spriteSize;
+	private String _name;
 		
-	public Map(JFrame frame, Graphics2D g2d, Tile[] tiles, int mapWidth, int mapHeight) {
+	public Map(JFrame frame, Graphics2D g2d, Tile[] tiles, int mapWidth, int mapHeight, String name) {
 		this.mapHeight = mapHeight;
 		this.mapWidth = mapWidth;
 		mapTiles = tiles;
+		_name = name;
 		
 		for(int i = 0; i < mapTiles.length; i++) {
 			mapTiles[i] = new Tile(mapTiles[i], frame, g2d);
@@ -45,4 +45,5 @@ public class Map implements Serializable {
 	
 	public int getWidth() { return mapWidth; }
 	public int getHeight() { return mapHeight; }
+	public String mapName() { return _name; }
 }

@@ -289,7 +289,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	}
 	
 	protected void updateData(Map currentMap, Map currentOverlay, double playerX, double playerY) {
-		data.update(currentMap, currentOverlay, playerX, playerY);
+		data.update(currentMap.mapName(), currentOverlay.mapName(), playerX, playerY);
 	}
 	
 	protected void spriteCollision() {

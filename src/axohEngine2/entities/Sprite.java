@@ -4,17 +4,15 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.io.Serializable;
 
 import javax.swing.JFrame;
 
 import axohEngine2.util.Point2D;
 
-public class Sprite extends Object implements Serializable{
-	private static final long serialVersionUID = 1L;
+public class Sprite extends Object {
 	
 	protected ImageEntity entity;
-	private transient Image image;
+	private Image image;
 	
     protected int currentState;
     protected String sprType;

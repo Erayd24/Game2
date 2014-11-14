@@ -10,12 +10,11 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 public class ImageEntity extends BaseGameEntity {
-	private static final long serialVersionUID = 1L;
 	
-	protected transient Image image;
+	protected Image image;
 	protected JFrame frame;
 	protected AffineTransform at;
-	protected transient Graphics2D g2d;
+	protected Graphics2D g2d;
 	protected int width;
 	protected int height;
 	public int scale;
