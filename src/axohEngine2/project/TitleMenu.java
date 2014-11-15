@@ -16,48 +16,48 @@ public class TitleMenu {
 	private File existingFiles;
 	private int location;
 	private String _fileName = "";
-	public boolean getName = false;
+	private boolean getName = false;
 	
-	ImageEntity titleMenu;
-	ImageEntity titleMenu2;
-	AnimatedSprite titleArrow;
-	OPTION _option;
+	private ImageEntity _mainImage;
+	private ImageEntity _secondary;
+	private AnimatedSprite _titleArrow;
+	private OPTION _option;
 	
-	private Font simple;
-	private Font bold;
-	private Font bigBold;
+	private Font _simple;
+	private Font _bold;
+	private Font _bigBold;
 	
 	private int SCREENWIDTH;
 	private int SCREENHEIGHT;
 	
-	public TitleMenu(ImageEntity mainImage, ImageEntity secondary,AnimatedSprite titleArrow, int width, int height, Font simple, Font bold, Font bigBold) {
+	public TitleMenu(ImageEntity mainImage, ImageEntity secondary,AnimatedSprite titleArrow, int screenWidth, int screenHeight, Font simple, Font bold, Font bigBold) {
 		existingFiles = new File("C:/gamedata/saves/");
-		titleMenu = mainImage;
-		titleMenu2 = secondary;
-		this.titleArrow = titleArrow;
-		SCREENWIDTH = width;
-		SCREENHEIGHT = height;
-		this.simple = simple;
-		this.bold = bold;
-		this.bigBold = bigBold;
+		_mainImage = mainImage;
+		_secondary = secondary;
+		_titleArrow = titleArrow;
+		SCREENWIDTH = screenWidth;
+		SCREENHEIGHT = screenHeight;
+		_simple = simple;
+		_bold = bold;
+		_bigBold = bigBold;
 		_option = OPTION.NONE;
 	}
 	
-	public void renderTitleScreen(JFrame frame, Graphics2D g2d, int titleX, int titleY, int titleX2, int titleY2) {
-		g2d.drawImage(titleMenu.getImage(), 0, 0, SCREENWIDTH, SCREENHEIGHT, frame);
+	public void render(JFrame frame, Graphics2D g2d, int titleX, int titleY, int titleX2, int titleY2) {
+		g2d.drawImage(_mainImage.getImage(), 0, 0, SCREENWIDTH, SCREENHEIGHT, frame);
 		g2d.setColor(Color.BLACK);
-		g2d.setFont(bold);
+		g2d.setFont(_bold);
 		g2d.drawString("New Game", 660, 700);
 		g2d.drawString("Load Game", 560, 800);
 		g2d.setColor(Color.YELLOW);
-		g2d.setFont(bigBold);
+		g2d.setFont(_bigBold);
 		drawString(g2d, "The\n   Judgement", 500, 100);
-		g2d.drawImage(titleArrow.getImage(), titleX, titleY, titleArrow.getSpriteSize(), titleArrow.getSpriteSize(), frame);
+		g2d.drawImage(_titleArrow.getImage(), titleX, titleY, _titleArrow.getSpriteSize(), _titleArrow.getSpriteSize(), frame);
 		
 		if(_option == OPTION.NEWGAME || _option == OPTION.LOADGAME){
 			g2d.setColor(Color.BLACK);
-			g2d.setFont(simple);
-			g2d.drawImage(titleMenu2.getImage(), 0, 0, SCREENWIDTH, SCREENHEIGHT, frame);
+			g2d.setFont(_simple);
+			g2d.drawImage(_secondary.getImage(), 0, 0, SCREENWIDTH, SCREENHEIGHT, frame);
 			if(files != null){
 				for(int i = 0; i < files.length; i++){
 					g2d.drawString(files[i], 540, 388 + i * 165);
@@ -70,7 +70,7 @@ public class TitleMenu {
 			if(_option == OPTION.LOADGAME) {
 				g2d.drawString("Load Game", 620, 190); 
 			}
-			g2d.drawImage(titleArrow.getImage(), titleX2, titleY2, titleArrow.getSpriteSize(), titleArrow.getSpriteSize(), frame);
+			g2d.drawImage(_titleArrow.getImage(), titleX2, titleY2, _titleArrow.getSpriteSize(), _titleArrow.getSpriteSize(), frame);
 		}
 	}
 	
@@ -111,6 +111,8 @@ public class TitleMenu {
 	}
 	
 	public String[] files() { return files; }
+	public boolean isGetName() { return getName; }
+	public void setGetName(boolean onOrOff) { getName = onOrOff; }
 	
 	void drawString(Graphics2D g2d, String text, int x, int y) {
        for (String line : text.split("\n"))
