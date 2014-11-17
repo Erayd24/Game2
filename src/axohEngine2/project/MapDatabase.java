@@ -61,7 +61,7 @@ public class MapDatabase {
 		h = new Tile(frame, g2d, "house", buildings, 0, true);
 		hf = new Tile(frame, g2d, "floor", misc, 8);
 		c = new Tile(frame, g2d, "chest", extras2, 0, true);
-
+		
 		//Set the tile blueprints in an array for the Map
 		Tile[] cityTiles = {b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b,
 						    b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b,

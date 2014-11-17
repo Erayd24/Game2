@@ -83,9 +83,9 @@ public class ImageEntity extends BaseGameEntity {
 		return r;
 	}
 	
-	public Rectangle getExtendedBounds(int spriteSize, int x, int y) {
+	public Rectangle getBounds(int boundSize, int x, int y) {
 		Rectangle r;
-		r = new Rectangle((int)getX() + x, (int)getY() + y, spriteSize, spriteSize);
+		r = new Rectangle((int)getX() + x, (int)getY() + y, boundSize, boundSize);
 		return r;
 	}
 }

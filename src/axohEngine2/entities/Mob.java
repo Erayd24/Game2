@@ -77,19 +77,51 @@ public class Mob extends AnimatedSprite{
 	
 	public void updatePlayer(boolean left, boolean right, boolean up, boolean down) {
 		if(left) {
-			if(!_left) setAnimTo(leftAnim);
+			if(!_left) {
+				setAnimTo(leftAnim);
+				if(hasMultBounds) {
+					toggleLeg(true);
+					toggleLeft(false);
+					toggleRight(false);
+					toggleHead(false);
+				}
+			}
 			startAnim();
 			_left = true;
 		} else if (right) {
-			if(!_right) setAnimTo(rightAnim);
+			if(!_right) {
+				setAnimTo(rightAnim);
+				if(hasMultBounds) {
+					toggleLeg(true);
+					toggleLeft(false);
+					toggleRight(false);
+					toggleHead(false);
+				}
+			}
 			startAnim();
 			_right = true;
 		} else if (up) {
-			if(!_up) setAnimTo(upAnim);
+			if(!_up) {
+				setAnimTo(upAnim);
+				if(hasMultBounds) {
+					toggleLeg(false);
+					toggleLeft(true);
+					toggleRight(true);
+					toggleHead(false);
+				}
+			}
 			startAnim();
 			_up = true;
 		} else if (down) {
-			if(!_down) setAnimTo(downAnim);
+			if(!_down) {
+				setAnimTo(downAnim);
+				if(hasMultBounds) {
+					toggleLeg(false);
+					toggleLeft(true);
+					toggleRight(true);
+					toggleHead(false);
+				}
+			}
 			startAnim();
 			_down = true;
 		}

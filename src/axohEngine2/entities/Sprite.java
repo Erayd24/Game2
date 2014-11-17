@@ -7,8 +7,6 @@ import java.awt.Rectangle;
 
 import javax.swing.JFrame;
 
-import axohEngine2.util.Point2D;
-
 public class Sprite extends Object {
 	
 	protected ImageEntity entity;
@@ -20,9 +18,18 @@ public class Sprite extends Object {
     protected int _lifespan, _lifeage;
     
     protected int spriteSize;
+    protected int _boundLegX, _boundLegY;
+    protected int _boundLeftX, _boundLeftY;
+    protected int _boundRightX, _boundRightY;
+    protected int _boundHeadX, _boundHeadY;
+    protected boolean left = false, right = false, head = false, leg = false;
+    protected boolean hasMultBounds = false;
+    protected int newBound;
     protected int spriteNumber;
     protected SpriteSheet sheet;
     protected int scale;
+    protected int nx, ny;
+    protected int cx, cy;
     
     private boolean solid = false;
 
@@ -44,10 +51,73 @@ public class Sprite extends Object {
     	return image;
     }
     
+    public void setBounds(int boundSize, int x, int y) {
+    	newBound = boundSize * scale;
+    	nx = x;
+    	ny = y;
+    }
+    
+    public void setMultBounds(int boundSize, int boundLegX, int boundLegY, int boundLeftX, int boundLeftY, int boundRightX, int boundRightY, int boundHeadX, int boundHeadY) {
+    	newBound = boundSize * scale;
+    	nx = boundLegX;
+    	ny = boundLegY;
+    	_boundLegX = boundLegX;
+    	_boundLegY = boundLegY;
+    	_boundLeftX = boundLeftX;
+    	_boundLeftY = boundLeftY;
+    	_boundRightX = boundRightX;
+    	_boundRightY = boundRightY;
+    	_boundHeadX = boundHeadX;
+    	_boundHeadY = boundHeadY;
+    	hasMultBounds = true;
+    }
+    
+    public void toggleLeg(boolean change) { leg = change; }
+    public void toggleLeft(boolean change) { left = change; }
+    public void toggleRight(boolean change) { right = change; }
+    public void toggleHead(boolean change) { head = change; }
+   
+    public void allBoundsOff() {
+    	leg = false;
+    	head = false;
+    	left = false;
+    	right = false;
+    }
+    
+    public boolean checkLeftBound(Rectangle r) {
+    	if(left){ if(r.intersects(getEntity().getBounds(newBound, _boundLeftX, _boundLeftY))) return true; }
+    	return false;
+    }
+    public boolean checkRightBound(Rectangle r) {
+    	if(right){ if(r.intersects(getEntity().getBounds(newBound, _boundRightX, _boundRightY))) return true; }
+    	return false;
+    }
+    public boolean checkHeadBound(Rectangle r) {
+    	if(head){ if(r.intersects(getEntity().getBounds(newBound, _boundHeadX, _boundHeadY))) return true; }
+    	return false;
+    }
+    public boolean checkLegBound(Rectangle r) {
+    	if(leg){ if(r.intersects(getEntity().getBounds(newBound, _boundLegX, _boundLegY))) return true; }
+    	return false;
+    }
+    
     public Image getImage() { return image; }
     public void setSolid(boolean solid) { this.solid = solid; }
     public boolean solid() { return solid; }
+    public int getBoundSize() { return newBound; }
+    public double getX() { return entity.getX() + nx; }
+    public double getY() { return entity.getY() + ny; }
     
+    public int legBoundX() { return _boundLegX; }
+    public int legBoundY() { return _boundLegY; }
+    public int leftBoundX() { return _boundLeftX; }
+    public int leftBoundY() { return _boundLeftY; }
+    public int rightBoundX() { return _boundRightX; }
+    public int rightBoundY() { return _boundRightY; }
+    public int headBoundX() { return _boundHeadX; }
+    public int headBoundY() { return _boundHeadY; }
+    public boolean hasMultBounds() { return hasMultBounds; }
+
     //load bitmap file for individual sprites
     public void load(String filename) {
         entity.load(filename);
@@ -56,7 +126,13 @@ public class Sprite extends Object {
     //draw bounding rectangle around sprite
     public void drawBounds(Color c) {
         entity.g2d.setColor(c);
-        entity.g2d.draw(getBounds());
+        if(!hasMultBounds) entity.g2d.draw(getBounds());
+        if(hasMultBounds) {
+        	if(leg) entity.g2d.draw(getEntity().getBounds(newBound, _boundLegX, _boundLegY));
+        	if(left) entity.g2d.draw(getEntity().getBounds(newBound, _boundLeftX, _boundLeftY));
+        	if(right) entity.g2d.draw(getEntity().getBounds(newBound, _boundRightX, _boundRightY));
+        	if(head) entity.g2d.draw(getEntity().getBounds(newBound, _boundHeadX, _boundHeadY));
+        }
     }
 
     //generic sprite state variable (alive, dead, collided, etc)
@@ -64,9 +140,11 @@ public class Sprite extends Object {
     public void setState(int state) { currentState = state; }
 
     //returns a bounding rectangle
-    public Rectangle getBounds() { return entity.getBounds(spriteSize); }
-    public Rectangle getExtendedBounds(int x, int y) { return entity.getExtendedBounds(spriteSize, x, y); }
-
+    public Rectangle getBounds() { 
+	    	if(nx != 0 || ny != 0) return entity.getBounds(newBound, nx, ny); 
+	    	else return entity.getBounds(newBound);
+    }
+    
     //generic variable for selectively using sprites
     public boolean alive() { return entity.isAlive(); }
     public void setAlive(boolean alive) { entity.setAlive(alive); }
@@ -82,10 +160,6 @@ public class Sprite extends Object {
     //check for collision with another sprite
     public boolean collidesWith(Sprite sprite) {
         return (getBounds().intersects(sprite.getBounds()));
-    }
-    //check for collision with a point
-    public boolean collidesWith(Point2D point) {
-        return (getBounds().contains(point.X(), point.Y()));
     }
 
     public JFrame frame() { return entity.frame; }

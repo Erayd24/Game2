@@ -1,5 +1,6 @@
 package axohEngine2;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -73,7 +74,7 @@ public class Judgement extends Game {
 	Mob randomNPC;
 	
 	public Judgement() {
-		super(95, SCREENWIDTH, SCREENHEIGHT);
+		super(180, SCREENWIDTH, SCREENHEIGHT);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -109,6 +110,7 @@ public class Judgement extends Game {
 		
 		//****Initialize Mobs*****************************************************************************
 		playerMob = new Mob(this, graphics(), mainCharacter, 40, "player", "mainC", true);
+		playerMob.setMultBounds(6, 50, 95, 37, 95, 62, 95, 54, 95);
 		playerMob.loadMultAnim(32, 48, 40, 56, 3, 8);
 		playerMob.setHealth(35);
 		sprites().add(playerMob);
@@ -136,6 +138,7 @@ public class Judgement extends Game {
 		if(state == STATE.TITLE) title.update(option, titleLocation);
 		if(state == STATE.INGAMEMENU) inMenu.update(option);
 		updateData(currentMap, currentOverlay, playerX, playerY);
+		System.out.println(frameRate());
 	}
 	
 	void gameRefreshScreen() {		
@@ -147,6 +150,7 @@ public class Judgement extends Game {
 			currentMap.render(this, g2d, (int)playerX, (int)playerY);
 			currentOverlay.render(this, g2d, (int)playerX, (int)playerY);
 			playerMob.renderMob(CENTERX, CENTERY);
+			playerMob.drawBounds(Color.BLACK);
 		}
 		if(state == STATE.INGAMEMENU){
 			inMenu.render(this, g2d, inX, inY);
@@ -202,7 +206,37 @@ public class Judgement extends Game {
 			}	
 		}
 		if(("player").equals(spr.spriteType())) {
+			double leftOverlap = (spr.getX() + spr.getBoundSize() - tile.getX());
+			double rightOverlap = (tile.getX() + tile.getBoundSize() - spr.getX());
+			double topOverlap = (spr.getY() + spr.getBoundSize() - tile.getY());
+			double botOverlap = (tile.getY() + tile.getBoundSize() - spr.getY());
 			
+			double smallestOverlap = Double.MAX_VALUE; 
+			double shiftX = 0;
+			double shiftY = 0;
+			
+			if(leftOverlap < smallestOverlap) { //Left
+				smallestOverlap = leftOverlap;
+				shiftX -= leftOverlap; 
+				shiftY = 0;
+			}
+			if(rightOverlap < smallestOverlap){ //right
+				smallestOverlap = rightOverlap;
+				shiftX = rightOverlap;
+				shiftY = 0;
+			}
+			if(topOverlap < smallestOverlap){ //up
+				smallestOverlap = topOverlap;
+				shiftX = 0;
+				shiftY -= topOverlap;
+			}
+			if(botOverlap < smallestOverlap){ //down
+				smallestOverlap = botOverlap;
+				shiftX = 0;
+				shiftY = botOverlap;
+			}
+			playerX -= shiftX;
+			playerY -= shiftY;
 		}
 
 		if(spr instanceof Mob) {
@@ -264,18 +298,7 @@ public class Judgement extends Game {
 			if(!keyLeft && !keyRight && !keyUp && !keyDown) {
 				playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
 			}
-			
-			if(!checkCollision(xa, ya, playerMob)) {
-				movePlayer(xa, ya);
-			} else {
-				if(ya < 0) {
-					movePlayer(0, ya * 2);
-				} else if(ya > 0) movePlayer(0, 0);
-				System.out.println(xa);
-				if(xa > 0) {
-					movePlayer(xa * 2, 0);
-				} else if(xa < 0) movePlayer(0, 0);
-			}
+			movePlayer(xa, ya);
 		
 			if(keyInventory) {
 				state = STATE.INGAMEMENU;

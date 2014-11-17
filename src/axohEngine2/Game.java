@@ -315,25 +315,28 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			for(int second = 0; second < _tiles.size(); second++) {
 				Tile tile = _tiles.get(second);
 				if(tile.isSolid() || tile.hasEvent()) {
-					if(tile.getTileBounds().intersects(spr.getBounds())) {
-						spr.setCollided(true);
-						tileCollision(spr, tile);
-					} 
-				} else spr.setCollided(false);
-			}
-		}
-	}
-	
-	protected boolean checkCollision(int x, int y, Mob mob) {
-			for(int i = 0; i < _tiles.size(); i++) {
-				Tile tile = _tiles.get(i);
-				if(tile.isSolid()) {
-					if(tile.getTileBounds().intersects(mob.getExtendedBounds(x, y))) {
-						return true;
+					if(!spr.hasMultBounds()) {
+						if(tile.getTileBounds().intersects(spr.getBounds())) {
+							tileCollision(spr, tile);
+						} 
 					}
+					if(spr.hasMultBounds()) {
+			    		if(spr.checkLeftBound(tile.getTileBounds())){
+			    			tileCollision(spr, tile);
+			    		}
+			    		if(spr.checkRightBound(tile.getTileBounds())){
+			    			tileCollision(spr, tile);
+			    		}
+			    		if(spr.checkHeadBound(tile.getTileBounds())){
+			    			tileCollision(spr, tile);
+			    		}
+			    		if(spr.checkLegBound(tile.getTileBounds())){
+			    			tileCollision(spr, tile);
+			    		}
+			    	}
 				}
 			}
-			return false;
+		}
 	}
 	
 	protected void drawSprites() {

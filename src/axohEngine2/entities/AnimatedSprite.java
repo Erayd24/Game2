@@ -118,6 +118,7 @@ public class AnimatedSprite extends Sprite {
     	animImage.setImage(setSprite(getSheet(), getSpriteNumber())); 
     	setScale(getSheet().getScale());
     	setSpriteSize(getSheet().getSpriteSize() * getScale());
+    	newBound = spriteSize;
     	currFrame = getSpriteNumber();
     }
 
