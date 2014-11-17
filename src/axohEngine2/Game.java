@@ -23,6 +23,7 @@ import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.Mob;
 import axohEngine2.map.Map;
 import axohEngine2.map.Tile;
+import axohEngine2.project.Item;
 import axohEngine2.util.Point2D;
 
 @SuppressWarnings("serial")
@@ -34,6 +35,8 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	public LinkedList<AnimatedSprite> sprites() { return _sprites; }
 	private LinkedList<Tile> _tiles;
 	public LinkedList<Tile> tiles() { return _tiles; }
+	private LinkedList<Item> _items;
+	public LinkedList<Item> items() { return _items; }
 	
 	private transient BufferedImage backBuffer;
 	private transient Graphics2D g2d;
@@ -92,6 +95,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
         //create the internal lists
         _sprites = new LinkedList<AnimatedSprite>();
         _tiles = new LinkedList<Tile>();
+        _items = new LinkedList<Item>();
         
         data = new Data();
 		save = new Save();
@@ -288,7 +292,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		}
 	}
 	
-	protected void updateData(Map currentMap, Map currentOverlay, double playerX, double playerY) {
+	protected void updateData(Map currentMap, Map currentOverlay, int playerX, int playerY) {
 		data.update(currentMap.mapName(), currentOverlay.mapName(), playerX, playerY);
 	}
 	
@@ -312,11 +316,24 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 				Tile tile = _tiles.get(second);
 				if(tile.isSolid() || tile.hasEvent()) {
 					if(tile.getTileBounds().intersects(spr.getBounds())) {
+						spr.setCollided(true);
 						tileCollision(spr, tile);
+					} 
+				} else spr.setCollided(false);
+			}
+		}
+	}
+	
+	protected boolean checkCollision(int x, int y, Mob mob) {
+			for(int i = 0; i < _tiles.size(); i++) {
+				Tile tile = _tiles.get(i);
+				if(tile.isSolid()) {
+					if(tile.getTileBounds().intersects(mob.getExtendedBounds(x, y))) {
+						return true;
 					}
 				}
 			}
-		}
+			return false;
 	}
 	
 	protected void drawSprites() {

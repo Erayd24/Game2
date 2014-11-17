@@ -15,6 +15,7 @@ public class MapDatabase {
 	SpriteSheet misc;
 	SpriteSheet buildings;
 	SpriteSheet environment32;
+	SpriteSheet extras2;
 	
 	//Maps
 	Map city;
@@ -32,6 +33,7 @@ public class MapDatabase {
 	Tile ro;
 	Tile h;
 	Tile hf;
+	Tile c;
 	
 	//Events
 	Event warp1;
@@ -46,6 +48,7 @@ public class MapDatabase {
 		misc = new SpriteSheet("/textures/environments/environments1.png", 16, 16, 16, scale);
 		buildings = new SpriteSheet("/textures/environments/4x4buildings.png", 4, 4, 64, scale);
 		environment32 = new SpriteSheet("/textures/environments/32SizeEnvironment.png", 8, 8, 32,scale);
+		extras2 = new SpriteSheet("/textures/extras/extras2.png", 16, 16, 16, scale);
 		
 		//Set up tile blueprints and if they are animating
 		d = new Tile(frame, g2d, "door", environment32, 0);
@@ -57,6 +60,7 @@ public class MapDatabase {
 		ro = new Tile(frame, g2d, "rock", misc, 2);
 		h = new Tile(frame, g2d, "house", buildings, 0, true);
 		hf = new Tile(frame, g2d, "floor", misc, 8);
+		c = new Tile(frame, g2d, "chest", extras2, 0, true);
 
 		//Set the tile blueprints in an array for the Map
 		Tile[] cityTiles = {b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b, b,
@@ -102,13 +106,13 @@ public class MapDatabase {
 
 		Tile[] cityOTiles = {e, e, h, e, e, e, e, h, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, d, e, e, e, e, d, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
+							 e, e, e, d, e, e, e, e, d, e, e, e, c, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, ro, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
+							 e, e, c, e, ro, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, ro, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, e, ro, ro, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
+							 e, e, e, e, e, e, e, e, c, ro, ro, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
@@ -174,7 +178,7 @@ public class MapDatabase {
 		
 		//Add the events to their specific tiles and maps
 		houses.accessTile(5).addEvent(warp1);
-		city.accessTile(331).addEvent(warp2);
+		//city.accessTile(331).addEvent(warp2);
 	}
 	
 	public Map getMap(int index) {

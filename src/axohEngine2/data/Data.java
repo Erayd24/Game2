@@ -7,10 +7,10 @@ public class Data implements Serializable {
 	
 	private String _currentMapName;
 	private String _currentOverlayName;
-	private double _playerX;
-	private double _playerY;
+	private int _playerX;
+	private int _playerY;
 	
-	public void update(String currentMapName, String currentOverlayName, double playerX, double playerY){
+	public void update(String currentMapName, String currentOverlayName, int playerX, int playerY){
 		_currentMapName = currentMapName;
 		_currentOverlayName = currentOverlayName;
 		_playerX = playerX;
@@ -25,11 +25,11 @@ public class Data implements Serializable {
 		return _currentOverlayName;
 	}
 	
-	public double getPlayerX() {
+	public int getPlayerX() {
 		return _playerX;
 	}
 	
-	public double getPlayerY() {
+	public int getPlayerY() {
 		return _playerY;
 	}
 }

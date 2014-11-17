@@ -38,14 +38,11 @@ public class Judgement extends Game {
 	
 	//player variables and scale
 	private int scale;
-	private double playerX;
-	private double playerY;
+	private int playerX;
+	private int playerY;
 	private int playerSpeed;
-	private double oldX;
-	private double oldY;
 	
 	//Map and collision variables
-	private boolean collision = false;
 	private Map currentMap;
 	private Map currentOverlay;
 	private MapDatabase mapBase;
@@ -87,8 +84,6 @@ public class Judgement extends Game {
 		scale = 4;
 		playerX = -40;
 		playerY = 0;
-		oldX = playerX;
-		oldY = playerY;
 		playerSpeed = 3;
 		
 		//****Initialize spriteSheets*********************************************************************
@@ -141,7 +136,6 @@ public class Judgement extends Game {
 		if(state == STATE.TITLE) title.update(option, titleLocation);
 		if(state == STATE.INGAMEMENU) inMenu.update(option);
 		updateData(currentMap, currentOverlay, playerX, playerY);
-		System.out.println(frameRate());
 	}
 	
 	void gameRefreshScreen() {		
@@ -150,15 +144,13 @@ public class Judgement extends Game {
 		g2d.setFont(simple);
 		
 		if(state == STATE.GAME) {
-			currentMap.render(this, graphics(), (int)playerX, (int)playerY);
-			currentOverlay.render(this, graphics(), (int)playerX, (int)playerY);
+			currentMap.render(this, g2d, (int)playerX, (int)playerY);
+			currentOverlay.render(this, g2d, (int)playerX, (int)playerY);
 			playerMob.renderMob(CENTERX, CENTERY);
 		}
-		
 		if(state == STATE.INGAMEMENU){
 			inMenu.render(this, g2d, inX, inY);
 		}
-		
 		if(state == STATE.TITLE) {
 			title.render(this, g2d, titleX, titleY, titleX2, titleY2);
 		}
@@ -209,10 +201,8 @@ public class Judgement extends Game {
 				return;
 			}	
 		}
-		
-		if(spr.spriteType() == "player") {
-			playerX = oldX - 0.5;
-			playerY = oldY - 0.5;
+		if(("player").equals(spr.spriteType())) {
+			
 		}
 
 		if(spr instanceof Mob) {
@@ -224,19 +214,16 @@ public class Judgement extends Game {
 	}
 	
 	void movePlayer(int xa, int ya) {
-		oldX = playerX;
-		oldY = playerY;
-		
-		if(!collision && xa > 0) {
+		if(xa > 0) {
 			playerX += xa; //left
 		}
-		if(!collision && xa < 0) {
+		if(xa < 0) {
 			playerX += xa; //right
 		}
-		if(!collision && ya > 0) {
+		if(ya > 0) {
 			playerY += ya; //up
 		}
-		if(!collision && ya < 0) {
+		if(ya < 0) {
 			playerY += ya; //down
 		}
 	}
@@ -277,7 +264,18 @@ public class Judgement extends Game {
 			if(!keyLeft && !keyRight && !keyUp && !keyDown) {
 				playerMob.updatePlayer(keyLeft, keyRight, keyUp, keyDown);
 			}
-			movePlayer(xa, ya);
+			
+			if(!checkCollision(xa, ya, playerMob)) {
+				movePlayer(xa, ya);
+			} else {
+				if(ya < 0) {
+					movePlayer(0, ya * 2);
+				} else if(ya > 0) movePlayer(0, 0);
+				System.out.println(xa);
+				if(xa > 0) {
+					movePlayer(xa * 2, 0);
+				} else if(xa < 0) movePlayer(0, 0);
+			}
 		
 			if(keyInventory) {
 				state = STATE.INGAMEMENU;

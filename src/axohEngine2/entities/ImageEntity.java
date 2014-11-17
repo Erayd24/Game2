@@ -82,4 +82,10 @@ public class ImageEntity extends BaseGameEntity {
 		r = new Rectangle((int)getX(), (int)getY(), spriteSize, spriteSize);
 		return r;
 	}
+	
+	public Rectangle getExtendedBounds(int spriteSize, int x, int y) {
+		Rectangle r;
+		r = new Rectangle((int)getX() + x, (int)getY() + y, spriteSize, spriteSize);
+		return r;
+	}
 }

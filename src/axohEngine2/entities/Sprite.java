@@ -27,7 +27,7 @@ public class Sprite extends Object {
     private boolean solid = false;
 
     //constructor
-    Sprite(JFrame frame, Graphics2D g2d) {
+    public Sprite(JFrame frame, Graphics2D g2d) {
         entity = new ImageEntity(frame);
         image = null;
         entity.setGraphics(g2d);
@@ -65,6 +65,7 @@ public class Sprite extends Object {
 
     //returns a bounding rectangle
     public Rectangle getBounds() { return entity.getBounds(spriteSize); }
+    public Rectangle getExtendedBounds(int x, int y) { return entity.getExtendedBounds(spriteSize, x, y); }
 
     //generic variable for selectively using sprites
     public boolean alive() { return entity.isAlive(); }
