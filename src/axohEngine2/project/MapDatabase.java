@@ -38,6 +38,10 @@ public class MapDatabase {
 	//Events
 	Event warp1;
 	Event warp2;
+	Event getPotion;
+	
+	//Items
+	Item potion;
 	
 	public Map[] maps;
 	
@@ -170,15 +174,26 @@ public class MapDatabase {
 		housesO = new Map(frame, g2d, houseOTiles, 6, 6, "housesO");
 		maps[3] = housesO;
 		
+		//Put together all items
+		potion = new Item(frame, g2d, extras2, 2, "potion");
+		potion.setHealItem(25, false, "");
+		
 		//Put together all events
-		warp1 = new Event("fromHouse", "warp");
+		//Warping events
+		warp1 = new Event("fromHouse", TYPE.WARP);
 		warp1.setWarp("city", "cityO", 200, -50);
-		warp2 = new Event("toHouse", "warp");
+		warp2 = new Event("toHouse", TYPE.WARP);
 		warp2.setWarp("houses", "housesO", 620, 250);
+		
+		//Item events
+		getPotion = new Event("getPotion", TYPE.ITEM);
+		getPotion.setItem(potion);
 		
 		//Add the events to their specific tiles and maps
 		houses.accessTile(5).addEvent(warp1);
-		//city.accessTile(331).addEvent(warp2);
+		cityO.accessTile(92).addEvent(getPotion);
+		cityO.accessTile(242).addEvent(getPotion);
+		cityO.accessTile(328).addEvent(getPotion);
 	}
 	
 	public Map getMap(int index) {

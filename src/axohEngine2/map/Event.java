@@ -1,17 +1,21 @@
 package axohEngine2.map;
 
+import axohEngine2.project.Item;
+import axohEngine2.project.TYPE;
+
 public class Event {
 	
 	//Warping variables
 	private int newX, newY;
 	private String _mapName;
 	private String _overlayName;
-	private String eventType;
+	private TYPE type;
 	private String _name;
+	private Item _item;
 		
-	public Event(String name, String type) {
+	public Event(String name, TYPE type) {
 		_name = name;
-		eventType = type;
+		this.type = type;
 	}
 	
 	public void setWarp(String mapName, String overlayName, int x, int y) {
@@ -21,10 +25,16 @@ public class Event {
 		newY = y;
 	}
 	
+	public void setItem(Item item) {
+		_item = item;
+	}
+	
 	public String getMapName() { return _mapName; }
 	public String getOverlayName() { return _overlayName; }
 	public int getNewX() { return newX; }
 	public int getNewY() { return newY; }
-	public String getEventType() { return eventType; }
+	public TYPE getEventType() { return type; }
 	public String getname() { return _name; }
+	
+	public Item getItem() { return _item; }
 }

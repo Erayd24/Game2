@@ -7,13 +7,15 @@ import java.awt.Rectangle;
 
 import javax.swing.JFrame;
 
+import axohEngine2.project.TYPE;
+
 public class Sprite extends Object {
 	
 	protected ImageEntity entity;
 	private Image image;
 	
     protected int currentState;
-    protected String sprType;
+    protected TYPE sprType;
     protected boolean _collided;
     protected int _lifespan, _lifeage;
     
@@ -181,8 +183,8 @@ public class Sprite extends Object {
     public void setImage(Image image) { entity.setImage(image); }
     public ImageEntity getEntity() { return entity; }
 
-    public String spriteType() { return sprType; }
-    public void setSpriteType(String type) { sprType = type; }
+    public TYPE spriteType() { return sprType; }
+    public void setSpriteType(TYPE type) { sprType = type; }
 
     public boolean collided() { return _collided; }
     public void setCollided(boolean collide) { _collided = collide; }

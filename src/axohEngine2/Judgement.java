@@ -1,6 +1,5 @@
 package axohEngine2;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -18,6 +17,7 @@ import axohEngine2.project.InGameMenu;
 import axohEngine2.project.MapDatabase;
 import axohEngine2.project.OPTION;
 import axohEngine2.project.STATE;
+import axohEngine2.project.TYPE;
 import axohEngine2.project.TitleMenu;
 
 public class Judgement extends Game {
@@ -74,7 +74,7 @@ public class Judgement extends Game {
 	Mob randomNPC;
 	
 	public Judgement() {
-		super(150, SCREENWIDTH, SCREENHEIGHT);
+		super(130, SCREENWIDTH, SCREENHEIGHT);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -93,7 +93,7 @@ public class Judgement extends Game {
 
 		//****Initialize AnimatedSprites******************************************************************
 		titleArrow = new AnimatedSprite(this, graphics(), extras1, 0, "arrow");
-		titleArrow.loadAnim(4, 11);
+		titleArrow.loadAnim(4, 10);
 		sprites().add(titleArrow);
 		
 		//****Initialize image entities*******************************************************************
@@ -109,7 +109,7 @@ public class Judgement extends Game {
 		inMenu = new InGameMenu(inGameMenu, SCREENWIDTH, SCREENHEIGHT);
 		
 		//****Initialize Mobs*****************************************************************************
-		playerMob = new Mob(this, graphics(), mainCharacter, 40, "player", "mainC", true);
+		playerMob = new Mob(this, graphics(), mainCharacter, 40, TYPE.PLAYER, "mainC", true);
 		playerMob.setMultBounds(6, 50, 95, 37, 90, 62, 95, 54, 95);
 		playerMob.loadMultAnim(32, 48, 40, 56, 3, 8);
 		playerMob.setHealth(35);
@@ -147,10 +147,9 @@ public class Judgement extends Game {
 		g2d.setFont(simple);
 		
 		if(state == STATE.GAME) {
-			currentMap.render(this, g2d, (int)playerX, (int)playerY);
-			currentOverlay.render(this, g2d, (int)playerX, (int)playerY);
+			currentMap.render(this, g2d, playerX, playerY);
+			currentOverlay.render(this, g2d, playerX, playerY);
 			playerMob.renderMob(CENTERX, CENTERY);
-			playerMob.drawBounds(Color.BLACK);
 		}
 		if(state == STATE.INGAMEMENU){
 			inMenu.render(this, g2d, inX, inY);
@@ -179,33 +178,41 @@ public class Judgement extends Game {
 	}
 
 	void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2) {
-		if(spr2.spriteType() == "wall" && spr1._name == "player") {
+		/*if(spr2.spriteType() == "wall" && spr1._name == "player") {
 		}
 		if(spr1.spriteType() == "enemy" || spr2.spriteType() == "enemy") {
 		}
 		if(spr1.spriteType() == "npc" || spr2.spriteType() == "npc") {
-		}
+		}*/
 	}
 	
 	void tileCollision(AnimatedSprite spr, Tile tile, int hitDir) {
-		if(spr.spriteType() == "player" && tile.hasEvent()) {
-			if(tile.event().getEventType().equals("warp")) {
-				tiles().clear();
-				for(int i = 0; i < mapBase.maps.length; i++){
-					 if(mapBase.getMap(i) == null) continue;
-					 if(tile.event().getMapName() == mapBase.getMap(i).mapName()) currentMap = mapBase.getMap(i);
-					 if(tile.event().getOverlayName() == mapBase.getMap(i).mapName()) currentOverlay = mapBase.getMap(i);
-				}
-				for(int i = 0; i < currentMap.getWidth() * currentMap.getHeight(); i++){ //For differing widths and height of each map
-					addTile(currentMap.accessTile(i));
-					addTile(currentOverlay.accessTile(i));
-				}
-				playerX = tile.event().getNewX();
-				playerY = tile.event().getNewY();
-				return;
-			}	
+		if(tile.hasEvent()){
+			if(spr.spriteType() == TYPE.PLAYER && tile.hasEvent()) {
+				if(tile.event().getEventType() == TYPE.WARP) {
+					tiles().clear();
+					for(int i = 0; i < mapBase.maps.length; i++){
+						 if(mapBase.getMap(i) == null) continue;
+						 if(tile.event().getMapName() == mapBase.getMap(i).mapName()) currentMap = mapBase.getMap(i);
+						 if(tile.event().getOverlayName() == mapBase.getMap(i).mapName()) currentOverlay = mapBase.getMap(i);
+					}
+					for(int i = 0; i < currentMap.getWidth() * currentMap.getHeight(); i++){ //For differing widths and height of each map
+						addTile(currentMap.accessTile(i));
+						addTile(currentOverlay.accessTile(i));
+					}
+					playerX = tile.event().getNewX();
+					playerY = tile.event().getNewY();
+					return;
+				}	
+			}
+			if(spr.spriteType() == TYPE.PLAYER && tile.event().getEventType() == TYPE.ITEM && keyAction){
+				if((tile._name).equals("chest")) tile.setFrame(tile.getSpriteNumber() + 1);
+				items().add(tile.event().getItem());
+				tile.endEvent();
+			}
 		}
-		if(("player").equals(spr.spriteType())) {
+		
+		if(spr.spriteType() == TYPE.PLAYER && tile.solid()) {
 			double leftOverlap = (spr.getBoundX(hitDir) + spr.getBoundSize() - tile.getBoundX(hitDir));
 			double rightOverlap = (tile.getBoundX(hitDir) + tile.getBoundSize() - spr.getBoundX(hitDir));
 			double topOverlap = (spr.getBoundY(hitDir) + spr.getBoundSize() - tile.getBoundY(hitDir));
@@ -240,10 +247,10 @@ public class Judgement extends Game {
 		}
 
 		if(spr instanceof Mob) {
-			if(spr.spriteType() == "enemy" || spr.spriteType() == "npc") {
+			/*if(spr.spriteType() == "enemy" || spr.spriteType() == "npc") {
 				spr = (Mob) spr;
 				((Mob) spr).setLoc((int)((Mob) spr).getXLoc(), (int)((Mob) spr).getYLoc());
-			}
+			}*/
 		}
 	}
 	
@@ -469,7 +476,7 @@ public class Judgement extends Game {
         case KeyEvent.VK_I:
         	keyInventory = true;
         	break;
-        case KeyEvent.VK_E:
+        case KeyEvent.VK_F:
         	keyAction = true;
         	break;
         case KeyEvent.VK_ENTER:
@@ -498,7 +505,7 @@ public class Judgement extends Game {
         case KeyEvent.VK_I:
 	    	keyInventory = false;
 	    	break;
-	    case KeyEvent.VK_E:
+	    case KeyEvent.VK_F:
 	    	keyAction = false;
 	    	break;
 	    case KeyEvent.VK_ENTER:

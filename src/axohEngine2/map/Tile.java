@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 
 import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.SpriteSheet;
+import axohEngine2.project.TYPE;
 
 public class Tile extends AnimatedSprite {
 	
@@ -36,7 +37,7 @@ public class Tile extends AnimatedSprite {
 		_slippery = false;
 		_breakable = false;
 		
-		if(solid) setSpriteType("wall");
+		if(solid) setSpriteType(TYPE.WALL);
 		if(solid) hasProperty = true;
 		setSolid(solid); //Sprite super class solid
 		setSprite(sheet, spriteNumber);
