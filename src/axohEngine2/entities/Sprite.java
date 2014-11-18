@@ -85,19 +85,19 @@ public class Sprite extends Object {
     }
     
     public boolean checkLeftBound(Rectangle r) {
-    	if(left){ if(r.intersects(getEntity().getBounds(newBound, _boundLeftX, _boundLeftY))) return true; }
+    	if(left){ if(r.intersects(entity.getBounds(newBound, _boundLeftX, _boundLeftY))) return true; }
     	return false;
     }
     public boolean checkRightBound(Rectangle r) {
-    	if(right){ if(r.intersects(getEntity().getBounds(newBound, _boundRightX, _boundRightY))) return true; }
+    	if(right){ if(r.intersects(entity.getBounds(newBound, _boundRightX, _boundRightY))) return true; }
     	return false;
     }
     public boolean checkHeadBound(Rectangle r) {
-    	if(head){ if(r.intersects(getEntity().getBounds(newBound, _boundHeadX, _boundHeadY))) return true; }
+    	if(head){ if(r.intersects(entity.getBounds(newBound, _boundHeadX, _boundHeadY))) return true; }
     	return false;
     }
     public boolean checkLegBound(Rectangle r) {
-    	if(leg){ if(r.intersects(getEntity().getBounds(newBound, _boundLegX, _boundLegY))) return true; }
+    	if(leg){ if(r.intersects(entity.getBounds(newBound, _boundLegX, _boundLegY))) return true; }
     	return false;
     }
     
@@ -105,8 +105,21 @@ public class Sprite extends Object {
     public void setSolid(boolean solid) { this.solid = solid; }
     public boolean solid() { return solid; }
     public int getBoundSize() { return newBound; }
-    public double getX() { return entity.getX() + nx; }
-    public double getY() { return entity.getY() + ny; }
+    
+    public double getBoundX(int hitDir) { 
+    	if(hitDir == 0) return entity.getX() + _boundLeftX;
+    	if(hitDir == 1) return entity.getX() + _boundRightX;
+    	if(hitDir == 2) return entity.getX() + _boundHeadX;
+    	if(hitDir == 3) return entity.getX() + _boundLegX;
+    	return entity.getX() + nx;
+    }
+    public double getBoundY(int hitDir) {
+    	if(hitDir == 0) return entity.getY() + _boundLeftY;
+    	if(hitDir == 1) return entity.getY() + _boundRightY;
+    	if(hitDir == 2) return entity.getY() + _boundHeadY;
+    	if(hitDir == 3) return entity.getY() + _boundLegY;
+    	return entity.getY() + ny; 
+    }
     
     public int legBoundX() { return _boundLegX; }
     public int legBoundY() { return _boundLegY; }

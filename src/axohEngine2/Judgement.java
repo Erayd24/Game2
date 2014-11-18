@@ -74,7 +74,7 @@ public class Judgement extends Game {
 	Mob randomNPC;
 	
 	public Judgement() {
-		super(180, SCREENWIDTH, SCREENHEIGHT);
+		super(150, SCREENWIDTH, SCREENHEIGHT);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -110,7 +110,7 @@ public class Judgement extends Game {
 		
 		//****Initialize Mobs*****************************************************************************
 		playerMob = new Mob(this, graphics(), mainCharacter, 40, "player", "mainC", true);
-		playerMob.setMultBounds(6, 50, 95, 37, 95, 62, 95, 54, 95);
+		playerMob.setMultBounds(6, 50, 95, 37, 90, 62, 95, 54, 95);
 		playerMob.loadMultAnim(32, 48, 40, 56, 3, 8);
 		playerMob.setHealth(35);
 		sprites().add(playerMob);
@@ -187,7 +187,7 @@ public class Judgement extends Game {
 		}
 	}
 	
-	void tileCollision(AnimatedSprite spr, Tile tile) {
+	void tileCollision(AnimatedSprite spr, Tile tile, int hitDir) {
 		if(spr.spriteType() == "player" && tile.hasEvent()) {
 			if(tile.event().getEventType().equals("warp")) {
 				tiles().clear();
@@ -206,10 +206,10 @@ public class Judgement extends Game {
 			}	
 		}
 		if(("player").equals(spr.spriteType())) {
-			double leftOverlap = (spr.getX() + spr.getBoundSize() - tile.getX());
-			double rightOverlap = (tile.getX() + tile.getBoundSize() - spr.getX());
-			double topOverlap = (spr.getY() + spr.getBoundSize() - tile.getY());
-			double botOverlap = (tile.getY() + tile.getBoundSize() - spr.getY());
+			double leftOverlap = (spr.getBoundX(hitDir) + spr.getBoundSize() - tile.getBoundX(hitDir));
+			double rightOverlap = (tile.getBoundX(hitDir) + tile.getBoundSize() - spr.getBoundX(hitDir));
+			double topOverlap = (spr.getBoundY(hitDir) + spr.getBoundSize() - tile.getBoundY(hitDir));
+			double botOverlap = (tile.getBoundY(hitDir) + tile.getBoundSize() - spr.getBoundY(hitDir));
 			
 			double smallestOverlap = Double.MAX_VALUE; 
 			double shiftX = 0;

@@ -75,7 +75,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	abstract void spriteDraw(AnimatedSprite sprite);
 	abstract void spriteDying(AnimatedSprite sprite);
 	abstract void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2);
-	abstract void tileCollision(AnimatedSprite spr, Tile tile);
+	abstract void tileCollision(AnimatedSprite spr, Tile tile, int hitDir);
 	
 	//Constructor
 	public Game(int frameRate,int width, int height) {
@@ -314,26 +314,24 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			AnimatedSprite spr = _sprites.get(first);
 			for(int second = 0; second < _tiles.size(); second++) {
 				Tile tile = _tiles.get(second);
-				if(tile.isSolid() || tile.hasEvent()) {
 					if(!spr.hasMultBounds()) {
 						if(tile.getTileBounds().intersects(spr.getBounds())) {
-							tileCollision(spr, tile);
+							tileCollision(spr, tile, -1);
 						} 
 					}
 					if(spr.hasMultBounds()) {
 			    		if(spr.checkLeftBound(tile.getTileBounds())){
-			    			tileCollision(spr, tile);
+			    			tileCollision(spr, tile, 0);
 			    		}
 			    		if(spr.checkRightBound(tile.getTileBounds())){
-			    			tileCollision(spr, tile);
+			    			tileCollision(spr, tile, 1);
 			    		}
 			    		if(spr.checkHeadBound(tile.getTileBounds())){
-			    			tileCollision(spr, tile);
+			    			tileCollision(spr, tile, 2);
 			    		}
 			    		if(spr.checkLegBound(tile.getTileBounds())){
-			    			tileCollision(spr, tile);
+			    			tileCollision(spr, tile, 3);
 			    		}
-			    	}
 				}
 			}
 		}
