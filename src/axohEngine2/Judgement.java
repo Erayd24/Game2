@@ -73,12 +73,15 @@ public class Judgement extends Game {
 	Mob playerMob;
 	Mob randomNPC;
 	
+	//Set up the super class Game and set the window to appear
 	public Judgement() {
 		super(130, SCREENWIDTH, SCREENHEIGHT);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
+	//This method is called only once by the Game class, for startup
+	//Initialize all variables here
 	void gameStartUp() {
 		state = STATE.TITLE;
 		option = OPTION.NONE;
@@ -129,18 +132,21 @@ public class Judgement extends Game {
 			currentOverlay.accessTile(i).getEntity().setX(-300);
 		}
 		
-		requestFocus();
-		start();
+		requestFocus(); //Make sure the game is focused on
+		start(); //Start the game loop
 	}
 	
+	//Special section that updates with the default game loop methods
+	//Add game specific elements that need updating here
 	void gameTimedUpdate() {
 		checkInput();
-		if(state == STATE.TITLE) title.update(option, titleLocation);
-		if(state == STATE.INGAMEMENU) inMenu.update(option);
-		updateData(currentMap, currentOverlay, playerX, playerY);
+		if(state == STATE.TITLE) title.update(option, titleLocation); //Title Menu update
+		if(state == STATE.INGAMEMENU) inMenu.update(option); //In Game Menu update
+		updateData(currentMap, currentOverlay, playerX, playerY); //Update the current file data for saving later
 		System.out.println(frameRate());
 	}
 	
+	//Obtain the graphics passed down by the super class Game and render objects on the screen here
 	void gameRefreshScreen() {		
 		Graphics2D g2d = graphics();
 		g2d.clearRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
@@ -158,16 +164,12 @@ public class Judgement extends Game {
 			title.render(this, g2d, titleX, titleY, titleX2, titleY2);
 		}
 	}
-
-	void addTile(Tile tile) {
-		if(tile.hasProperty()){
-			tiles().add(tile);
-		}
-	}
 	
+	//Set special actions for quitting out of a game window
 	void gameShutDown() {		
 	}
 
+	
 	void spriteUpdate(AnimatedSprite sprite) {		
 	}
 
@@ -177,6 +179,7 @@ public class Judgement extends Game {
 	void spriteDying(AnimatedSprite sprite) {		
 	}
 
+	//Set handling for when a sprite contacts a sprite
 	void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2) {
 		/*if(spr2.spriteType() == "wall" && spr1._name == "player") {
 		}
@@ -186,6 +189,8 @@ public class Judgement extends Game {
 		}*/
 	}
 	
+	//Set handling for when a sprite contacts a Tile, this is handy for
+	// dealing with Tiles which contain Events
 	void tileCollision(AnimatedSprite spr, Tile tile, int hitDir) {
 		if(tile.hasEvent()){
 			if(spr.spriteType() == TYPE.PLAYER && tile.hasEvent()) {
@@ -254,6 +259,10 @@ public class Judgement extends Game {
 		}
 	}
 	
+	//Method to call which moves the player. The player sprite itself is not actually
+	// ever moved. In fact, the playerX and playerY variables are fed in to the map
+	// so the map moves around the player sprite which is why the x and y variables
+	// are opposites. If you want to move right, you subtract from X.
 	void movePlayer(int xa, int ya) {
 		if(xa > 0) {
 			playerX += xa; //left
@@ -275,7 +284,7 @@ public class Judgement extends Game {
 	}
 	
 	/**********************************************************
-	 * 
+	 * The Depths of Judgement Lies Below
 	 * 
 	 *             Key events - Mouse events
 	 *                            
@@ -464,15 +473,27 @@ public class Judgement extends Game {
         case KeyEvent.VK_LEFT:
             keyLeft = true;
             break;
+        case KeyEvent.VK_A:
+        	keyLeft = true;
+        	break;
         case KeyEvent.VK_RIGHT:
             keyRight = true;
             break;
+        case KeyEvent.VK_D:
+        	keyRight = true;
+        	break;
         case KeyEvent.VK_UP:
             keyUp = true;
             break;
+        case KeyEvent.VK_W:
+        	keyUp = true;
+        	break;
         case KeyEvent.VK_DOWN:
             keyDown = true;
             break;
+        case KeyEvent.VK_S:
+        	keyDown = true;
+        	break;
         case KeyEvent.VK_I:
         	keyInventory = true;
         	break;
@@ -493,15 +514,27 @@ public class Judgement extends Game {
         case KeyEvent.VK_LEFT:
             keyLeft = false;
             break;
+        case KeyEvent.VK_A:
+        	keyLeft = false;
+        	break;
         case KeyEvent.VK_RIGHT:
             keyRight = false;
             break;
+        case KeyEvent.VK_D:
+        	keyRight = false;
+        	break;
         case KeyEvent.VK_UP:
             keyUp = false;
             break;
+        case KeyEvent.VK_W:
+        	keyUp = false;
+        	break;
         case KeyEvent.VK_DOWN:
             keyDown = false;
             break;
+        case KeyEvent.VK_S:
+        	keyDown = false;
+        	break;
         case KeyEvent.VK_I:
 	    	keyInventory = false;
 	    	break;
@@ -525,12 +558,9 @@ public class Judgement extends Game {
 
 	void gameMouseMove() {
 	}
-	
-	 void drawString(Graphics2D g2d, String text, int x, int y) {
-         for (String line : text.split("\n"))
-             g2d.drawString(line, x, y += g2d.getFontMetrics().getHeight());
-     }
 	 
+	 //From the title screen, load a game file by having the super class get the data,
+	 // then handling where the pieces of the data will be assigned here.
 	 void loadGame() {
 		 if(currentFile != "") {
 			 loadData(currentFile);
