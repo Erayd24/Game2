@@ -52,6 +52,7 @@ public class Judgement extends Game {
 	//Menu variables
 	private int inX = 90, inY = 90;
 	private int inLocation;
+	private int sectionLoc;
 	private int titleX = 530, titleY = 610;
 	private int titleX2 = 340, titleY2 = 310;
 	private int titleLocation;
@@ -212,7 +213,7 @@ public class Judgement extends Game {
 			}
 			if(spr.spriteType() == TYPE.PLAYER && tile.event().getEventType() == TYPE.ITEM && keyAction){
 				if((tile._name).equals("chest")) tile.setFrame(tile.getSpriteNumber() + 1);
-				items().add(tile.event().getItem());
+				inMenu.addItem(tile.event().getItem()); //Add item to inventory
 				tile.endEvent();
 			}
 		}
@@ -318,7 +319,7 @@ public class Judgement extends Game {
 		
 			if(keyInventory) {
 				state = STATE.INGAMEMENU;
-				inputWait = 5;
+				inputWait = 10;
 			}
 		}
 		
@@ -420,7 +421,7 @@ public class Judgement extends Game {
 				option = OPTION.NONE;
 				inLocation = 0;
 				inY = 90;
-				inputWait = 5;
+				inputWait = 8;
 			}
 			if(option == OPTION.NONE){ 
 				if(keyUp) {
@@ -461,8 +462,25 @@ public class Judgement extends Game {
 					}
 				}
 			}
+			if(keyUp && option == OPTION.ITEMS){
+				sectionLoc--;
+				inMenu.loadOldItems();
+			}
+			if(keyDown && option == OPTION.ITEMS) {
+				sectionLoc++;
+				if(sectionLoc > 3) inMenu.loadNextItems();
+			}
+			
 			if(keyBack) {
 				option = OPTION.NONE;
+				inputWait = 8;
+			}
+			if(keyBack && option == OPTION.NONE) {
+				state = STATE.GAME;
+				option = OPTION.NONE;
+				inLocation = 0;
+				inY = 90;
+				inputWait = 8;
 			}
 		}
 		inputWait--;

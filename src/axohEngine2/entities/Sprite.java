@@ -50,6 +50,7 @@ public class Sprite extends Object {
     public Image setSprite(SpriteSheet sheet, int spriteNumber) {
     	image = (Image) sheet.getSprite(spriteNumber);
     	entity.setImage(image);
+    	if(spriteSize == 0) spriteSize = sheet.getSpriteSize() * sheet.getScale();
     	return image;
     }
     
@@ -107,6 +108,7 @@ public class Sprite extends Object {
     public void setSolid(boolean solid) { this.solid = solid; }
     public boolean solid() { return solid; }
     public int getBoundSize() { return newBound; }
+    public int getSpriteSize() { return spriteSize; }
     
     public double getBoundX(int hitDir) { 
     	if(hitDir == 0) return entity.getX() + _boundLeftX;

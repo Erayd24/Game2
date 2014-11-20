@@ -26,7 +26,7 @@ public class Item extends Sprite{
 	}
 	
 	public void render(JFrame frame, Graphics2D g2d, int x, int y) {
-		g2d.drawImage(getImage(), x, y, frame);
+		g2d.drawImage(getImage(), x, y, getSpriteSize(), getSpriteSize(), frame);
 	}
 	
 	public void setHealItem(int healingAmount, boolean healsStatus, String statusToHeal) {
@@ -44,6 +44,10 @@ public class Item extends Sprite{
 	
 	public void setKeyItem() {
 		keyItem = true;
+	}
+	
+	public String getName() {
+		return _name;
 	}
 	
 	public int useItem() { // TODO: Under construction

@@ -175,7 +175,7 @@ public class MapDatabase {
 		maps[3] = housesO;
 		
 		//Put together all items
-		potion = new Item(frame, g2d, extras2, 2, "potion");
+		potion = new Item(frame, g2d, extras2, 2, "Potion");
 		potion.setHealItem(25, false, "");
 		
 		//Put together all events

@@ -23,7 +23,6 @@ import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.Mob;
 import axohEngine2.map.Map;
 import axohEngine2.map.Tile;
-import axohEngine2.project.Item;
 import axohEngine2.util.Point2D;
 
 @SuppressWarnings("serial")
@@ -37,8 +36,6 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	public LinkedList<AnimatedSprite> sprites() { return _sprites; }
 	private LinkedList<Tile> _tiles;
 	public LinkedList<Tile> tiles() { return _tiles; }
-	private LinkedList<Item> _items;
-	public LinkedList<Item> items() { return _items; }
 	
 	//Set up graphics, synchronizing, screenwidth and height
 	private transient BufferedImage backBuffer;
@@ -102,7 +99,6 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
         //create the internal lists
         _sprites = new LinkedList<AnimatedSprite>();
         _tiles = new LinkedList<Tile>();
-        _items = new LinkedList<Item>();
         
         data = new Data();
 		save = new Save();
