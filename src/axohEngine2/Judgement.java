@@ -57,6 +57,9 @@ public class Judgement extends Game {
 	private int titleX2 = 340, titleY2 = 310;
 	private int titleLocation;
 	private String currentFile;
+	private boolean wasSaving = false;
+	private int wait;
+	private boolean waitOn = false;
 	
 	//Game variables
 	SpriteSheet extras1;
@@ -142,9 +145,12 @@ public class Judgement extends Game {
 	void gameTimedUpdate() {
 		checkInput();
 		if(state == STATE.TITLE) title.update(option, titleLocation); //Title Menu update
-		if(state == STATE.INGAMEMENU) inMenu.update(option); //In Game Menu update
+		if(state == STATE.INGAMEMENU) inMenu.update(option, sectionLoc); //In Game Menu update
 		updateData(currentMap, currentOverlay, playerX, playerY); //Update the current file data for saving later
 		System.out.println(frameRate());
+		if(waitOn){
+			wait--;
+		}
 	}
 	
 	//Obtain the graphics passed down by the super class Game and render objects on the screen here
@@ -163,6 +169,12 @@ public class Judgement extends Game {
 		}
 		if(state == STATE.TITLE) {
 			title.render(this, g2d, titleX, titleY, titleX2, titleY2);
+		}
+		if(option == OPTION.SAVE){
+			drawString(g2d, "Are you sure you\n      would like to save?", 660, 400);
+		}
+		if(wasSaving && wait > 0) {
+			g2d.drawString("Game Saved!", 700, 500);
 		}
 	}
 	
@@ -424,6 +436,7 @@ public class Judgement extends Game {
 				inputWait = 8;
 			}
 			if(option == OPTION.NONE){ 
+				if(wait == 0) wasSaving = false;
 				if(keyUp) {
 					if(inLocation > 0) {
 						inY -= 108;
@@ -457,28 +470,48 @@ public class Judgement extends Game {
 					}
 					if(inLocation == 4){
 						option = OPTION.SAVE;
-						inputWait = 5;
-						save.saveState(currentFile, data());
+						inputWait = 20;
 					}
+					keyEnter = false;
 				}
 			}
-			if(keyUp && option == OPTION.ITEMS){
-				sectionLoc--;
-				inMenu.loadOldItems();
-			}
-			if(keyDown && option == OPTION.ITEMS) {
-				sectionLoc++;
-				if(sectionLoc > 3) inMenu.loadNextItems();
+			
+			if(option == OPTION.ITEMS) {
+				if(keyUp){
+					if(sectionLoc == 0) inMenu.loadOldItems();
+					if(sectionLoc - 1 != -1) sectionLoc--;
+					inputWait = 8;
+				}
+				if(keyDown) {
+					if(sectionLoc == 3) inMenu.loadNextItems();
+					if(inMenu.getItems().size() > sectionLoc + 1 && sectionLoc < 3) sectionLoc++;
+					inputWait = 8;
+				}
 			}
 			
-			if(keyBack) {
+			if(option == OPTION.SAVE){
+				if(keyEnter){
+					save.saveState(currentFile, data());
+					inputWait = 20;
+					waitOn = true;
+					wait = 200;
+					wasSaving = true;
+					option = OPTION.NONE;
+				}
+			}
+			
+			if(keyBack && option != OPTION.NONE) {
 				option = OPTION.NONE;
+				inMenu.setLocation(0);
+				sectionLoc = 0;
 				inputWait = 8;
+				keyBack = false;
 			}
 			if(keyBack && option == OPTION.NONE) {
 				state = STATE.GAME;
 				option = OPTION.NONE;
 				inLocation = 0;
+				sectionLoc = 0;
 				inY = 90;
 				inputWait = 8;
 			}

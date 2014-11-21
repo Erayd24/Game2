@@ -39,9 +39,11 @@ public class MapDatabase {
 	Event warp1;
 	Event warp2;
 	Event getPotion;
+	Event getMpotion;
 	
 	//Items
 	Item potion;
+	Item mpotion;
 	
 	public Map[] maps;
 	
@@ -110,13 +112,13 @@ public class MapDatabase {
 
 		Tile[] cityOTiles = {e, e, h, e, e, e, e, h, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, d, e, e, e, e, d, e, e, e, c, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
+							 e, e, e, d, e, e, e, e, d, e, e, e, c, c, c, c, c, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, c, e, ro, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, ro, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
-							 e, e, e, e, e, e, e, e, c, ro, ro, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
+							 e, e, e, e, e, c, c, c, c, ro, ro, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
 							 e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e,
@@ -174,9 +176,11 @@ public class MapDatabase {
 		housesO = new Map(frame, g2d, houseOTiles, 6, 6, "housesO");
 		maps[3] = housesO;
 		
-		//Put together all items
+		//Put together all items (Dont forget to add these to the counts method in inGameMenu.java)
 		potion = new Item(frame, g2d, extras2, 2, "Potion");
 		potion.setHealItem(25, false, "");
+		mpotion = new Item(frame, g2d, extras2, 2, "Mega Potion");
+		potion.setHealItem(50, false, "");
 		
 		//Put together all events
 		//Warping events
@@ -188,12 +192,21 @@ public class MapDatabase {
 		//Item events
 		getPotion = new Event("getPotion", TYPE.ITEM);
 		getPotion.setItem(potion);
+		getMpotion = new Event("getMpotion", TYPE.ITEM);
+		getMpotion.setItem(mpotion);
 		
 		//Add the events to their specific tiles and maps
 		houses.accessTile(5).addEvent(warp1);
 		cityO.accessTile(92).addEvent(getPotion);
 		cityO.accessTile(242).addEvent(getPotion);
 		cityO.accessTile(328).addEvent(getPotion);
+		cityO.accessTile(327).addEvent(getMpotion);
+		cityO.accessTile(326).addEvent(getMpotion);
+		cityO.accessTile(325).addEvent(getMpotion);
+		cityO.accessTile(93).addEvent(getMpotion);
+		cityO.accessTile(94).addEvent(getMpotion);
+		cityO.accessTile(95).addEvent(getMpotion);
+		cityO.accessTile(96).addEvent(getMpotion);
 	}
 	
 	public Map getMap(int index) {
