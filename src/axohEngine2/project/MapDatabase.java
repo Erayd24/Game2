@@ -176,7 +176,7 @@ public class MapDatabase {
 		housesO = new Map(frame, g2d, houseOTiles, 6, 6, "housesO");
 		maps[3] = housesO;
 		
-		//Put together all items (Dont forget to add these to the counts method in inGameMenu.java)
+		//Put together all items (Dont forget to add these to the count and setup methods in inGameMenu.java)
 		potion = new Item(frame, g2d, extras2, 2, "Potion");
 		potion.setHealItem(25, false, "");
 		mpotion = new Item(frame, g2d, extras2, 2, "Mega Potion");

@@ -441,14 +441,14 @@ public class Judgement extends Game {
 					if(inLocation > 0) {
 						inY -= 108;
 						inLocation--;
-						inputWait = 5;
+						inputWait = 10;
 					}
 				}
 				if(keyDown) {
 					if(inLocation < 4) {
 						inY += 108;
 						inLocation++;
-						inputWait = 5;
+						inputWait = 10;
 					}
 				}
 				if(keyEnter) {
@@ -484,7 +484,7 @@ public class Judgement extends Game {
 				}
 				if(keyDown) {
 					if(sectionLoc == 3) inMenu.loadNextItems();
-					if(inMenu.getItems().size() > sectionLoc + 1 && sectionLoc < 3) sectionLoc++;
+					if(inMenu.getTotalItems() > sectionLoc + 1 && sectionLoc < 3) sectionLoc++;
 					inputWait = 8;
 				}
 			}
@@ -502,7 +502,7 @@ public class Judgement extends Game {
 			
 			if(keyBack && option != OPTION.NONE) {
 				option = OPTION.NONE;
-				inMenu.setLocation(0);
+				inMenu.setItemLoc(0);
 				sectionLoc = 0;
 				inputWait = 8;
 				keyBack = false;
