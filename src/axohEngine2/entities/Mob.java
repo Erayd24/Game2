@@ -1,6 +1,7 @@
 package axohEngine2.entities;
 
 import java.awt.Graphics2D;
+import java.util.Random;
 
 import javax.swing.JFrame;
 
@@ -8,11 +9,13 @@ import axohEngine2.project.TYPE;
 
 public class Mob extends AnimatedSprite{
 	
+	private Random random = new Random();
 	private boolean hostile;
 	private int health;
 	private TYPE ai;
 	private int xx;
 	private int yy;
+	private int speed = 5;
 	
 	boolean _left = false;
 	boolean _right = false;
@@ -23,7 +26,7 @@ public class Mob extends AnimatedSprite{
 	boolean wasUp = false;
 	boolean wasDown = false;
 	
-	private transient Graphics2D g2d;
+	private Graphics2D g2d;
 	private JFrame frame;
 	
 	public Mob(JFrame frame, Graphics2D g2d, SpriteSheet sheet, int spriteNumber, TYPE ai, String name, boolean hostility) {
@@ -45,22 +48,20 @@ public class Mob extends AnimatedSprite{
 	public void setHealth(int health) { this.health = health; }
 	public void setAi(TYPE ai) { this.ai = ai; }
 	public void setName(String name) { super._name = name; }
+	public void setSpeed(int speed) { this.speed = speed; }
 	
 	public void updateMob() {
 		if(ai == TYPE.RANDOMPATH) {
 			randomPath();
 		}
-		
 		if(ai == TYPE.SEARCH) {
 			search();
 		}
-		
 		if(ai == TYPE.CHASE) {
 			chase();
 		}
-		
 		if(ai == TYPE.PLAYER) {
-		
+			//TODO: Do I need this?
 		}
 		if(hostile && health < 0) {
 			setAlive(false);
@@ -68,7 +69,11 @@ public class Mob extends AnimatedSprite{
 	}
 	
 	private void randomPath() {
-		
+		if(60 % (random.nextInt(60) + 30) == 0) {
+			xx += random.nextInt(speed);
+			yy += random.nextInt(speed);
+			System.out.println("inside");
+		}
 	}
 	
 	private void search() {
@@ -169,7 +174,7 @@ public class Mob extends AnimatedSprite{
 	
 	public double getXLoc() { return entity.getX(); }
 	public double getYLoc() { return entity.getY(); }
-	public void setLoc(int x, int y) {
+	public void setLoc(int x, int y) { //Relative to current position
 		xx = xx + x;
 		yy = yy + y;
 	}

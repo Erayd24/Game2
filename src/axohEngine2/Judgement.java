@@ -132,6 +132,8 @@ public class Judgement extends Game {
 		for(int i = 0; i < currentMap.getHeight() * currentMap.getHeight(); i++){
 			addTile(currentMap.accessTile(i));
 			addTile(currentOverlay.accessTile(i));
+			if(currentMap.accessTile(i).hasMob()) sprites().add(currentMap.accessTile(i).mob());
+			if(currentMap.accessTile(i).hasMob()) sprites().add(currentOverlay.accessTile(i).mob());
 			currentMap.accessTile(i).getEntity().setX(-300);
 			currentOverlay.accessTile(i).getEntity().setX(-300);
 		}
@@ -148,9 +150,7 @@ public class Judgement extends Game {
 		if(state == STATE.INGAMEMENU) inMenu.update(option, sectionLoc); //In Game Menu update
 		updateData(currentMap, currentOverlay, playerX, playerY); //Update the current file data for saving later
 		System.out.println(frameRate());
-		if(waitOn){
-			wait--;
-		}
+		if(waitOn) wait--;
 	}
 	
 	//Obtain the graphics passed down by the super class Game and render objects on the screen here
@@ -214,9 +214,11 @@ public class Judgement extends Game {
 						 if(tile.event().getMapName() == mapBase.getMap(i).mapName()) currentMap = mapBase.getMap(i);
 						 if(tile.event().getOverlayName() == mapBase.getMap(i).mapName()) currentOverlay = mapBase.getMap(i);
 					}
-					for(int i = 0; i < currentMap.getWidth() * currentMap.getHeight(); i++){ //For differing widths and height of each map
+					for(int i = 0; i < currentMap.getWidth() * currentMap.getHeight(); i++){
 						addTile(currentMap.accessTile(i));
 						addTile(currentOverlay.accessTile(i));
+						if(currentMap.accessTile(i).hasMob()) sprites().add(currentMap.accessTile(i).mob());
+						if(currentMap.accessTile(i).hasMob()) sprites().add(currentOverlay.accessTile(i).mob());
 					}
 					playerX = tile.event().getNewX();
 					playerY = tile.event().getNewY();
@@ -639,6 +641,8 @@ public class Judgement extends Game {
 			 for(int i = 0; i < currentMap.getWidth() * currentMap.getHeight(); i++){
 					addTile(currentMap.accessTile(i));
 					addTile(currentOverlay.accessTile(i));
+					if(currentMap.accessTile(i).hasMob()) sprites().add(currentMap.accessTile(i).mob());
+					if(currentMap.accessTile(i).hasMob()) sprites().add(currentOverlay.accessTile(i).mob());
 			}
 		 }
 	 }

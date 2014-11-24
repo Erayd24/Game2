@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 
 import javax.swing.JFrame;
 
+import axohEngine2.entities.Mob;
 import axohEngine2.entities.SpriteSheet;
 import axohEngine2.map.Event;
 import axohEngine2.map.Map;
@@ -16,6 +17,7 @@ public class MapDatabase {
 	SpriteSheet buildings;
 	SpriteSheet environment32;
 	SpriteSheet extras2;
+	SpriteSheet mainCharacter;
 	
 	//Maps
 	Map city;
@@ -45,6 +47,9 @@ public class MapDatabase {
 	Item potion;
 	Item mpotion;
 	
+	//NPC's and Monsters
+	Mob npc;
+	
 	public Map[] maps;
 	
 	public MapDatabase(JFrame frame, Graphics2D g2d, int scale) {
@@ -55,6 +60,7 @@ public class MapDatabase {
 		buildings = new SpriteSheet("/textures/environments/4x4buildings.png", 4, 4, 64, scale);
 		environment32 = new SpriteSheet("/textures/environments/32SizeEnvironment.png", 8, 8, 32,scale);
 		extras2 = new SpriteSheet("/textures/extras/extras2.png", 16, 16, 16, scale);
+		mainCharacter = new SpriteSheet("/textures/characters/mainCharacter.png", 8, 8, 32, scale);
 		
 		//Set up tile blueprints and if they are animating
 		d = new Tile(frame, g2d, "door", environment32, 0);
@@ -207,6 +213,13 @@ public class MapDatabase {
 		cityO.accessTile(94).addEvent(getMpotion);
 		cityO.accessTile(95).addEvent(getMpotion);
 		cityO.accessTile(96).addEvent(getMpotion);
+		
+		//Set up Monsters and NPCs
+		npc = new Mob(frame, g2d, mainCharacter, 40, TYPE.RANDOMPATH, "npc", false);
+		npc.setMultBounds(6, 50, 95, 37, 90, 62, 95, 54, 95);
+		npc.loadMultAnim(32, 48, 40, 56, 3, 8);
+		
+		cityO.accessTile(98).addMob(npc);;
 	}
 	
 	public Map getMap(int index) {

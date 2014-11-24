@@ -7,6 +7,7 @@ import java.awt.Rectangle;
 import javax.swing.JFrame;
 
 import axohEngine2.entities.AnimatedSprite;
+import axohEngine2.entities.Mob;
 import axohEngine2.entities.SpriteSheet;
 import axohEngine2.project.TYPE;
 
@@ -16,8 +17,10 @@ public class Tile extends AnimatedSprite {
 	private boolean _slippery;
 	private boolean _breakable;
 	private boolean hasEvent = false;
+	private boolean hasMob = false;
 	
 	private Event event;
+	private Mob mob;
 	private boolean hasProperty = false;
 		
 	//Default constructor
@@ -83,6 +86,13 @@ public class Tile extends AnimatedSprite {
 		hasEvent = false;
 	}
 	
+	public Mob mob() { return mob; }
+	public boolean hasMob() { return hasMob; }
+	public void addMob(Mob mob) {
+		hasMob = true;
+		this.mob = mob;
+	}
+	
 	public boolean isSolid() { return _solid; }
 	public boolean isSlippery() { return _slippery; }
 	public boolean isBreakable() { return _breakable; }
@@ -94,6 +104,9 @@ public class Tile extends AnimatedSprite {
 	
 	public void renderTile(int x, int y, Graphics2D g2d, JFrame frame) {
 		g2d.drawImage(getImage(), x, y, getSpriteSize(), getSpriteSize(), frame);
+		getEntity().setX(x);
+		getEntity().setY(y);
+		if(hasMob) mob.updateMob();
 	}
 	
 	public void drawTileBounds(Color c, Graphics2D g2d) {
