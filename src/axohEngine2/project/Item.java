@@ -15,13 +15,15 @@ public class Item extends Sprite{
 	private boolean healItem = false;
 	private boolean attackItem = false;
 	private boolean keyItem = false;
+	private boolean isEquipment;
 	private String status;
 	private String _name;
 	
-	public Item(JFrame frame, Graphics2D g2d, SpriteSheet sheet, int spriteNumber, String name) {
+	public Item(JFrame frame, Graphics2D g2d, SpriteSheet sheet, int spriteNumber, String name, boolean equipment) {
 		super(frame, g2d);
 		setSprite(sheet, spriteNumber);
 		this.sheet = sheet;
+		isEquipment = equipment;
 		_name = name;
 	}
 	
@@ -49,6 +51,8 @@ public class Item extends Sprite{
 	public String getName() {
 		return _name;
 	}
+	
+	public boolean isEquimpent() { return isEquipment; }
 	
 	public int useItem() { // TODO: Under construction
 		if(keyItem) {

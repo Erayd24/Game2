@@ -230,7 +230,7 @@ public class Judgement extends Game {
 			}
 		}
 		
-		if(spr.spriteType() == TYPE.PLAYER && tile.solid()) {
+		if(spr.spriteType() == TYPE.PLAYER && tile.solid() && state == STATE.GAME) {
 			double leftOverlap = (spr.getBoundX(hitDir) + spr.getBoundSize() - tile.getBoundX(hitDir));
 			double rightOverlap = (tile.getBoundX(hitDir) + tile.getBoundSize() - spr.getBoundX(hitDir));
 			double topOverlap = (spr.getBoundY(hitDir) + spr.getBoundSize() - tile.getBoundY(hitDir));
@@ -489,12 +489,25 @@ public class Judgement extends Game {
 				}
 			}
 			
+			if(option == OPTION.EQUIPMENT) {
+				if(keyUp){
+					if(sectionLoc == 0) inMenu.loadOldItems();
+					if(sectionLoc - 1 != -1) sectionLoc--;
+					inputWait = 8;
+				}
+				if(keyDown) {
+					if(sectionLoc == 3) inMenu.loadNextEquipment();
+					if(inMenu.getTotalEquipment() > sectionLoc + 1 && sectionLoc < 3) sectionLoc++;
+					inputWait = 8;
+				}
+			}
+			
 			if(option == OPTION.SAVE){
 				if(keyEnter){
 					save.saveState(currentFile, data());
 					inputWait = 20;
-					waitOn = true;
 					wait = 200;
+					waitOn = true;
 					wasSaving = true;
 					option = OPTION.NONE;
 				}

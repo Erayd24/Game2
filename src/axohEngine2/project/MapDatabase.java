@@ -177,9 +177,9 @@ public class MapDatabase {
 		maps[3] = housesO;
 		
 		//Put together all items (Dont forget to add these to the count and setup methods in inGameMenu.java)
-		potion = new Item(frame, g2d, extras2, 2, "Potion");
+		potion = new Item(frame, g2d, extras2, 2, "Potion", false);
 		potion.setHealItem(25, false, "");
-		mpotion = new Item(frame, g2d, extras2, 2, "Mega Potion");
+		mpotion = new Item(frame, g2d, extras2, 2, "Mega Potion", false);
 		potion.setHealItem(50, false, "");
 		
 		//Put together all events
