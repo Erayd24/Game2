@@ -356,7 +356,7 @@ public class Judgement extends Game {
 					if(titleLocation == 0){
 						option = OPTION.NEWGAME;
 						titleLocation = 0;
-						inputWait = 5;
+						inputWait = 10;
 						keyEnter = false;
 					}
 					if(titleLocation == 1){
@@ -376,19 +376,26 @@ public class Judgement extends Game {
 					titleY2 = 310;
 					option = OPTION.NONE;
 				}
-				if(keyDown && titleLocation < 2) {
+				if(keyDown && titleLocation < 2 && !title.isGetName()) {
 					titleLocation++;
 					titleY2 += 160;
 					inputWait = 7;
 				}
-				if(keyUp && titleLocation > 0) {
+				if(keyUp && titleLocation > 0 && !title.isGetName()) {
 					titleLocation--;
 					titleY2 -= 160;
 					inputWait = 7;
 				}
 				if(keyEnter && !title.isGetName()) {
 					if(option == OPTION.NEWGAME) {
-						if(title.files().length - 1 < titleLocation) {
+						if(title.files() != null){ //Make sure the location of a new game is greater than previous ones
+							if(title.files().length - 1 < titleLocation) {
+								title.enter();
+								titleX2 += 40;
+								inputWait = 5;
+							}
+						}
+						if(title.files() == null) { //final check if there are no files made yet, to make the file anywhere
 							title.enter();
 							titleX2 += 40;
 							inputWait = 5;

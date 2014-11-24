@@ -25,9 +25,9 @@ import axohEngine2.map.Map;
 import axohEngine2.map.Tile;
 import axohEngine2.util.Point2D;
 
-@SuppressWarnings("serial")
 abstract class Game extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener {
-	
+	private static final long serialVersionUID = 1L;
+
 	//Game loop and Thread variable
 	private transient Thread gameloop;
 	

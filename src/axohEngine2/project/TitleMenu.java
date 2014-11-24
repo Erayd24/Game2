@@ -97,10 +97,12 @@ public class TitleMenu {
 			return "";
 		}
 		if(_option == OPTION.LOADGAME) {
-			if(location <= files.length  - 1){
-				if(files.length == 3) return (files[location]); 
-				if(files.length == 2 && location <= 1) return (files[location]); 
-				if(files.length == 1 && location == 0) return (files[location]); 
+			if(files != null){
+				if(location <= files.length  - 1){
+					if(files.length == 3) return (files[location]); 
+					if(files.length == 2 && location <= 1) return (files[location]); 
+					if(files.length == 1 && location == 0) return (files[location]); 
+				}
 			}
 		}
 		return "";
@@ -110,7 +112,10 @@ public class TitleMenu {
 		return _fileName;
 	}
 	
-	public String[] files() { return files; }
+	public String[] files() { 
+		return files; 
+	}
+	
 	public boolean isGetName() { return getName; }
 	public void setGetName(boolean onOrOff) { getName = onOrOff; }
 	
