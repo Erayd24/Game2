@@ -15,7 +15,7 @@ public class Mob extends AnimatedSprite{
 	private TYPE ai;
 	private int xx;
 	private int yy;
-	private int speed = 5;
+	private int speed = 2;
 	
 	boolean _left = false;
 	boolean _right = false;
@@ -25,6 +25,13 @@ public class Mob extends AnimatedSprite{
 	boolean wasLeft = false;
 	boolean wasUp = false;
 	boolean wasDown = false;
+	boolean randUp = false;
+	boolean randDown = false;
+	boolean randLeft = false;
+	boolean randRight = false;
+	
+	boolean waitOn = false;
+	int wait = 1;
 	
 	private Graphics2D g2d;
 	private JFrame frame;
@@ -69,11 +76,52 @@ public class Mob extends AnimatedSprite{
 	}
 	
 	private void randomPath() {
-		if(60 % (random.nextInt(60) + 30) == 0) {
-			xx += random.nextInt(speed);
-			yy += random.nextInt(speed);
-			System.out.println("inside");
+		int xa = 0;
+		int ya = 0;
+		
+		if(wait <= 0) {
+			waitOn = false;
+			randRight = false;
+			randUp = false;
+			randDown = false;
+			randLeft = false;
+			wait = 1;
 		}
+		
+		if(random.nextInt(60) > 50 && !waitOn) { //right
+			randRight = true;
+			waitOn = true;
+			wait = random.nextInt(300);
+		}
+		if(random.nextInt(60) > 50 && !waitOn) { //left
+			randLeft = true;
+			waitOn = true;
+			wait = random.nextInt(300);
+		}
+		if(random.nextInt(60) > 50 && !waitOn) { //up
+			randUp = true;
+			waitOn = true;
+			wait = random.nextInt(300);
+		}
+		if(random.nextInt(60) > 50 && !waitOn) { //down
+			randDown = true;
+			waitOn = true;
+			wait = random.nextInt(300);
+		}
+		if(random.nextInt(60) > 40 && !waitOn) { //Not moving
+			waitOn = true;
+			wait = random.nextInt(300);
+		}
+		
+		if(randRight) xa = speed;
+		if(randLeft) xa = -speed;
+		if(randUp) ya = speed;
+		if(randDown) ya = -speed;
+		
+		move(xa, ya);
+		
+		if(xa == 0 && ya == 0) stopAnim();
+		if(randRight || randDown || randLeft || randUp) wait--;
 	}
 	
 	private void search() {
@@ -82,6 +130,54 @@ public class Mob extends AnimatedSprite{
 	
 	private void chase() {
 		
+	}
+	
+	private void move(int xa, int ya) {
+		if(xa < 0) {
+			xx += xa; //left
+			
+			if(!_left) {
+				setAnimTo(leftAnim);
+			}
+			startAnim();
+			_left = true;
+		}
+		if(xa > 0) {
+			xx += xa; //right
+			
+			if(!_right) {
+				setAnimTo(rightAnim);
+			}
+			startAnim();
+			_right = true;
+		}
+		if(ya < 0) {
+			yy += ya; //up
+			
+			if(!_up) {
+				setAnimTo(upAnim);
+			}
+			startAnim();
+			_up = true;
+		}
+		if(ya > 0) {
+			yy += ya; //down
+			
+			if(!_down) {
+				setAnimTo(downAnim);
+			}
+			startAnim();
+			_down = true;
+		}
+		
+		if(xa == 0 && _left || _right) {
+			_left = false;
+			_right = false;
+		}
+		if(ya == 0 && _up || _right) {
+			_up = false;
+			_down = false;
+		}
 	}
 	
 	public void updatePlayer(boolean left, boolean right, boolean up, boolean down) {
