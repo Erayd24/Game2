@@ -31,7 +31,7 @@ public class Mob extends AnimatedSprite{
 	boolean randRight = false;
 	
 	boolean waitOn = false;
-	int wait = 1;
+	int wait;
 	
 	private Graphics2D g2d;
 	private JFrame frame;
@@ -78,6 +78,7 @@ public class Mob extends AnimatedSprite{
 	private void randomPath() {
 		int xa = 0;
 		int ya = 0;
+		int r = random.nextInt(7);
 		
 		if(wait <= 0) {
 			waitOn = false;
@@ -85,32 +86,36 @@ public class Mob extends AnimatedSprite{
 			randUp = false;
 			randDown = false;
 			randLeft = false;
-			wait = 1;
 		}
 		
-		if(random.nextInt(60) > 50 && !waitOn) { //right
+		if(r == 0 && !waitOn) { //right
 			randRight = true;
 			waitOn = true;
-			wait = random.nextInt(300);
+			wait = random.nextInt(200);
 		}
-		if(random.nextInt(60) > 50 && !waitOn) { //left
+		if(r == 1 && !waitOn) { //left
 			randLeft = true;
 			waitOn = true;
-			wait = random.nextInt(300);
+			wait = random.nextInt(200);
 		}
-		if(random.nextInt(60) > 50 && !waitOn) { //up
+		if(r == 2 && !waitOn) { //up
 			randUp = true;
 			waitOn = true;
-			wait = random.nextInt(300);
+			wait = random.nextInt(200);
 		}
-		if(random.nextInt(60) > 50 && !waitOn) { //down
+		if(r == 3 && !waitOn) { //down
 			randDown = true;
 			waitOn = true;
-			wait = random.nextInt(300);
+			wait = random.nextInt(200);
 		}
-		if(random.nextInt(60) > 40 && !waitOn) { //Not moving
+		if(r >= 4 && !waitOn) { //Not moving
 			waitOn = true;
-			wait = random.nextInt(300);
+			_down = false;
+			_right = false;
+			_up = false;
+			_left = false;
+			wait = random.nextInt(200);
+			stopAnim();
 		}
 		
 		if(randRight) xa = speed;
@@ -119,9 +124,7 @@ public class Mob extends AnimatedSprite{
 		if(randDown) ya = -speed;
 		
 		move(xa, ya);
-		
-		if(xa == 0 && ya == 0) stopAnim();
-		if(randRight || randDown || randLeft || randUp) wait--;
+		if(waitOn) wait--;
 	}
 	
 	private void search() {
@@ -133,50 +136,44 @@ public class Mob extends AnimatedSprite{
 	}
 	
 	private void move(int xa, int ya) {
-		if(xa < 0) {
-			xx += xa; //left
+		if(xa < 0) { //left
+			xx += xa; 
+			_right = false;
+			_down = false;
+			_up = false;
 			
-			if(!_left) {
-				setAnimTo(leftAnim);
-			}
+			if(!_left) setAnimTo(leftAnim);
 			startAnim();
 			_left = true;
-		}
-		if(xa > 0) {
-			xx += xa; //right
+		} else if(xa > 0) { //right
+			xx += xa; 
+			_left = false;
+			_up = false;
+			_down = false;
 			
-			if(!_right) {
-				setAnimTo(rightAnim);
-			}
+			if(!_right) setAnimTo(rightAnim);
 			startAnim();
 			_right = true;
 		}
-		if(ya < 0) {
-			yy += ya; //up
-			
-			if(!_up) {
-				setAnimTo(upAnim);
-			}
+		
+		if(ya < 0) {  //up
+			yy += ya;
+			_down = false;
+			_right = false;
+			_left = false;
+
+			if(!_up) setAnimTo(upAnim);
 			startAnim();
 			_up = true;
-		}
-		if(ya > 0) {
-			yy += ya; //down
+		} else if(ya > 0) { //down
+			yy += ya; 
+			_up = false;
+			_right = false;
+			_left = false;
 			
-			if(!_down) {
-				setAnimTo(downAnim);
-			}
+			if(!_down) setAnimTo(downAnim);
 			startAnim();
 			_down = true;
-		}
-		
-		if(xa == 0 && _left || _right) {
-			_left = false;
-			_right = false;
-		}
-		if(ya == 0 && _up || _right) {
-			_up = false;
-			_down = false;
 		}
 	}
 	
