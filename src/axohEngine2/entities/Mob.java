@@ -17,21 +17,21 @@ public class Mob extends AnimatedSprite{
 	private int yy;
 	private int speed = 2;
 	
-	boolean _left = false;
-	boolean _right = false;
-	boolean _up = false;
-	boolean _down = false;
-	boolean wasRight = false;
-	boolean wasLeft = false;
-	boolean wasUp = false;
-	boolean wasDown = false;
-	boolean randUp = false;
-	boolean randDown = false;
-	boolean randLeft = false;
-	boolean randRight = false;
+	private boolean _left = false;
+	private boolean _right = false;
+	private boolean _up = false;
+	private boolean _down = false;
+	private boolean wasRight = false;
+	private boolean wasLeft = false;
+	private boolean wasUp = false;
+	private boolean wasDown = false;
+	private boolean randUp = false;
+	private boolean randDown = false;
+	private boolean randLeft = false;
+	private boolean randRight = false;
 	
-	boolean waitOn = false;
-	int wait;
+	private boolean waitOn = false;
+	private int wait;
 	
 	private Graphics2D g2d;
 	private JFrame frame;
@@ -86,6 +86,10 @@ public class Mob extends AnimatedSprite{
 			randUp = false;
 			randDown = false;
 			randLeft = false;
+			_left = false;
+			_right = false;
+			_up = false;
+			_down = false;
 		}
 		
 		if(r == 0 && !waitOn) { //right
@@ -110,10 +114,6 @@ public class Mob extends AnimatedSprite{
 		}
 		if(r >= 4 && !waitOn) { //Not moving
 			waitOn = true;
-			_down = false;
-			_right = false;
-			_up = false;
-			_left = false;
 			wait = random.nextInt(200);
 			stopAnim();
 		}
@@ -138,18 +138,12 @@ public class Mob extends AnimatedSprite{
 	private void move(int xa, int ya) {
 		if(xa < 0) { //left
 			xx += xa; 
-			_right = false;
-			_down = false;
-			_up = false;
 			
 			if(!_left) setAnimTo(leftAnim);
 			startAnim();
 			_left = true;
 		} else if(xa > 0) { //right
 			xx += xa; 
-			_left = false;
-			_up = false;
-			_down = false;
 			
 			if(!_right) setAnimTo(rightAnim);
 			startAnim();
@@ -158,18 +152,12 @@ public class Mob extends AnimatedSprite{
 		
 		if(ya < 0) {  //up
 			yy += ya;
-			_down = false;
-			_right = false;
-			_left = false;
 
 			if(!_up) setAnimTo(upAnim);
 			startAnim();
 			_up = true;
 		} else if(ya > 0) { //down
 			yy += ya; 
-			_up = false;
-			_right = false;
-			_left = false;
 			
 			if(!_down) setAnimTo(downAnim);
 			startAnim();
