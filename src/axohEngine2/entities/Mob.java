@@ -123,6 +123,7 @@ public class Mob extends AnimatedSprite{
 		if(randUp) ya = speed;
 		if(randDown) ya = -speed;
 		
+		if(randRight || randDown || randUp || randLeft) startAnim();
 		move(xa, ya);
 		if(waitOn) wait--;
 	}

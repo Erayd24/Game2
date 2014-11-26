@@ -133,7 +133,7 @@ public class Judgement extends Game {
 			addTile(currentMap.accessTile(i));
 			addTile(currentOverlay.accessTile(i));
 			if(currentMap.accessTile(i).hasMob()) sprites().add(currentMap.accessTile(i).mob());
-			if(currentMap.accessTile(i).hasMob()) sprites().add(currentOverlay.accessTile(i).mob());
+			if(currentOverlay.accessTile(i).hasMob()) sprites().add(currentOverlay.accessTile(i).mob());
 			currentMap.accessTile(i).getEntity().setX(-300);
 			currentOverlay.accessTile(i).getEntity().setX(-300);
 		}
@@ -218,7 +218,7 @@ public class Judgement extends Game {
 						addTile(currentMap.accessTile(i));
 						addTile(currentOverlay.accessTile(i));
 						if(currentMap.accessTile(i).hasMob()) sprites().add(currentMap.accessTile(i).mob());
-						if(currentMap.accessTile(i).hasMob()) sprites().add(currentOverlay.accessTile(i).mob());
+						if(currentOverlay.accessTile(i).hasMob()) sprites().add(currentOverlay.accessTile(i).mob());
 					}
 					playerX = tile.event().getNewX();
 					playerY = tile.event().getNewY();
@@ -649,7 +649,7 @@ public class Judgement extends Game {
 					addTile(currentMap.accessTile(i));
 					addTile(currentOverlay.accessTile(i));
 					if(currentMap.accessTile(i).hasMob()) sprites().add(currentMap.accessTile(i).mob());
-					if(currentMap.accessTile(i).hasMob()) sprites().add(currentOverlay.accessTile(i).mob());
+					if(currentOverlay.accessTile(i).hasMob()) sprites().add(currentOverlay.accessTile(i).mob());
 			}
 		 }
 	 }
