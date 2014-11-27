@@ -106,7 +106,6 @@ public class Tile extends AnimatedSprite {
 		g2d.drawImage(getImage(), x, y, getSpriteSize(), getSpriteSize(), frame);
 		getEntity().setX(x);
 		getEntity().setY(y);
-		if(hasMob) mob.updateMob();
 	}
 	
 	public void drawTileBounds(Color c, Graphics2D g2d) {

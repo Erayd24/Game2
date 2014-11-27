@@ -129,10 +129,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			
 			purgeSprites(); 
 		}
-		
-		if(!gamePaused()) {
-			drawSprites();
-		}
+		if(!gamePaused()) drawSprites();
 			paint(g);
 			gameRefreshScreen();
 	}
@@ -152,8 +149,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	//Using Runnable, run a loop which calls update methods for specific things including
 	// graphics and collision.
 	public void run() {
-		 Thread t = Thread.currentThread();
-		
+		Thread t = Thread.currentThread();
 		while(t == gameloop) {
 			try { 
 				Thread.sleep(1000 / desiredRate);
@@ -182,37 +178,22 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		FileInputStream file_in = null;
 		ObjectInputStream reader = null;
 		Object obj = null;
-		
 		try {
 			file_in = new FileInputStream("C:/gamedata/saves/" + fileName);
 			reader = new ObjectInputStream (file_in);
 			System.out.println("Load successful.");
-	
 			obj = reader.readObject();
 		} catch(IOException | ClassNotFoundException e) {}
-			
-		if(obj instanceof Data) {
-			data = (Data) obj;
-		}
+		if(obj instanceof Data) data = (Data) obj;
 	}
 	
 	//Get the current Data class instance
-	public Data data() {
-		return data;
-	}
+	public Data data() { return data; }
 	
 	//Key Listener Methods
-	public void keyTyped(KeyEvent k) { 
-		setKeyChar(k.getKeyChar());
-	}
-	
-    public void keyPressed(KeyEvent k) {
-        gameKeyDown(k.getKeyCode());
-    }
-    
-    public void keyReleased(KeyEvent k) {
-        gameKeyUp(k.getKeyCode());
-    }
+	public void keyTyped(KeyEvent k) { setKeyChar(k.getKeyChar()); }
+    public void keyPressed(KeyEvent k) { gameKeyDown(k.getKeyCode()); }
+    public void keyReleased(KeyEvent k) { gameKeyUp(k.getKeyCode()); }
     
     //Mouse Listener events
     private void checkButtons(MouseEvent e) {
@@ -280,17 +261,11 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	
 	//Set the current key being pressed to the current char being pressed
 	// get currentChar to obtain the char pressed.
-	public void setKeyChar(char keyChar) {
-		currentChar = keyChar;
-	}
+	public void setKeyChar(char keyChar) { currentChar = keyChar; }
 
 	//Return an angles X or Y value based on a degree and returned in radians
-	protected double calcAngleMoveX(double angle) {
-		return (double) (Math.cos(angle * Math.PI / 180));
-	}
-	protected double calcAngleMoveY(double angle) {
-		return (double) (Math.sin(angle * Math.PI / 180));
-	}
+	protected double calcAngleMoveX(double angle) { return (double) (Math.cos(angle * Math.PI / 180)); }
+	protected double calcAngleMoveY(double angle) { return (double) (Math.sin(angle * Math.PI / 180)); }
 	
 	//update all the sprites in the current list if they are alive
 	protected void updateSprites() {
@@ -309,49 +284,37 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		data.update(currentMap.mapName(), currentOverlay.mapName(), playerX, playerY);
 	}
 	
-	//Detect when a sprite intersects a sprite and call a handling method, currently only 
+	//Detect when a sprite intersects a sprite and calls a handling method, currently only 
 	// rectangles are used for detection
 	protected void spriteCollision() {
-		for(int first = 0; first < _sprites.size(); first++) {
-			AnimatedSprite spr1 = _sprites.get(first);
-				for(int second = 0; second < _sprites.size(); second++) {
-					AnimatedSprite spr2 = _sprites.get(second);
-						if(spr1.collidesWith(spr2) && spr2.solid())
-							spriteCollision(spr1, spr2);
-						else
-							spr2.setCollided(false);
-				}
+		for(int i = 0; i < _sprites.size(); i++) {
+			AnimatedSprite spr1 = _sprites.get(i);
+			for(int j = 0; j < _sprites.size(); j++) {
+				AnimatedSprite spr2 = _sprites.get(j);
+				if(spr1.collidesWith(spr2) && spr2.solid()) spriteCollision(spr1, spr2);
+			}
 		}
 	}
 	
 	//Same as the above spriteCollision() method but instead the collision is between
-	// a sprite and a Tile. Also, currently only with rectangles
+	// a sprite and a Tile. Also, currently only with rectangles. The method gets a sprite
+	// then gets a each tile, if it intersects any bounds made for that sprite the method 
+	// calls a method that can handle an intersection seperately for specific properties.
 	protected void tileCollision() {
-		for(int first = 0; first < _sprites.size(); first++) {
-			AnimatedSprite spr = _sprites.get(first);
-			for(int second = 0; second < _tiles.size(); second++) {
-				Tile tile = _tiles.get(second);
+		for(int i = 0; i < _sprites.size(); i++) {
+			AnimatedSprite spr = _sprites.get(i);
+			for(int j = 0; j < _tiles.size(); j++) {
+				Tile tile = _tiles.get(j);
 				if(!spr.hasMultBounds()) {
-					if(tile.getTileBounds().intersects(spr.getBounds())) {
-						tileCollision(spr, tile, -1);
-					} 
+					if(tile.getTileBounds().intersects(spr.getBounds())) tileCollision(spr, tile, -1);
+				} else {
+			   		if(spr.checkLeftBound(tile.getTileBounds())) tileCollision(spr, tile, 0);
+			   		if(spr.checkRightBound(tile.getTileBounds())) tileCollision(spr, tile, 1);
+			   		if(spr.checkHeadBound(tile.getTileBounds())) tileCollision(spr, tile, 2);
+			   		if(spr.checkLegBound(tile.getTileBounds())) tileCollision(spr, tile, 3);
 				}
-				if(spr.hasMultBounds()) {
-		    		if(spr.checkLeftBound(tile.getTileBounds())){
-		    			tileCollision(spr, tile, 0);
-		    		}
-		    		if(spr.checkRightBound(tile.getTileBounds())){
-			    			tileCollision(spr, tile, 1);
-		    		}
-		    		if(spr.checkHeadBound(tile.getTileBounds())){
-			    			tileCollision(spr, tile, 2);
-		    		}
-		    		if(spr.checkLegBound(tile.getTileBounds())){
-		    			tileCollision(spr, tile, 3);
-		    		}
-				}
-			}
-		}
+			} //end _tiles for loop
+		} //end _sprites for loop
 	}
 	
 	//Draw and update animated sprites automatically, they must be in the list
@@ -363,18 +326,14 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 				spriteDraw(spr);
 			}
 		}
-		for(int i = 0; i < _tiles.size(); i++) {
-			_tiles.get(i).updateFrame();
-		}
+		for(int i = 0; i < _tiles.size(); i++) _tiles.get(i).updateFrame();
 	}
 	
 	//Delete the sprite that has been killed from the system
 	private void purgeSprites() {
 		for(int i = 0; i < _sprites.size(); i++) {
-			AnimatedSprite spr = (AnimatedSprite) _sprites.get(i);
-			if(spr.alive() == false) {
-				_sprites.remove(i);
-			}
+			AnimatedSprite spr = _sprites.get(i);
+			if(spr.alive() == false) _sprites.remove(i);
 		}
 	}
 	
@@ -382,16 +341,13 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	// use this method to add a layer of choice(filter). This method currently only 
 	// allows Tiles which have properties - solid, event, breakable, etc..
 	void addTile(Tile tile) {
-		if(tile.hasProperty()){
-			tiles().add(tile);
-		}
+		if(tile.hasProperty()) tiles().add(tile);
 	}
 	
 	//Special drawString method which takes an extra parameter. This allows for a
 	// newLine character to be used which removes the need for seperate drawString
 	// method calls in your code. '\n' makes a new line
 	void drawString(Graphics2D g2d, String text, int x, int y) {
-        for (String line : text.split("\n"))
-            g2d.drawString(line, x, y += g2d.getFontMetrics().getHeight());
+        for(String line : text.split("\n")) g2d.drawString(line, x, y += g2d.getFontMetrics().getHeight());
     }
 }

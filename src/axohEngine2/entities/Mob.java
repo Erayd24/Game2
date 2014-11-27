@@ -25,6 +25,7 @@ public class Mob extends AnimatedSprite{
 	private boolean wasLeft = false;
 	private boolean wasUp = false;
 	private boolean wasDown = false;
+	
 	private boolean randUp = false;
 	private boolean randDown = false;
 	private boolean randLeft = false;

@@ -194,21 +194,52 @@ public class Judgement extends Game {
 
 	//Set handling for when a sprite contacts a sprite
 	void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2) {
-		/*if(spr2.spriteType() == "wall" && spr1._name == "player") {
-		}
-		if(spr1.spriteType() == "enemy" || spr2.spriteType() == "enemy") {
-		}
-		if(spr1.spriteType() == "npc" || spr2.spriteType() == "npc") {
-		}*/
+		
 	}
 	
 	//Set handling for when a sprite contacts a Tile, this is handy for
-	// dealing with Tiles which contain Events
+	// dealing with Tiles which contain Events. When specifying a new
+	// collision method, check for the type of sprite and whether a tile is
+	// solid or breakable, both, or even if it contains an event. This is
+	// mandatory because the AxohEngine finds details on collision and then 
+	// sends it here, which can be the handled in specific ways by the user.
+	// AxohEngine doesn't check for solidity. The user must.
 	void tileCollision(AnimatedSprite spr, Tile tile, int hitDir) {
+		double leftOverlap = (spr.getBoundX(hitDir) + spr.getBoundSize() - tile.getBoundX(hitDir));
+		double rightOverlap = (tile.getBoundX(hitDir) + tile.getBoundSize() - spr.getBoundX(hitDir));
+		double topOverlap = (spr.getBoundY(hitDir) + spr.getBoundSize() - tile.getBoundY(hitDir));
+		double botOverlap = (tile.getBoundY(hitDir) + tile.getBoundSize() - spr.getBoundY(hitDir));
+		double smallestOverlap = Double.MAX_VALUE; 
+		double shiftX = 0;
+		double shiftY = 0;
+
+		if(leftOverlap < smallestOverlap) { //Left
+			smallestOverlap = leftOverlap;
+			shiftX -= leftOverlap; 
+			shiftY = 0;
+		}
+		if(rightOverlap < smallestOverlap){ //right
+			smallestOverlap = rightOverlap;
+			shiftX = rightOverlap;
+			shiftY = 0;
+		}
+		if(topOverlap < smallestOverlap){ //up
+			smallestOverlap = topOverlap;
+			shiftX = 0;
+			shiftY -= topOverlap;
+		}
+		if(botOverlap < smallestOverlap){ //down
+			smallestOverlap = botOverlap;
+			shiftX = 0;
+			shiftY = botOverlap;
+		}
+		
 		if(tile.hasEvent()){
 			if(spr.spriteType() == TYPE.PLAYER && tile.hasEvent()) {
 				if(tile.event().getEventType() == TYPE.WARP) {
 					tiles().clear();
+					sprites().clear();
+					sprites().add(playerMob);
 					for(int i = 0; i < mapBase.maps.length; i++){
 						 if(mapBase.getMap(i) == null) continue;
 						 if(tile.event().getMapName() == mapBase.getMap(i).mapName()) currentMap = mapBase.getMap(i);
@@ -222,7 +253,6 @@ public class Judgement extends Game {
 					}
 					playerX = tile.event().getNewX();
 					playerY = tile.event().getNewY();
-					return;
 				}	
 			}
 			if(spr.spriteType() == TYPE.PLAYER && tile.event().getEventType() == TYPE.ITEM && keyAction){
@@ -233,44 +263,13 @@ public class Judgement extends Game {
 		}
 		
 		if(spr.spriteType() == TYPE.PLAYER && tile.solid() && state == STATE.GAME) {
-			double leftOverlap = (spr.getBoundX(hitDir) + spr.getBoundSize() - tile.getBoundX(hitDir));
-			double rightOverlap = (tile.getBoundX(hitDir) + tile.getBoundSize() - spr.getBoundX(hitDir));
-			double topOverlap = (spr.getBoundY(hitDir) + spr.getBoundSize() - tile.getBoundY(hitDir));
-			double botOverlap = (tile.getBoundY(hitDir) + tile.getBoundSize() - spr.getBoundY(hitDir));
-			
-			double smallestOverlap = Double.MAX_VALUE; 
-			double shiftX = 0;
-			double shiftY = 0;
-			
-			if(leftOverlap < smallestOverlap) { //Left
-				smallestOverlap = leftOverlap;
-				shiftX -= leftOverlap; 
-				shiftY = 0;
-			}
-			if(rightOverlap < smallestOverlap){ //right
-				smallestOverlap = rightOverlap;
-				shiftX = rightOverlap;
-				shiftY = 0;
-			}
-			if(topOverlap < smallestOverlap){ //up
-				smallestOverlap = topOverlap;
-				shiftX = 0;
-				shiftY -= topOverlap;
-			}
-			if(botOverlap < smallestOverlap){ //down
-				smallestOverlap = botOverlap;
-				shiftX = 0;
-				shiftY = botOverlap;
-			}
 			playerX -= shiftX;
 			playerY -= shiftY;
+			return;
 		}
-
-		if(spr instanceof Mob) {
-			/*if(spr.spriteType() == "enemy" || spr.spriteType() == "npc") {
-				spr = (Mob) spr;
-				((Mob) spr).setLoc((int)((Mob) spr).getXLoc(), (int)((Mob) spr).getYLoc());
-			}*/
+		if(tile.solid() && state == STATE.GAME){
+			spr.getEntity().setX(spr.getEntity().getX() - shiftX);
+			spr.getEntity().setY(spr.getEntity().getY() - shiftY);
 		}
 	}
 	
@@ -279,24 +278,14 @@ public class Judgement extends Game {
 	// so the map moves around the player sprite which is why the x and y variables
 	// are opposites. If you want to move right, you subtract from X.
 	void movePlayer(int xa, int ya) {
-		if(xa > 0) {
-			playerX += xa; //left
-		}
-		if(xa < 0) {
-			playerX += xa; //right
-		}
-		if(ya > 0) {
-			playerY += ya; //up
-		}
-		if(ya < 0) {
-			playerY += ya; //down
-		}
+		if(xa > 0) playerX += xa; //left
+		if(xa < 0) playerX += xa; //right
+		if(ya > 0) playerY += ya; //up
+		if(ya < 0) playerY += ya; //down
 	}
 	
 	//Main
-	public static void main(String[] args) {
-		new Judgement();
-	}
+	public static void main(String[] args) { new Judgement(); }
 	
 	/**********************************************************
 	 * The Depths of Judgement Lies Below
