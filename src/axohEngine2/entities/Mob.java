@@ -57,6 +57,30 @@ public class Mob extends AnimatedSprite{
 	public void setAi(TYPE ai) { this.ai = ai; }
 	public void setName(String name) { super._name = name; }
 	public void setSpeed(int speed) { this.speed = speed; }
+	public void resetMovement() {
+		randRight = false;
+		randLeft = false;
+		randUp = false;
+		randDown = false;
+		wait = 0;
+		waitOn = false;
+		_left = false;
+		_right = false;
+		_up = false;
+		_down = false;
+	}
+	
+	public void stop() {
+		if(ai == TYPE.RANDOMPATH){
+			randRight = false;
+			randUp = false;
+			randDown = false;
+			randLeft = false;
+			waitOn = true;
+			wait = 100 + random.nextInt(200);
+			stopAnim();
+		}
+	}
 	
 	public void updateMob() {
 		if(ai == TYPE.RANDOMPATH) {
@@ -181,7 +205,7 @@ public class Mob extends AnimatedSprite{
 					toggleLeg(true);
 					toggleLeft(false);
 					toggleRight(false);
-					toggleHead(false);
+					toggleHead(true);
 				}
 			}
 			startAnim();
@@ -200,7 +224,7 @@ public class Mob extends AnimatedSprite{
 					toggleLeg(true);
 					toggleLeft(false);
 					toggleRight(false);
-					toggleHead(false);
+					toggleHead(true);
 				}
 			}
 			startAnim();
@@ -219,7 +243,7 @@ public class Mob extends AnimatedSprite{
 					toggleLeg(false);
 					toggleLeft(true);
 					toggleRight(true);
-					toggleHead(false);
+					toggleHead(true);
 				}
 			}
 			startAnim();
@@ -238,7 +262,7 @@ public class Mob extends AnimatedSprite{
 					toggleLeg(false);
 					toggleLeft(true);
 					toggleRight(true);
-					toggleHead(false);
+					toggleHead(true);
 				}
 			}
 			startAnim();

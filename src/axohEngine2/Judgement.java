@@ -1,5 +1,6 @@
 package axohEngine2;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -117,7 +118,7 @@ public class Judgement extends Game {
 		
 		//****Initialize Mobs*****************************************************************************
 		playerMob = new Mob(this, graphics(), mainCharacter, 40, TYPE.PLAYER, "mainC", true);
-		playerMob.setMultBounds(6, 50, 95, 37, 90, 62, 95, 54, 95);
+		playerMob.setMultBounds(6, 50, 95, 37, 90, 62, 96, 61, 95);
 		playerMob.loadMultAnim(32, 48, 40, 56, 3, 8);
 		playerMob.setHealth(35);
 		sprites().add(playerMob);
@@ -163,6 +164,8 @@ public class Judgement extends Game {
 			currentMap.render(this, g2d, playerX, playerY);
 			currentOverlay.render(this, g2d, playerX, playerY);
 			playerMob.renderMob(CENTERX, CENTERY);
+			playerMob.drawBounds(Color.RED);
+			currentOverlay.accessTile(98).mob().drawBounds(Color.RED);
 		}
 		if(state == STATE.INGAMEMENU){
 			inMenu.render(this, g2d, inX, inY);
@@ -193,8 +196,41 @@ public class Judgement extends Game {
 	}
 
 	//Set handling for when a sprite contacts a sprite
-	void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2) {
+	void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2, int hitDir) {
+		double leftOverlap = (spr1.getBoundX(hitDir) + spr1.getBoundSize() - spr2.getBoundX(hitDir));
+		double rightOverlap = (spr2.getBoundX(hitDir) + spr2.getBoundSize() - spr1.getBoundX(hitDir));
+		double topOverlap = (spr1.getBoundY(hitDir) + spr1.getBoundSize() - spr2.getBoundY(hitDir));
+		double botOverlap = (spr2.getBoundY(hitDir) + spr2.getBoundSize() - spr1.getBoundY(hitDir));
+		double smallestOverlap = Double.MAX_VALUE; 
+		double shiftX = 0;
+		double shiftY = 0;
+
+		if(leftOverlap < smallestOverlap) { //Left
+			smallestOverlap = leftOverlap;
+			shiftX -= leftOverlap; 
+			shiftY = 0;
+		}
+		if(rightOverlap < smallestOverlap){ //right
+			smallestOverlap = rightOverlap;
+			shiftX = rightOverlap;
+			shiftY = 0;
+		}
+		if(topOverlap < smallestOverlap){ //up
+			smallestOverlap = topOverlap;
+			shiftX = 0;
+			shiftY -= topOverlap;
+		}
+		if(botOverlap < smallestOverlap){ //down
+			smallestOverlap = botOverlap;
+			shiftX = 0;
+			shiftY = botOverlap;
+		}
 		
+		if(spr1.spriteType() == TYPE.PLAYER ^ spr2.spriteType() == TYPE.PLAYER && state == STATE.GAME){
+			if(spr2 instanceof Mob) ((Mob) spr2).stop();
+			playerX -= shiftX;
+			playerY -= shiftY;
+		}
 	}
 	
 	//Set handling for when a sprite contacts a Tile, this is handy for
@@ -267,9 +303,12 @@ public class Judgement extends Game {
 			playerY -= shiftY;
 			return;
 		}
-		if(tile.solid() && state == STATE.GAME){
-			spr.getEntity().setX(spr.getEntity().getX() - shiftX);
-			spr.getEntity().setY(spr.getEntity().getY() - shiftY);
+		if(spr.spriteType() != TYPE.PLAYER && tile.solid() && state == STATE.GAME){
+			if(spr instanceof Mob) {
+				((Mob) spr).setLoc((int)shiftX, (int)shiftY);
+				((Mob) spr).resetMovement();
+			}
+			
 		}
 	}
 	
@@ -627,6 +666,7 @@ public class Judgement extends Game {
 		 if(currentFile != "") {
 			 loadData(currentFile);
 			 tiles().clear();
+			 sprites().clear();
 			 for(int i = 0; i < mapBase.maps.length; i++){
 				 if(mapBase.getMap(i) == null) continue;
 				 if(data().getMapName() == mapBase.getMap(i).mapName()) currentMap = mapBase.getMap(i);
@@ -634,6 +674,7 @@ public class Judgement extends Game {
 			 }
 			 playerX = data().getPlayerX();
 			 playerY = data().getPlayerY();
+			 sprites().add(playerMob);
 			 for(int i = 0; i < currentMap.getWidth() * currentMap.getHeight(); i++){
 					addTile(currentMap.accessTile(i));
 					addTile(currentOverlay.accessTile(i));

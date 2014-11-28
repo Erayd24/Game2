@@ -60,10 +60,13 @@ public class Sprite extends Object {
     	ny = y;
     }
     
+    //Automatically the legX and legY bound is set initialy. This method is to simplify the adding of multiple
+    // bounding boxes which can each be turned on or off seperately.
     public void setMultBounds(int boundSize, int boundLegX, int boundLegY, int boundLeftX, int boundLeftY, int boundRightX, int boundRightY, int boundHeadX, int boundHeadY) {
     	newBound = boundSize * scale;
     	nx = boundLegX;
     	ny = boundLegY;
+    	leg = true;
     	_boundLegX = boundLegX;
     	_boundLegY = boundLegY;
     	_boundLeftX = boundLeftX;
@@ -134,17 +137,22 @@ public class Sprite extends Object {
     public int headBoundX() { return _boundHeadX; }
     public int headBoundY() { return _boundHeadY; }
     public boolean hasMultBounds() { return hasMultBounds; }
+    public Rectangle getLeftBound() { return entity.getBounds(newBound, _boundLeftX, _boundLeftY); }
+    public Rectangle getRightBound() { return entity.getBounds(newBound, _boundRightX, _boundRightY); }
+    public Rectangle getHeadBound() { return entity.getBounds(newBound, _boundHeadX, _boundHeadY); }
+    public Rectangle getLegBound() { return entity.getBounds(newBound, _boundLegX, _boundLegY); }
+
 
     //load bitmap file for individual sprites
     public void load(String filename) {
         entity.load(filename);
     }
     
-    //draw bounding rectangle around sprite
+    //draw bounding rectangle around sprite using the bounding boxes
     public void drawBounds(Color c) {
         entity.g2d.setColor(c);
         if(!hasMultBounds) entity.g2d.draw(getBounds());
-        if(hasMultBounds) {
+        else {
         	if(leg) entity.g2d.draw(getEntity().getBounds(newBound, _boundLegX, _boundLegY));
         	if(left) entity.g2d.draw(getEntity().getBounds(newBound, _boundLeftX, _boundLeftY));
         	if(right) entity.g2d.draw(getEntity().getBounds(newBound, _boundRightX, _boundRightY));

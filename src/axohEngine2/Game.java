@@ -77,7 +77,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	abstract void spriteUpdate(AnimatedSprite sprite);
 	abstract void spriteDraw(AnimatedSprite sprite);
 	abstract void spriteDying(AnimatedSprite sprite);
-	abstract void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2);
+	abstract void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2, int hitDir);
 	abstract void tileCollision(AnimatedSprite spr, Tile tile, int hitDir);
 	
 	//Constructor - Initialize the frame, the backBuffer, the game lists, and any other
@@ -291,7 +291,43 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			AnimatedSprite spr1 = _sprites.get(i);
 			for(int j = 0; j < _sprites.size(); j++) {
 				AnimatedSprite spr2 = _sprites.get(j);
-				if(spr1.collidesWith(spr2) && spr2.solid()) spriteCollision(spr1, spr2);
+				if(!spr1.hasMultBounds() && !spr2.hasMultBounds()){
+					if(spr1.getBounds().intersects(spr2.getBounds())) spriteCollision(spr1, spr2, -1); //spr1 and spr2 have one bound
+				} else {
+					if(spr1.hasMultBounds() && !spr2.hasMultBounds()){ //spr1 has multiple bounds but not spr2
+						if(spr1.checkLeftBound(spr2.getBounds())) spriteCollision(spr1, spr2, 0);
+				   		if(spr1.checkRightBound(spr2.getBounds())) spriteCollision(spr1, spr2, 1);
+				   		if(spr1.checkHeadBound(spr2.getBounds())) spriteCollision(spr1, spr2, 2);
+				   		if(spr1.checkLegBound(spr2.getBounds())) spriteCollision(spr1, spr2, 3);
+					}
+					if(spr2.hasMultBounds() && !spr1.hasMultBounds()){ //spr2 has multiple bounds but not spr1
+						if(spr2.checkLeftBound(spr1.getBounds())) spriteCollision(spr1, spr2, 0);
+				   		if(spr2.checkRightBound(spr1.getBounds())) spriteCollision(spr1, spr2, 1);
+				   		if(spr2.checkHeadBound(spr1.getBounds())) spriteCollision(spr1, spr2, 2);
+				   		if(spr2.checkLegBound(spr1.getBounds())) spriteCollision(spr1, spr2, 3);
+					}
+					if(spr2.hasMultBounds() && spr1.hasMultBounds()){ //spr2 has multiple bounds as well as spr1
+						if(spr1.checkLeftBound(spr2.getLeftBound())) spriteCollision(spr1, spr2, 0);
+						if(spr1.checkLeftBound(spr2.getRightBound())) spriteCollision(spr1, spr2, 1);
+						if(spr1.checkLeftBound(spr2.getHeadBound())) spriteCollision(spr1, spr2, 2);
+						if(spr1.checkLeftBound(spr2.getLegBound())) spriteCollision(spr1, spr2, 3);
+
+						if(spr1.checkRightBound(spr2.getLeftBound())) spriteCollision(spr1, spr2, 0);
+						if(spr1.checkRightBound(spr2.getRightBound())) spriteCollision(spr1, spr2, 1);
+						if(spr1.checkRightBound(spr2.getHeadBound())) spriteCollision(spr1, spr2, 2);
+						if(spr1.checkRightBound(spr2.getLegBound())) spriteCollision(spr1, spr2, 3);
+						
+						if(spr1.checkHeadBound(spr2.getLeftBound())) spriteCollision(spr1, spr2, 0);
+						if(spr1.checkHeadBound(spr2.getRightBound())) spriteCollision(spr1, spr2, 1);
+						if(spr1.checkHeadBound(spr2.getHeadBound())) spriteCollision(spr1, spr2, 2);
+						if(spr1.checkHeadBound(spr2.getLegBound())) spriteCollision(spr1, spr2, 3);
+						
+						if(spr1.checkLegBound(spr2.getLeftBound())) spriteCollision(spr1, spr2, 0);
+						if(spr1.checkLegBound(spr2.getRightBound())) spriteCollision(spr1, spr2, 1);
+						if(spr1.checkLegBound(spr2.getHeadBound())) spriteCollision(spr1, spr2, 2);
+						if(spr1.checkLegBound(spr2.getLegBound())) spriteCollision(spr1, spr2, 3);
+					}
+				}
 			}
 		}
 	}
