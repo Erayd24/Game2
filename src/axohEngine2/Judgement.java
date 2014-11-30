@@ -164,8 +164,6 @@ public class Judgement extends Game {
 			currentMap.render(this, g2d, playerX, playerY);
 			currentOverlay.render(this, g2d, playerX, playerY);
 			playerMob.renderMob(CENTERX, CENTERY);
-			playerMob.drawBounds(Color.RED);
-			currentOverlay.accessTile(98).mob().drawBounds(Color.RED);
 		}
 		if(state == STATE.INGAMEMENU){
 			inMenu.render(this, g2d, inX, inY);
@@ -196,11 +194,12 @@ public class Judgement extends Game {
 	}
 
 	//Set handling for when a sprite contacts a sprite
-	void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2, int hitDir) {
-		double leftOverlap = (spr1.getBoundX(hitDir) + spr1.getBoundSize() - spr2.getBoundX(hitDir));
-		double rightOverlap = (spr2.getBoundX(hitDir) + spr2.getBoundSize() - spr1.getBoundX(hitDir));
-		double topOverlap = (spr1.getBoundY(hitDir) + spr1.getBoundSize() - spr2.getBoundY(hitDir));
-		double botOverlap = (spr2.getBoundY(hitDir) + spr2.getBoundSize() - spr1.getBoundY(hitDir));
+	// hitDir is the hit found when coliding on a specific box on spr1 and hitDir2 is the same thing but for spr2
+	void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2, int hitDir, int hitDir2) {
+		double leftOverlap = (spr1.getBoundX(hitDir) + spr1.getBoundSize() - spr2.getBoundX(hitDir2));
+		double rightOverlap = (spr2.getBoundX(hitDir2) + spr2.getBoundSize() - spr1.getBoundX(hitDir));
+		double topOverlap = (spr1.getBoundY(hitDir) + spr1.getBoundSize() - spr2.getBoundY(hitDir2));
+		double botOverlap = (spr2.getBoundY(hitDir2) + spr2.getBoundSize() - spr1.getBoundY(hitDir));
 		double smallestOverlap = Double.MAX_VALUE; 
 		double shiftX = 0;
 		double shiftY = 0;
@@ -225,8 +224,8 @@ public class Judgement extends Game {
 			shiftX = 0;
 			shiftY = botOverlap;
 		}
-		
-		if(spr1.spriteType() == TYPE.PLAYER ^ spr2.spriteType() == TYPE.PLAYER && state == STATE.GAME){
+
+		if(spr1.spriteType() == TYPE.PLAYER && state == STATE.GAME){
 			if(spr2 instanceof Mob) ((Mob) spr2).stop();
 			playerX -= shiftX;
 			playerY -= shiftY;
@@ -241,10 +240,14 @@ public class Judgement extends Game {
 	// sends it here, which can be the handled in specific ways by the user.
 	// AxohEngine doesn't check for solidity. The user must.
 	void tileCollision(AnimatedSprite spr, Tile tile, int hitDir) {
-		double leftOverlap = (spr.getBoundX(hitDir) + spr.getBoundSize() - tile.getBoundX(hitDir));
-		double rightOverlap = (tile.getBoundX(hitDir) + tile.getBoundSize() - spr.getBoundX(hitDir));
-		double topOverlap = (spr.getBoundY(hitDir) + spr.getBoundSize() - tile.getBoundY(hitDir));
-		double botOverlap = (tile.getBoundY(hitDir) + tile.getBoundSize() - spr.getBoundY(hitDir));
+		int hitDir2;
+		if(!tile.hasMultBounds()) {
+			hitDir2 = -1;
+		} else hitDir2 = hitDir;
+		double leftOverlap = (spr.getBoundX(hitDir) + spr.getBoundSize() - tile.getBoundX(hitDir2));
+		double rightOverlap = (tile.getBoundX(hitDir2) + tile.getBoundSize() - spr.getBoundX(hitDir));
+		double topOverlap = (spr.getBoundY(hitDir) + spr.getBoundSize() - tile.getBoundY(hitDir2));
+		double botOverlap = (tile.getBoundY(hitDir2) + tile.getBoundSize() - spr.getBoundY(hitDir));
 		double smallestOverlap = Double.MAX_VALUE; 
 		double shiftX = 0;
 		double shiftY = 0;
@@ -263,6 +266,7 @@ public class Judgement extends Game {
 			smallestOverlap = topOverlap;
 			shiftX = 0;
 			shiftY -= topOverlap;
+			System.out.println(spr.getBoundY(hitDir) + " bound Y " + spr.getBoundSize() + " size " + tile.getBoundY(hitDir) + " tile collision");
 		}
 		if(botOverlap < smallestOverlap){ //down
 			smallestOverlap = botOverlap;
