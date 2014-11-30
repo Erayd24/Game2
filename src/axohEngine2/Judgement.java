@@ -118,7 +118,7 @@ public class Judgement extends Game {
 		
 		//****Initialize Mobs*****************************************************************************
 		playerMob = new Mob(this, graphics(), mainCharacter, 40, TYPE.PLAYER, "mainC", true);
-		playerMob.setMultBounds(6, 50, 95, 37, 90, 62, 96, 61, 95);
+		playerMob.setMultBounds(6, 50, 95, 37, 88, 62, 92, 62, 96);
 		playerMob.loadMultAnim(32, 48, 40, 56, 3, 8);
 		playerMob.setHealth(35);
 		sprites().add(playerMob);
@@ -164,6 +164,7 @@ public class Judgement extends Game {
 			currentMap.render(this, g2d, playerX, playerY);
 			currentOverlay.render(this, g2d, playerX, playerY);
 			playerMob.renderMob(CENTERX, CENTERY);
+			playerMob.drawBounds(Color.RED);
 		}
 		if(state == STATE.INGAMEMENU){
 			inMenu.render(this, g2d, inX, inY);
@@ -239,11 +240,7 @@ public class Judgement extends Game {
 	// mandatory because the AxohEngine finds details on collision and then 
 	// sends it here, which can be the handled in specific ways by the user.
 	// AxohEngine doesn't check for solidity. The user must.
-	void tileCollision(AnimatedSprite spr, Tile tile, int hitDir) {
-		int hitDir2;
-		if(!tile.hasMultBounds()) {
-			hitDir2 = -1;
-		} else hitDir2 = hitDir;
+	void tileCollision(AnimatedSprite spr, Tile tile, int hitDir, int hitDir2) {
 		double leftOverlap = (spr.getBoundX(hitDir) + spr.getBoundSize() - tile.getBoundX(hitDir2));
 		double rightOverlap = (tile.getBoundX(hitDir2) + tile.getBoundSize() - spr.getBoundX(hitDir));
 		double topOverlap = (spr.getBoundY(hitDir) + spr.getBoundSize() - tile.getBoundY(hitDir2));
@@ -266,7 +263,6 @@ public class Judgement extends Game {
 			smallestOverlap = topOverlap;
 			shiftX = 0;
 			shiftY -= topOverlap;
-			System.out.println(spr.getBoundY(hitDir) + " bound Y " + spr.getBoundSize() + " size " + tile.getBoundY(hitDir) + " tile collision");
 		}
 		if(botOverlap < smallestOverlap){ //down
 			smallestOverlap = botOverlap;

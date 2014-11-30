@@ -196,6 +196,10 @@ public class Mob extends AnimatedSprite{
 			if(right || up || down) wasLeft = true;
 			if(wasLeft && !up && !down && !right) {
 				setAnimTo(leftAnim);
+				toggleLeg(true);
+				toggleLeft(false);
+				toggleRight(false);
+				toggleHead(false);
 				wasLeft = false;
 			}
 			
@@ -205,7 +209,7 @@ public class Mob extends AnimatedSprite{
 					toggleLeg(true);
 					toggleLeft(false);
 					toggleRight(false);
-					toggleHead(true);
+					toggleHead(false);
 				}
 			}
 			startAnim();
@@ -215,6 +219,10 @@ public class Mob extends AnimatedSprite{
 			if(left || up || down) wasRight = true;
 			if(wasRight && !up && !down && !left) {
 				setAnimTo(rightAnim);
+				toggleLeg(true);
+				toggleLeft(false);
+				toggleRight(false);
+				toggleHead(false);
 				wasRight = false;
 			}
 			
@@ -224,7 +232,7 @@ public class Mob extends AnimatedSprite{
 					toggleLeg(true);
 					toggleLeft(false);
 					toggleRight(false);
-					toggleHead(true);
+					toggleHead(false);
 				}
 			}
 			startAnim();
@@ -234,6 +242,10 @@ public class Mob extends AnimatedSprite{
 			if(left || right || down) wasUp = true;
 			if(wasUp && !right && !down && !left) {
 				setAnimTo(upAnim);
+				toggleLeg(false);
+				toggleLeft(true);
+				toggleRight(true);
+				toggleHead(true);
 				wasUp = false;
 			}
 			
@@ -253,6 +265,10 @@ public class Mob extends AnimatedSprite{
 			if(left || up || right) wasDown = true;
 			if(wasDown && !up && !right && !left) {
 				setAnimTo(downAnim);
+				toggleLeg(false);
+				toggleLeft(true);
+				toggleRight(true);
+				toggleHead(true);
 				wasDown = false;
 			}
 			

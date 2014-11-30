@@ -81,7 +81,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	abstract void spriteDraw(AnimatedSprite sprite);
 	abstract void spriteDying(AnimatedSprite sprite);
 	abstract void spriteCollision(AnimatedSprite spr1, AnimatedSprite spr2, int hitDir, int hitDir2);
-	abstract void tileCollision(AnimatedSprite spr, Tile tile, int hitDir);
+	abstract void tileCollision(AnimatedSprite spr, Tile tile, int hitDir, int hitDir2);
 	
 	//Constructor - Initialize the frame, the backBuffer, the game lists, and any other
 	// background related objects. Add the listeners.
@@ -350,13 +350,42 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			AnimatedSprite spr = _sprites.get(i);
 			for(int j = 0; j < _tiles.size(); j++) {
 				Tile tile = _tiles.get(j);
-				if(!spr.hasMultBounds()) {
-					if(tile.getTileBounds().intersects(spr.getBounds())) tileCollision(spr, tile, -1);
+				if(!spr.hasMultBounds() && !tile.hasMultBounds()) {
+					if(tile.getTileBounds().intersects(spr.getBounds())) tileCollision(spr, tile, -1, -1);
 				} else {
-			   		if(spr.checkLeftBound(tile.getTileBounds())) tileCollision(spr, tile, 0);
-			   		if(spr.checkRightBound(tile.getTileBounds())) tileCollision(spr, tile, 1);
-			   		if(spr.checkHeadBound(tile.getTileBounds())) tileCollision(spr, tile, 2);
-			   		if(spr.checkLegBound(tile.getTileBounds())) tileCollision(spr, tile, 3);
+					if(spr.hasMultBounds() && !tile.hasMultBounds()){
+				   		if(spr.checkLeftBound(tile.getTileBounds())) tileCollision(spr, tile, 0, -1);
+				   		if(spr.checkRightBound(tile.getTileBounds())) tileCollision(spr, tile, 1, -1);
+				   		if(spr.checkHeadBound(tile.getTileBounds())) tileCollision(spr, tile, 2, -1);
+				   		if(spr.checkLegBound(tile.getTileBounds())) tileCollision(spr, tile, 3, -1);
+					}
+					if(tile.hasMultBounds() && !spr.hasMultBounds()){
+						if(tile.checkLeftBound(spr.getBounds())) tileCollision(spr, tile, -1, 0);
+				   		if(tile.checkRightBound(spr.getBounds())) tileCollision(spr, tile, -1, 1);
+				   		if(tile.checkHeadBound(spr.getBounds())) tileCollision(spr, tile, -1, 2);
+				   		if(tile.checkLegBound(spr.getBounds())) tileCollision(spr, tile, -1, 3);
+					}
+					if(tile.hasMultBounds() && spr.hasMultBounds()){ //spr2 has multiple bounds as well as spr1
+						if(spr.checkLeftBound(tile.getLeftBound())) tileCollision(spr, tile, 0, 0);
+						if(spr.checkLeftBound(tile.getRightBound())) tileCollision(spr, tile, 0, 1);
+						if(spr.checkLeftBound(tile.getHeadBound())) tileCollision(spr, tile, 0, 2);
+						if(spr.checkLeftBound(tile.getLegBound())) tileCollision(spr, tile, 0, 3);
+
+						if(spr.checkRightBound(tile.getLeftBound())) tileCollision(spr, tile, 1, 0);
+						if(spr.checkRightBound(tile.getRightBound())) tileCollision(spr, tile, 1, 1);
+						if(spr.checkRightBound(tile.getHeadBound())) tileCollision(spr, tile, 1, 2);
+						if(spr.checkRightBound(tile.getLegBound())) tileCollision(spr, tile, 1, 3);
+						
+						if(spr.checkHeadBound(tile.getLeftBound())) tileCollision(spr, tile, 2, 0);
+						if(spr.checkHeadBound(tile.getRightBound())) tileCollision(spr, tile, 2, 1);
+						if(spr.checkHeadBound(tile.getHeadBound())) tileCollision(spr, tile, 2, 2);
+						if(spr.checkHeadBound(tile.getLegBound())) tileCollision(spr, tile, 2, 3);
+						
+						if(spr.checkLegBound(tile.getLeftBound())) tileCollision(spr, tile, 3, 0);
+						if(spr.checkLegBound(tile.getRightBound())) tileCollision(spr, tile, 3, 1);
+						if(spr.checkLegBound(tile.getHeadBound())) tileCollision(spr, tile, 3, 2);
+						if(spr.checkLegBound(tile.getLegBound())) tileCollision(spr, tile, 3, 3);
+					}
 				}
 			} //end _tiles for loop
 		} //end _sprites for loop
