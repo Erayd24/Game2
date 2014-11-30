@@ -436,6 +436,7 @@ public class Judgement extends Game {
 							inputWait = 5;
 							option = OPTION.NONE;
 							state = STATE.GAME;
+							setGameState(STATE.GAME);
 						}
 					}
 				}
@@ -458,6 +459,7 @@ public class Judgement extends Game {
 						currentFile = title.getFileName();
 						state = STATE.GAME;
 						option = OPTION.NONE;
+						setGameState(STATE.GAME);
 					}
 				}
 			}

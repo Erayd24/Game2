@@ -23,6 +23,7 @@ import axohEngine2.entities.AnimatedSprite;
 import axohEngine2.entities.Mob;
 import axohEngine2.map.Map;
 import axohEngine2.map.Tile;
+import axohEngine2.project.STATE;
 import axohEngine2.util.Point2D;
 
 abstract class Game extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener {
@@ -42,6 +43,8 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	private transient Graphics2D g2d;
 	private transient Toolkit tk;
 	private int screenWidth, screenHeight;
+	private STATE state;
+	public void setGameState(STATE state) { this.state = state; }
 	
 	//Mouse variables
 	private transient Point2D mousePos = new Point2D(0, 0);
@@ -95,6 +98,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 		backBuffer = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_RGB);
         g2d = backBuffer.createGraphics();
         tk = Toolkit.getDefaultToolkit();
+        state = null;
 
         //create the internal lists
         _sprites = new LinkedList<AnimatedSprite>();
@@ -129,7 +133,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			
 			purgeSprites(); 
 		}
-		if(!gamePaused()) drawSprites();
+			drawSprites();
 			paint(g);
 			gameRefreshScreen();
 	}
@@ -273,7 +277,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 			AnimatedSprite spr = (AnimatedSprite) _sprites.get(i);
 			if(spr.alive()) {
 				spriteUpdate(spr);
-				if(spr instanceof Mob) ((Mob) spr).updateMob();
+				if(state == STATE.GAME) if(spr instanceof Mob) ((Mob) spr).updateMob();
 			}
 			spriteDying(spr);
 		}
