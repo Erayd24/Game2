@@ -164,7 +164,6 @@ public class Judgement extends Game {
 			currentMap.render(this, g2d, playerX, playerY);
 			currentOverlay.render(this, g2d, playerX, playerY);
 			playerMob.renderMob(CENTERX, CENTERY);
-			playerMob.drawBounds(Color.RED);
 		}
 		if(state == STATE.INGAMEMENU){
 			inMenu.render(this, g2d, inX, inY);
