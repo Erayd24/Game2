@@ -1,5 +1,6 @@
 package axohEngine2;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -163,6 +164,10 @@ public class Judgement extends Game {
 			currentMap.render(this, g2d, playerX, playerY);
 			currentOverlay.render(this, g2d, playerX, playerY);
 			playerMob.renderMob(CENTERX, CENTERY);
+			g2d.setColor(Color.GREEN);
+			g2d.drawString("Health: " + inMenu.getHealth(), CENTERX - 780, CENTERY - 350);
+			g2d.setColor(Color.BLUE);
+			g2d.drawString("Magic: " + inMenu.getMagic(), CENTERX - 280, CENTERY - 350);
 		}
 		if(state == STATE.INGAMEMENU){
 			inMenu.render(this, g2d, inX, inY);
@@ -182,7 +187,6 @@ public class Judgement extends Game {
 	void gameShutDown() {		
 	}
 
-	
 	void spriteUpdate(AnimatedSprite sprite) {		
 	}
 

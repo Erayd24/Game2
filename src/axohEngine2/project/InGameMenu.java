@@ -31,6 +31,7 @@ public class InGameMenu {
 	//Starting stat variables
 	private int level = 1;
 	private int health = 50;
+	private int magic = 5;
 	private int attack = 8;
 	private int defense = 4;
 	private int experience;
@@ -281,4 +282,10 @@ public class InGameMenu {
 	public int getTotalItems() { return totalItems; }
 	public int getTotalEquipment() { return totalEquipment; }
 	public void setItemLoc(int location) { itemLocation = location; }
+	
+	public int getHealth() { return health; }
+	public void setHealth(int health) { this.health = health; }
+	
+	public int getMagic() { return magic; }
+	public void setmagic(int magic) { this.magic = magic; }
 }
