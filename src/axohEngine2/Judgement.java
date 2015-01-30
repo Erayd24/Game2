@@ -49,6 +49,7 @@ public class Judgement extends Game {
 	private Map currentOverlay;
 	private MapDatabase mapBase;
 	private int inputWait = 5;
+	private boolean confirmUse = false;
 	
 	//Menu variables
 	private int inX = 90, inY = 90;
@@ -171,6 +172,8 @@ public class Judgement extends Game {
 		}
 		if(state == STATE.INGAMEMENU){
 			inMenu.render(this, g2d, inX, inY);
+			g2d.setColor(Color.red);
+			if(confirmUse) g2d.drawString("Use this?", CENTERX, CENTERY);
 		}
 		if(state == STATE.TITLE) {
 			title.render(this, g2d, titleX, titleY, titleX2, titleY2);
@@ -528,6 +531,16 @@ public class Judgement extends Game {
 					if(inMenu.getTotalItems() > sectionLoc + 1 && sectionLoc < 3) sectionLoc++;
 					inputWait = 8;
 				}
+				if(keyEnter){
+					if(confirmUse) {
+						inMenu.useItem(); //then use item
+						confirmUse = false;
+						keyEnter = false;
+					}
+					if(inMenu.checkCount() > 0 && keyEnter) confirmUse = true;
+					inputWait = 10;
+				}
+				if(keyBack) confirmUse = false;
 			}
 			
 			if(option == OPTION.EQUIPMENT) {

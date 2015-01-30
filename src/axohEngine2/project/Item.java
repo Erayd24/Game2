@@ -54,16 +54,19 @@ public class Item extends Sprite{
 	
 	public boolean isEquimpent() { return isEquipment; }
 	
-	public int useItem() { // TODO: Under construction
+	//Remember to update the useItem() method under InGameMenu.java when adding a new group of items. All are handled seperately
+	public int checkItem() { // TODO: Under construction
 		if(keyItem) {
 			return 1;
 		}
 		if(healItem) {
-			return health;
+			return 2;
 		}
 		if(attackItem) {
-			return damage;
+			return 3;
 		}
-		return 1;
+		return -1;
 	}
+	
+	public int getHealth() { return health; }
 }

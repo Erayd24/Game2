@@ -30,7 +30,8 @@ public class InGameMenu {
 	
 	//Starting stat variables
 	private int level = 1;
-	private int health = 50;
+	private int maxHealth = 50;
+	private int currHealth = maxHealth;
 	private int magic = 5;
 	private int attack = 8;
 	private int defense = 4;
@@ -123,6 +124,7 @@ public class InGameMenu {
 	}
 	
 	//Each new item will need to be added here as well.
+	//This is to make a list of what items are being shown
 	private void setItems() {
 		totalItems = 0;
 		totalEquipment = 0;
@@ -177,7 +179,7 @@ public class InGameMenu {
 			g2d.drawString("Level: " + level, 600, 375);
 			g2d.drawString("Attack: " + attack, 600, 475);
 			g2d.drawString("Defense: " + defense, 600, 575);
-			g2d.drawString("Health: " + health, 600, 675);
+			g2d.drawString("Health: " + currHealth, 600, 675);
 			g2d.drawString("Experience: " + experience + " / " + nextLevel, 600, 775);
 		}
 		
@@ -218,11 +220,11 @@ public class InGameMenu {
 			if(level > 50 && level < 75) nextExp = nextExp + 80 + random.nextInt(level + 40);
 			if(level >= 75) nextExp = nextExp + 80 + random.nextInt(level + 80);
 			//Health
-			if(level % 10 == 10) health += random.nextInt(level) + 1;
-			if(level % 5 == 5) health += 2 + random.nextInt(4);
-			if(level % 3 == 3) health += 3;
-			if(level % 2 == 2) health += 1;
-			if(level % 7 == 7) health += 5 + random.nextInt(4) - random.nextInt(3);
+			if(level % 10 == 10) maxHealth += random.nextInt(level) + 1;
+			if(level % 5 == 5) maxHealth += 2 + random.nextInt(4);
+			if(level % 3 == 3) maxHealth += 3;
+			if(level % 2 == 2) maxHealth += 1;
+			if(level % 7 == 7) maxHealth += 5 + random.nextInt(4) - random.nextInt(3);
 			//Attack
 			if(level % 7 == 7) attack += 3;
 			if(level % 8 == 8) attack += 1;
@@ -283,8 +285,29 @@ public class InGameMenu {
 	public int getTotalEquipment() { return totalEquipment; }
 	public void setItemLoc(int location) { itemLocation = location; }
 	
-	public int getHealth() { return health; }
-	public void setHealth(int health) { this.health = health; }
+	//Remember to update the item check inder Item.java when adding a new group of items. All are handled seperately
+	public void useItem() { 
+		for(int i = 0; i < items.size(); i++){
+			if(shownItems[itemLocation].getName() == items.get(i).getName()) {
+				if(items.get(i).checkItem() == 1); //TODO: What to do with key items?
+				if(items.get(i).checkItem() == 2) {
+					if(currHealth + items.get(i).getHealth() >= maxHealth){
+						currHealth = maxHealth;
+						break;
+					}
+					currHealth += items.get(i).getHealth();
+				} //Heal Item
+				if(items.get(i).checkItem() == 3); //TODO: Attack Item
+				items.remove(i);
+				countItems();
+				setItems();
+				break;
+			}
+		}
+	}
+	
+	public int checkCount() { return counts[itemLocation]; }
+	public int getHealth() { return currHealth; }
 	
 	public int getMagic() { return magic; }
 	public void setmagic(int magic) { this.magic = magic; }
