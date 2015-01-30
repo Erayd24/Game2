@@ -77,6 +77,15 @@ public class InGameMenu {
 	 *  'i' would increase because the item would be skipped. The last check is done in order to make
 	 *  sure 'y' is correctly reset just in case 4 items are found immediately and the loop would end.
 	 *  
+	 *  itemLocation: The starting point in the list of items that will be shown, for example, if it is 2,
+	 *  then you have 6 items, the first two arent being shown.
+	 *  
+	 *  sectionLoc: The item section you are highlighting currently. For example, if it is 3, then you
+	 *  are highlighting the third item on screen.
+	 *  
+	 *  Using the above two variables, adding itemLocation and sectionLoc together will always net you the
+	 *  correct item to be managed
+	 *  
 	 ********************************************************************************************/
 	
 	//Change count[] and shownItem[] size to adjust for even more items in game
@@ -200,10 +209,10 @@ public class InGameMenu {
 				continue;
 			}
 			g2d.setColor(Color.YELLOW);
-			if(!list.isEmpty()) g2d.drawLine(670, 410 + sectionLoc * 110, 670 + array[i].getName().length() * 37, 410 + sectionLoc * 110);
+			if(!list.isEmpty()) g2d.drawLine(670, 410 + sectionLoc * 110, 670 + array[itemLocation + sectionLoc].getName().length() * 37, 410 + sectionLoc * 110);
 			g2d.setColor(Color.BLACK);
 			g2d.drawString(array[i].getName(), 670, 400 + y * 110);
-			g2d.drawString(" x" + new Integer(counts[i]).toString(), 700 + array[i].getName().length() * 37,  400 + y * 110);
+			g2d.drawString(" x " + new Integer(counts[i]).toString(), 700 + array[i].getName().length() * 37,  400 + y * 110);
 			array[i].render(frame, g2d, 600, 340 + y * 110);
 			y++;
 		}
@@ -288,15 +297,22 @@ public class InGameMenu {
 	//Remember to update the item check inder Item.java when adding a new group of items. All are handled seperately
 	public void useItem() { 
 		for(int i = 0; i < items.size(); i++){
-			if(shownItems[itemLocation].getName() == items.get(i).getName()) {
+			System.out.println(shownItems[sectionLoc].getName());
+			if(shownItems[itemLocation + sectionLoc].getName() == items.get(i).getName()) {
+				
 				if(items.get(i).checkItem() == 1); //TODO: What to do with key items?
+				
 				if(items.get(i).checkItem() == 2) {
 					if(currHealth + items.get(i).getHealth() >= maxHealth){
 						currHealth = maxHealth;
+						items.remove(i);
+						countItems();
+						setItems();
 						break;
 					}
 					currHealth += items.get(i).getHealth();
 				} //Heal Item
+				
 				if(items.get(i).checkItem() == 3); //TODO: Attack Item
 				items.remove(i);
 				countItems();
@@ -306,7 +322,7 @@ public class InGameMenu {
 		}
 	}
 	
-	public int checkCount() { return counts[itemLocation]; }
+	public int checkCount() { return counts[itemLocation + sectionLoc]; }
 	public int getHealth() { return currHealth; }
 	
 	public int getMagic() { return magic; }
