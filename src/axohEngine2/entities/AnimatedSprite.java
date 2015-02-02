@@ -19,11 +19,29 @@ public class AnimatedSprite extends Sprite {
     private int delay;
     private int tempDelay;
     private boolean animating;
+    private boolean playOnce = false;
+    public boolean changeBack = false;
     
 	public int leftAnim;
 	public int rightAnim;
 	public int upAnim;
 	public int downAnim;
+	public int walkFrames;
+	public int walkDelay;
+	
+	//For unsheathing/ed and attacking
+	public int swordLeft;
+	public int swordRight;
+	public int swordUp;
+	public int swordDown;
+	public int attackLeft;
+	public int attackRight;
+	public int attackUp;
+	public int attackDown;
+	public int unsheathedFrames;
+	public int attackFrames;
+	public int unsheathedDelay;
+	public int attackDelay;
 
     public AnimatedSprite(JFrame frame, Graphics2D g2d, SpriteSheet sheet, int spriteNumber, String name) {
         super(frame, g2d);
@@ -65,6 +83,8 @@ public class AnimatedSprite extends Sprite {
 		rightAnim = spriteNumRight;
 		upAnim = spriteNumUp;
 		downAnim = spriteNumDown;
+		walkFrames = frames;
+		walkDelay = delay;
 		
 		currFrame = getSpriteNumber();
         if(frames > 0) {
@@ -74,6 +94,28 @@ public class AnimatedSprite extends Sprite {
        	if(delay > 0) setDelay(delay);
         tempDelay = delay;
 	}
+    
+    public void loadSwordAnim(int unsheathLeft, int unsheathRight, int unsheathUp, int unsheathDown, int swipeLeft, int swipeRight, int swipeUp, int swipeDown, int unsheathFrames, int unsheathDelay, int attackingFrames, int attackingDelay) {
+    	swordLeft = unsheathLeft;
+    	swordRight = unsheathRight;
+    	swordUp = unsheathUp;
+    	swordDown = unsheathDown;
+    	attackLeft = swipeLeft;
+    	attackRight = swipeRight;
+    	attackUp = swipeUp;
+    	attackDown = swipeDown;
+    	unsheathedFrames = unsheathFrames;
+    	unsheathedDelay = unsheathDelay;
+    	attackFrames = attackingFrames;
+    	attackDelay = attackingDelay;
+    }
+    
+    public void setFullAnim(int startFrame, int totalFrames, int delay, int tempDelay){
+    	setAnimTo(startFrame);
+		setTotalFrames(totalFrames);
+		setDelay(delay);
+		setTempDelay(tempDelay);
+    }
     
     public void setFrame(int frame) { 
     	currFrame = frame; 
@@ -94,8 +136,11 @@ public class AnimatedSprite extends Sprite {
     
     public void startAnim() { animating = true; }
     public boolean animating() { return animating; }
+    public void playOnce() { playOnce = true; }
     
     public void setDelay(int delay) { this.delay = delay; }
+    public int delay() { return delay; }
+    public void setTempDelay(int delay) { tempDelay = delay; }
     public void setTotalFrames(int total) { totFrames = total; }
     public void setAnimating(boolean state) { animating = state; }
     public void setAnimImage(Image image) { animImage.setImage(image); }
@@ -136,6 +181,8 @@ public class AnimatedSprite extends Sprite {
 	    			currFrame = getSpriteNumber();
 	    			animImage.setImage(setSprite(getSheet(), currentFrame()));
 			    	tempDelay = delay;
+			    	if(playOnce) changeBack = true;
+			    	playOnce = false;
 	    			return;
 	    		}
 		    	currFrame++;
