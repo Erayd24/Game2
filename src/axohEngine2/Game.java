@@ -262,6 +262,7 @@ abstract class Game extends JFrame implements Runnable, KeyListener, MouseListen
 	}
 	
 	public void mouseClicked(MouseEvent e) { }
+	public boolean getMouseButtons(int index) { return mouseButtons[index]; }
 	
 	//Set the current key being pressed to the current char being pressed
 	// get currentChar to obtain the char pressed.

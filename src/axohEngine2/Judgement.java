@@ -30,7 +30,7 @@ public class Judgement extends Game {
 	static int CENTERY = SCREENHEIGHT / 2;
 	
 	//enums, keys, and fonts variables
-	boolean keyLeft, keyRight, keyUp, keyDown, keyInventory, keyAction, keyBack, keyEnter;
+	boolean keyLeft, keyRight, keyUp, keyDown, keyInventory, keyAction, keyBack, keyEnter, keySpace;
 	Random random = new Random();
 	STATE state;
 	OPTION option;
@@ -368,6 +368,11 @@ public class Judgement extends Game {
 				state = STATE.INGAMEMENU;
 				inputWait = 10;
 			}
+			
+			if(keySpace) {
+				playerMob.changeSheath();
+				inputWait = 10;
+			}
 		}
 		
 		 //Special actions for the title menu
@@ -624,6 +629,9 @@ public class Judgement extends Game {
         case KeyEvent.VK_BACK_SPACE:
         	keyBack = true;
         	break;
+        case KeyEvent.VK_SPACE:
+        	keySpace = true;
+        	break;
         }
 	}
 
@@ -665,13 +673,19 @@ public class Judgement extends Game {
 	    case KeyEvent.VK_BACK_SPACE:
 	    	keyBack = false;
 	    	break;
+	    case KeyEvent.VK_SPACE:
+	    	keySpace = false;
+	    	break;
 		}
 	}
 
-	void gameMouseDown() {		
+	void gameMouseDown() {	
 	}
 
-	void gameMouseUp() {		
+	void gameMouseUp() {
+		if(getMouseButtons(1) == true && playerMob.isUnsheathed()) {
+			playerMob.attack();
+		}
 	}
 
 	void gameMouseMove() {

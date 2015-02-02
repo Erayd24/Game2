@@ -16,6 +16,8 @@ public class Mob extends AnimatedSprite{
 	private int xx;
 	private int yy;
 	private int speed = 2;
+	private boolean attacking = false;
+	private boolean unsheathed = false;
 	
 	private boolean _left = false;
 	private boolean _right = false;
@@ -161,33 +163,38 @@ public class Mob extends AnimatedSprite{
 		
 	}
 	
-	private void move(int xa, int ya) {
-		if(xa < 0) { //left
-			xx += xa; 
+	private void move(int xa, int ya) { 
+		if(!unsheathed) {
+			if(xa < 0) { //left
+				xx += xa; 
+				
+				if(!_left) setAnimTo(leftAnim);
+				startAnim();
+				_left = true;
+			} else if(xa > 0) { //right
+				xx += xa; 
+				
+				if(!_right) setAnimTo(rightAnim);
+				startAnim();
+				_right = true;
+			}
 			
-			if(!_left) setAnimTo(leftAnim);
-			startAnim();
-			_left = true;
-		} else if(xa > 0) { //right
-			xx += xa; 
-			
-			if(!_right) setAnimTo(rightAnim);
-			startAnim();
-			_right = true;
+			if(ya < 0) {  //up
+				yy += ya;
+	
+				if(!_up) setAnimTo(upAnim);
+				startAnim();
+				_up = true;
+			} else if(ya > 0) { //down
+				yy += ya; 
+				
+				if(!_down) setAnimTo(downAnim);
+				startAnim();
+				_down = true;
+			}
 		}
-		
-		if(ya < 0) {  //up
-			yy += ya;
-
-			if(!_up) setAnimTo(upAnim);
-			startAnim();
-			_up = true;
-		} else if(ya > 0) { //down
-			yy += ya; 
-			
-			if(!_down) setAnimTo(downAnim);
-			startAnim();
-			_down = true;
+		if(unsheathed){
+			//TODO: This is where animation data for movement while unsheathed goes
 		}
 	}
 	
@@ -293,6 +300,21 @@ public class Mob extends AnimatedSprite{
 		if(!left && !right && !up && !down) {
 			stopAnim();
 		}
+	}
+	
+	//Check to see if a mob is currently attacking or change the state of whether it is attacking or not
+	public void changeSheath() {
+		unsheathed = !unsheathed; 
+		//TODO: This is where the unsheath animation is added
+	}
+	public boolean isUnsheathed() { return unsheathed; }
+	public boolean attacking() { return attacking; }	
+	public void attack() {
+		attacking = true;
+		/*
+		 * TODO: Set attacking animation here depending on direction facing, put in a wait so system can check for intersection and animation can be seen
+		 */
+		attacking = false;
 	}
 	
 	public double getXLoc() { return entity.getX(); }
