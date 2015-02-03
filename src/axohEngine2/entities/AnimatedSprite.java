@@ -42,6 +42,13 @@ public class AnimatedSprite extends Sprite {
 	public int attackFrames;
 	public int unsheathedDelay;
 	public int attackDelay;
+	
+	public int unshLeft;
+	public int unshRight;
+	public int unshUp;
+	public int unshDown;
+	public int unshFrames;
+	public int unshDelay;
 
     public AnimatedSprite(JFrame frame, Graphics2D g2d, SpriteSheet sheet, int spriteNumber, String name) {
         super(frame, g2d);
@@ -95,6 +102,7 @@ public class AnimatedSprite extends Sprite {
         tempDelay = delay;
 	}
     
+    //This is for animations pertaining to attacking, it may say sword but it can also be arrows or anything
     public void loadSwordAnim(int unsheathLeft, int unsheathRight, int unsheathUp, int unsheathDown, int swipeLeft, int swipeRight, int swipeUp, int swipeDown, int unsheathFrames, int unsheathDelay, int attackingFrames, int attackingDelay) {
     	swordLeft = unsheathLeft;
     	swordRight = unsheathRight;
@@ -110,11 +118,22 @@ public class AnimatedSprite extends Sprite {
     	attackDelay = attackingDelay;
     }
     
+    //This is specifically for animations pertaining to taking out weapons
+    public void loadUnsheathAnim(int left, int right, int up, int down, int frames, int delay){
+    	unshLeft = left;
+    	unshRight = right;
+    	unshUp = up;
+    	unshDown = down;
+    	unshFrames = frames;
+    	unshDelay = delay;
+    }
+    
     public void setFullAnim(int startFrame, int totalFrames, int delay, int tempDelay){
     	setAnimTo(startFrame);
 		setTotalFrames(totalFrames);
 		setDelay(delay);
 		setTempDelay(tempDelay);
+		setSpriteNumber(startFrame);
     }
     
     public void setFrame(int frame) { 

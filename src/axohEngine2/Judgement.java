@@ -121,7 +121,8 @@ public class Judgement extends Game {
 		playerMob = new Mob(this, graphics(), mainCharacter, 40, TYPE.PLAYER, "mainC", true);
 		playerMob.setMultBounds(6, 50, 95, 37, 88, 62, 92, 62, 96);
 		playerMob.loadMultAnim(32, 48, 40, 56, 3, 8);
-		playerMob.loadSwordAnim(8, 0, 16, 24, 0, 0, 0, 0, 3, 8, 2, 6);
+		playerMob.loadSwordAnim(9, 1, 17, 25, 12, 4, 20, 28, 3, 8, 3, 6);
+		playerMob.loadUnsheathAnim(8, 0, 16, 24, 1, 10);
 		playerMob.setHealth(35);
 		sprites().add(playerMob);
 		
@@ -371,9 +372,8 @@ public class Judgement extends Game {
 			}
 			
 			if(keySpace) {
-				if(playerMob.isUnsheathed()) playerMob.changeSheath(false);
-				if(!playerMob.isUnsheathed()) playerMob.changeSheath(true);
-				inputWait = 20;
+				playerMob.changeSheath();
+				inputWait = 10;
 			}
 		}
 		

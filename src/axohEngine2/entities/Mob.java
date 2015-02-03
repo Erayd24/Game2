@@ -33,10 +33,6 @@ public class Mob extends AnimatedSprite{
 	private boolean randLeft = false;
 	private boolean randRight = false;
 	
-	private int oldStartFrame;
-	private int oldTotalFrame;
-	private int oldDelay;
-	
 	private boolean waitOn = false;
 	private int wait;
 	
@@ -205,7 +201,8 @@ public class Mob extends AnimatedSprite{
 		if(left) {
 			if(right || up || down) wasLeft = true;
 			if(wasLeft && !up && !down && !right) {
-				setAnimTo(leftAnim);
+				if(!unsheathed) setAnimTo(leftAnim);
+				if(unsheathed) setAnimTo(swordLeft);
 				toggleLeg(true);
 				toggleLeft(false);
 				toggleRight(false);
@@ -214,7 +211,8 @@ public class Mob extends AnimatedSprite{
 			}
 			
 			if(!_left) {
-				setAnimTo(leftAnim);
+				if(!unsheathed) setAnimTo(leftAnim);
+				if(unsheathed) setAnimTo(swordLeft);
 				if(hasMultBounds) {
 					toggleLeg(true);
 					toggleLeft(false);
@@ -228,7 +226,8 @@ public class Mob extends AnimatedSprite{
 		if (right) {
 			if(left || up || down) wasRight = true;
 			if(wasRight && !up && !down && !left) {
-				setAnimTo(rightAnim);
+				if(!unsheathed) setAnimTo(rightAnim);
+				if(unsheathed) setAnimTo(swordRight);
 				toggleLeg(true);
 				toggleLeft(false);
 				toggleRight(false);
@@ -237,7 +236,8 @@ public class Mob extends AnimatedSprite{
 			}
 			
 			if(!_right) {
-				setAnimTo(rightAnim);
+				if(!unsheathed) setAnimTo(rightAnim);
+				if(unsheathed) setAnimTo(swordRight);
 				if(hasMultBounds) {
 					toggleLeg(true);
 					toggleLeft(false);
@@ -251,7 +251,8 @@ public class Mob extends AnimatedSprite{
 		if (up) {
 			if(left || right || down) wasUp = true;
 			if(wasUp && !right && !down && !left) {
-				setAnimTo(upAnim);
+				if(!unsheathed) setAnimTo(upAnim);
+				if(unsheathed) setAnimTo(swordUp);
 				toggleLeg(false);
 				toggleLeft(true);
 				toggleRight(true);
@@ -260,7 +261,8 @@ public class Mob extends AnimatedSprite{
 			}
 			
 			if(!_up) {
-				setAnimTo(upAnim);
+				if(!unsheathed) setAnimTo(upAnim);
+				if(unsheathed) setAnimTo(swordUp);
 				if(hasMultBounds) {
 					toggleLeg(false);
 					toggleLeft(true);
@@ -274,7 +276,8 @@ public class Mob extends AnimatedSprite{
 		if (down) {
 			if(left || up || right) wasDown = true;
 			if(wasDown && !up && !right && !left) {
-				setAnimTo(downAnim);
+				if(!unsheathed) setAnimTo(downAnim);
+				if(unsheathed) setAnimTo(swordDown);
 				toggleLeg(false);
 				toggleLeft(true);
 				toggleRight(true);
@@ -283,7 +286,8 @@ public class Mob extends AnimatedSprite{
 			}
 			
 			if(!_down) {
-				setAnimTo(downAnim);
+				if(!unsheathed) setAnimTo(downAnim);
+				if(unsheathed) setAnimTo(swordDown);
 				if(hasMultBounds) {
 					toggleLeg(false);
 					toggleLeft(true);
@@ -306,32 +310,36 @@ public class Mob extends AnimatedSprite{
 		
 		if(changeBack) {
 			attacking = false;
-			setFullAnim(oldStartFrame, oldTotalFrame, oldDelay, oldDelay);
+			if(_left) setFullAnim(swordLeft, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+			if(_right) setFullAnim(swordRight, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+			if(_up) setFullAnim(swordUp, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+			if(_down) setFullAnim(swordDown, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+			changeBack = false;
 		}
 	}
 	
 	//Check to see if a mob is currently attacking or change the state of whether it is attacking or not
-	public void changeSheath(boolean value) {
-		unsheathed = value; 
-		//TODO: This is where the unsheath animation is added
+	public void changeSheath() {
+		unsheathed = !unsheathed;
+		if(_left) setFullAnim(unshLeft, unshFrames, unshDelay, unshDelay);
+		if(_right) setFullAnim(unshRight, unshFrames, unshDelay, unshDelay);
+		if(_up) setFullAnim(unshUp, unshFrames, unshDelay, unshDelay);
+		if(_down) setFullAnim(unshDown, unshFrames, unshDelay, unshDelay);
+		_left = false;
+		_right = false;
+		_up = false;
+		_down = false;
 	}
+	
 	public boolean isUnsheathed() { return unsheathed; }
 	public boolean attacking() { return attacking; }	
 	public void attack() {
 		attacking = true;
-		updateOldAnim();
-		
-		if(oldStartFrame == swordLeft) setFullAnim(attackLeft, attackFrames, attackDelay, attackDelay);
-		if(oldStartFrame == swordRight) setFullAnim(attackRight, attackFrames, attackDelay, attackDelay);
-		if(oldStartFrame == swordUp) setFullAnim(attackUp, attackFrames, attackDelay, attackDelay);
-		if(oldStartFrame == swordDown) setFullAnim(attackDown, attackFrames, attackDelay, attackDelay);
+		if(_left) setFullAnim(attackLeft, attackFrames, attackDelay, attackDelay);
+		if(_right) setFullAnim(attackRight, attackFrames, attackDelay, attackDelay);
+		if(_up) setFullAnim(attackUp, attackFrames, attackDelay, attackDelay);
+		if(_down) setFullAnim(attackDown, attackFrames, attackDelay, attackDelay);
 		playOnce();
-	}
-	
-	private void updateOldAnim() {
-		oldStartFrame = currentFrame();
-		oldTotalFrame = totalFrames();
-		oldDelay = delay();
 	}
 	
 	public double getXLoc() { return entity.getX(); }
