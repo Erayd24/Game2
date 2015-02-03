@@ -18,6 +18,7 @@ public class Mob extends AnimatedSprite{
 	private int speed = 2;
 	private boolean attacking = false;
 	private boolean unsheathed = false;
+	private int lastPressed;
 	
 	private boolean _left = false;
 	private boolean _right = false;
@@ -299,23 +300,38 @@ public class Mob extends AnimatedSprite{
 			_down = true;
 		}
 		
-		if(!left) _left = false;
-		if(!up) _up = false;
-		if(!down) _down = false;
-		if(!right) _right = false;
+		if(!left) _left = false; lastPressed = 1;
+		if(!up) _up = false; lastPressed = 3;
+		if(!down) _down = false; lastPressed = 4;
+		if(!right) _right = false; lastPressed = 2;
 		
 		if(!left && !right && !up && !down) {
 			stopAnim();
 		}
 		
 		if(changeBack) {
+			if(unsheathed && attacking){
+				if(_left) setFullAnim(swordLeft, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+				if(_right) setFullAnim(swordRight, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+				if(_up) setFullAnim(swordUp, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+				if(_down) setFullAnim(swordDown, unsheathedFrames, unsheathedDelay, unsheathedDelay);			
+			}
+			if(unsheathed && !attacking){
+				if(_left) setFullAnim(swordLeft, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+				if(_right) setFullAnim(swordRight, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+				if(_up) setFullAnim(swordUp, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+				if(_down) setFullAnim(swordDown, unsheathedFrames, unsheathedDelay, unsheathedDelay);				
+			}
+			if(!unsheathed && !attacking){
+				if(_left) setFullAnim(leftAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+				if(_right) setFullAnim(rightAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+				if(_up) setFullAnim(upAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+				if(_down) setFullAnim(downAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+			}
 			attacking = false;
-			if(_left) setFullAnim(swordLeft, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-			if(_right) setFullAnim(swordRight, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-			if(_up) setFullAnim(swordUp, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-			if(_down) setFullAnim(swordDown, unsheathedFrames, unsheathedDelay, unsheathedDelay);
 			changeBack = false;
 		}
+		System.out.println("left: " + _left + " right: " + _right + " up: " + _up + " down: " + _down + " unsheathed: " + unsheathed);
 	}
 	
 	//Check to see if a mob is currently attacking or change the state of whether it is attacking or not
@@ -325,10 +341,7 @@ public class Mob extends AnimatedSprite{
 		if(_right) setFullAnim(unshRight, unshFrames, unshDelay, unshDelay);
 		if(_up) setFullAnim(unshUp, unshFrames, unshDelay, unshDelay);
 		if(_down) setFullAnim(unshDown, unshFrames, unshDelay, unshDelay);
-		_left = false;
-		_right = false;
-		_up = false;
-		_down = false;
+		playOnce();
 	}
 	
 	public boolean isUnsheathed() { return unsheathed; }
