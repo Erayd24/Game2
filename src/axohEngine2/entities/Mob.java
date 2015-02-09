@@ -16,9 +16,8 @@ public class Mob extends AnimatedSprite{
 	private int xx;
 	private int yy;
 	private int speed = 2;
-	private boolean attacking = false;
+	private boolean attacking;
 	private boolean unsheathed = false;
-	private int lastPressed;
 	
 	private boolean _left = false;
 	private boolean _right = false;
@@ -168,15 +167,13 @@ public class Mob extends AnimatedSprite{
 		if(xa < 0) { //left
 			xx += xa; 
 				
-			if(!_left && !unsheathed) setAnimTo(leftAnim);
-			if(!_left && unsheathed) setFullAnim(swordLeft, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+			if(!_left) setAnimTo(leftAnim);
 			startAnim();
 			_left = true;
 		} else if(xa > 0) { //right
 			xx += xa; 
 			
-			if(!_right && !unsheathed) setAnimTo(rightAnim);
-			if(!_right && unsheathed) setFullAnim(swordRight, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+			if(!_right) setAnimTo(rightAnim);
 			startAnim();
 			_right = true;
 		}
@@ -184,21 +181,32 @@ public class Mob extends AnimatedSprite{
 		if(ya < 0) {  //up
 			yy += ya;
 
-			if(!_up && !unsheathed) setAnimTo(upAnim);
-			if(!_up && unsheathed) setFullAnim(swordUp, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+			if(!_up) setAnimTo(upAnim);
 			startAnim();
 			_up = true;
 		} else if(ya > 0) { //down
 			yy += ya; 
 			
-			if(!_down && !unsheathed) setAnimTo(downAnim);
-			if(!_down && unsheathed) setFullAnim(swordDown, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+			if(!_down) setAnimTo(downAnim);
 			startAnim();
 			_down = true;
 		}
 	}
 	
 	public void updatePlayer(boolean left, boolean right, boolean up, boolean down) {
+		if(currentFrame() == unshLeft && unsheathed) setFullAnim(swordLeft, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+		if(currentFrame() == unshLeft && !unsheathed) setFullAnim(leftAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+		if(currentFrame() == unshRight && unsheathed) setFullAnim(swordRight, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+		if(currentFrame() == unshRight && !unsheathed) setFullAnim(rightAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+		if(currentFrame() == unshUp && unsheathed) setFullAnim(swordUp, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+		if(currentFrame() == unshUp && !unsheathed) setFullAnim(upAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+		if(currentFrame() == unshDown && unsheathed) setFullAnim(swordDown, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+		if(currentFrame() == unshDown && !unsheathed) setFullAnim(downAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+		
+		if(!_left && !_right && !_up && !_down && currentFrame() == attackRight && changeBack == true) setFullAnim(swordRight, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+		System.out.println(playOnce + "jdhasdjhadkjash " + changeBack);
+
+		
 		if(left) {
 			if(right || up || down) wasLeft = true;
 			if(wasLeft && !up && !down && !right) {
@@ -300,38 +308,28 @@ public class Mob extends AnimatedSprite{
 			_down = true;
 		}
 		
-		if(!left) _left = false; lastPressed = 1;
-		if(!up) _up = false; lastPressed = 3;
-		if(!down) _down = false; lastPressed = 4;
-		if(!right) _right = false; lastPressed = 2;
+		if(!left) _left = false;
+		if(!right) _right = false;
+		if(!up) _up = false;
+		if(!down) _down = false;
 		
-		if(!left && !right && !up && !down) {
-			stopAnim();
-		}
 		
 		if(changeBack) {
-			if(unsheathed && attacking){
+			if(_left || _right || _down || _up){
 				if(_left) setFullAnim(swordLeft, unsheathedFrames, unsheathedDelay, unsheathedDelay);
 				if(_right) setFullAnim(swordRight, unsheathedFrames, unsheathedDelay, unsheathedDelay);
 				if(_up) setFullAnim(swordUp, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-				if(_down) setFullAnim(swordDown, unsheathedFrames, unsheathedDelay, unsheathedDelay);			
-			}
-			if(unsheathed && !attacking){
-				if(_left) setFullAnim(swordLeft, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-				if(_right) setFullAnim(swordRight, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-				if(_up) setFullAnim(swordUp, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-				if(_down) setFullAnim(swordDown, unsheathedFrames, unsheathedDelay, unsheathedDelay);				
-			}
-			if(!unsheathed && !attacking){
-				if(_left) setFullAnim(leftAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-				if(_right) setFullAnim(rightAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-				if(_up) setFullAnim(upAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-				if(_down) setFullAnim(downAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
+				if(_down) setFullAnim(swordDown, unsheathedFrames, unsheathedDelay, unsheathedDelay);	
+			} else {
+				if(!_left && !_right && !_up && !_down && currentFrame() == attackRight) setFullAnim(rightAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
 			}
 			attacking = false;
 			changeBack = false;
 		}
-		System.out.println("left: " + _left + " right: " + _right + " up: " + _up + " down: " + _down + " unsheathed: " + unsheathed);
+		
+		if(!left && !right && !up && !down) {
+			stopAnim();
+		}
 	}
 	
 	//Check to see if a mob is currently attacking or change the state of whether it is attacking or not
@@ -341,18 +339,51 @@ public class Mob extends AnimatedSprite{
 		if(_right) setFullAnim(unshRight, unshFrames, unshDelay, unshDelay);
 		if(_up) setFullAnim(unshUp, unshFrames, unshDelay, unshDelay);
 		if(_down) setFullAnim(unshDown, unshFrames, unshDelay, unshDelay);
-		playOnce();
+		if(currentFrame() == leftAnim || currentFrame() == swordLeft) setFullAnim(unshLeft, unshFrames, unshDelay, unshDelay);
+		if(currentFrame() == rightAnim || currentFrame() == swordRight) setFullAnim(unshRight, unshFrames, unshDelay, unshDelay);
+		if(currentFrame() == upAnim || currentFrame() == swordUp) setFullAnim(unshUp, unshFrames, unshDelay, unshDelay);
+		if(currentFrame() == downAnim || currentFrame() == swordDown) setFullAnim(unshDown, unshFrames, unshDelay, unshDelay);
 	}
 	
 	public boolean isUnsheathed() { return unsheathed; }
 	public boolean attacking() { return attacking; }	
 	public void attack() {
 		attacking = true;
-		if(_left) setFullAnim(attackLeft, attackFrames, attackDelay, attackDelay);
-		if(_right) setFullAnim(attackRight, attackFrames, attackDelay, attackDelay);
-		if(_up) setFullAnim(attackUp, attackFrames, attackDelay, attackDelay);
-		if(_down) setFullAnim(attackDown, attackFrames, attackDelay, attackDelay);
-		playOnce();
+		if(_left || _right || _up || _down){
+			if(_left) {
+				setFullAnim(attackLeft, attackFrames, attackDelay, attackDelay);
+				playOnce(swordLeft, unsheathedDelay, unsheathedFrames, attackLeft + attackFrames);
+			}
+			if(_right) {
+				setFullAnim(attackRight, attackFrames, attackDelay, attackDelay);
+				playOnce(swordRight, unsheathedDelay, unsheathedFrames, attackRight + attackFrames);
+			}
+			if(_up) {
+				setFullAnim(attackUp, attackFrames, attackDelay, attackDelay);
+				playOnce(swordUp, unsheathedDelay, unsheathedFrames, attackUp + attackFrames);
+			}
+			if(_down) {
+				setFullAnim(attackDown, attackFrames, attackDelay, attackDelay);
+				playOnce(swordDown, unsheathedDelay, unsheathedFrames, attackDown + attackFrames);
+			}
+		} else {
+			if(currentFrame() == swordLeft) {
+				setFullAnim(attackLeft, attackFrames, attackDelay, attackDelay);
+				playOnce(swordLeft, unsheathedDelay, unsheathedFrames, attackLeft + attackFrames);
+			}
+			if(currentFrame() == swordRight) {
+				setFullAnim(attackRight, attackFrames, attackDelay, attackDelay);
+				playOnce(swordRight, unsheathedDelay, unsheathedFrames, attackRight + attackFrames);
+			}
+			if(currentFrame() == swordUp) {
+				setFullAnim(attackUp, attackFrames, attackDelay, attackDelay);
+				playOnce(swordUp, unsheathedDelay, unsheathedFrames, attackUp + attackFrames);
+			}
+			if(currentFrame() == swordDown) {
+				setFullAnim(attackDown, attackFrames, attackDelay, attackDelay);
+				playOnce(swordDown, unsheathedDelay, unsheathedFrames, attackDown + attackFrames);
+			}
+		}
 	}
 	
 	public double getXLoc() { return entity.getX(); }

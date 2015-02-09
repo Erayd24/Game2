@@ -19,8 +19,12 @@ public class AnimatedSprite extends Sprite {
     private int delay;
     private int tempDelay;
     private boolean animating;
-    private boolean playOnce = false;
+    public boolean playOnce = false;
     public boolean changeBack = false;
+    public int nextAnim;
+    public int nextDelay;
+    public int endFrame;
+    public int nextTotal;
     
 	public int leftAnim;
 	public int rightAnim;
@@ -133,7 +137,6 @@ public class AnimatedSprite extends Sprite {
 		setTotalFrames(totalFrames);
 		setDelay(delay);
 		setTempDelay(tempDelay);
-		setSpriteNumber(startFrame);
     }
     
     public void setFrame(int frame) { 
@@ -147,15 +150,24 @@ public class AnimatedSprite extends Sprite {
 		animImage.setImage(setSprite(getSheet(), currentFrame()));
     }
     
-    public void stopAnim() { 
-    	animating = false; 
-    	currFrame = getSpriteNumber();
-		animImage.setImage(setSprite(getSheet(), currentFrame()));
+    public void stopAnim() {
+    	if(!playOnce){
+	    	animating = false; 
+	    	currFrame = getSpriteNumber();
+			animImage.setImage(setSprite(getSheet(), currentFrame()));
+    	}
     }
     
     public void startAnim() { animating = true; }
     public boolean animating() { return animating; }
-    public void playOnce() { playOnce = true; }
+    public void playOnce(int nextAnimFrame, int nextAnimDelay, int nextAnimTotal, int endingFrame) { 
+    	playOnce = true; 
+    	nextAnim = nextAnimFrame;
+    	endFrame = endingFrame - 1;
+    	nextDelay = nextAnimDelay;
+    	nextTotal = nextAnimTotal;
+    	animating = true;
+    }
     
     public void setDelay(int delay) { this.delay = delay; }
     public int delay() { return delay; }
@@ -196,12 +208,17 @@ public class AnimatedSprite extends Sprite {
     	if(animating) {
 	    	tempDelay--;
 	    	if(tempDelay % delay == 0) {
+	    		if(playOnce && currentFrame() == endFrame) {
+	    			playOnce = false;
+	    			setAnimTo(nextAnim);
+	    			delay = nextDelay;
+	    			setTotalFrames(nextTotal);
+	    			System.out.println("Running");
+	    		}
 	    		if(currentFrame() == getSpriteNumber() - 1 + totalFrames()) {
 	    			currFrame = getSpriteNumber();
 	    			animImage.setImage(setSprite(getSheet(), currentFrame()));
 			    	tempDelay = delay;
-			    	if(playOnce) changeBack = true;
-			    	playOnce = false;
 	    			return;
 	    		}
 		    	currFrame++;
