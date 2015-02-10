@@ -20,7 +20,6 @@ public class AnimatedSprite extends Sprite {
     private int tempDelay;
     private boolean animating;
     public boolean playOnce = false;
-    public boolean changeBack = false;
     public int nextAnim;
     public int nextDelay;
     public int endFrame;

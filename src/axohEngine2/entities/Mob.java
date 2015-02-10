@@ -194,19 +194,7 @@ public class Mob extends AnimatedSprite{
 	}
 	
 	public void updatePlayer(boolean left, boolean right, boolean up, boolean down) {
-		if(currentFrame() == unshLeft && unsheathed) setFullAnim(swordLeft, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-		if(currentFrame() == unshLeft && !unsheathed) setFullAnim(leftAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-		if(currentFrame() == unshRight && unsheathed) setFullAnim(swordRight, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-		if(currentFrame() == unshRight && !unsheathed) setFullAnim(rightAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-		if(currentFrame() == unshUp && unsheathed) setFullAnim(swordUp, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-		if(currentFrame() == unshUp && !unsheathed) setFullAnim(upAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-		if(currentFrame() == unshDown && unsheathed) setFullAnim(swordDown, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-		if(currentFrame() == unshDown && !unsheathed) setFullAnim(downAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-		
-		if(!_left && !_right && !_up && !_down && currentFrame() == attackRight && changeBack == true) setFullAnim(swordRight, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-		System.out.println(playOnce + "jdhasdjhadkjash " + changeBack);
-
-		
+				
 		if(left) {
 			if(right || up || down) wasLeft = true;
 			if(wasLeft && !up && !down && !right) {
@@ -313,20 +301,6 @@ public class Mob extends AnimatedSprite{
 		if(!up) _up = false;
 		if(!down) _down = false;
 		
-		
-		if(changeBack) {
-			if(_left || _right || _down || _up){
-				if(_left) setFullAnim(swordLeft, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-				if(_right) setFullAnim(swordRight, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-				if(_up) setFullAnim(swordUp, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-				if(_down) setFullAnim(swordDown, unsheathedFrames, unsheathedDelay, unsheathedDelay);	
-			} else {
-				if(!_left && !_right && !_up && !_down && currentFrame() == attackRight) setFullAnim(rightAnim, unsheathedFrames, unsheathedDelay, unsheathedDelay);
-			}
-			attacking = false;
-			changeBack = false;
-		}
-		
 		if(!left && !right && !up && !down) {
 			stopAnim();
 		}
@@ -335,14 +309,46 @@ public class Mob extends AnimatedSprite{
 	//Check to see if a mob is currently attacking or change the state of whether it is attacking or not
 	public void changeSheath() {
 		unsheathed = !unsheathed;
-		if(_left) setFullAnim(unshLeft, unshFrames, unshDelay, unshDelay);
-		if(_right) setFullAnim(unshRight, unshFrames, unshDelay, unshDelay);
-		if(_up) setFullAnim(unshUp, unshFrames, unshDelay, unshDelay);
-		if(_down) setFullAnim(unshDown, unshFrames, unshDelay, unshDelay);
-		if(currentFrame() == leftAnim || currentFrame() == swordLeft) setFullAnim(unshLeft, unshFrames, unshDelay, unshDelay);
-		if(currentFrame() == rightAnim || currentFrame() == swordRight) setFullAnim(unshRight, unshFrames, unshDelay, unshDelay);
-		if(currentFrame() == upAnim || currentFrame() == swordUp) setFullAnim(unshUp, unshFrames, unshDelay, unshDelay);
-		if(currentFrame() == downAnim || currentFrame() == swordDown) setFullAnim(unshDown, unshFrames, unshDelay, unshDelay);
+		if(_left) {
+			setFullAnim(unshLeft, unshFrames, unshDelay, unshDelay);
+			if(unsheathed) playOnce(swordLeft, unsheathedDelay, unsheathedFrames, unshLeft + unshFrames);
+			else playOnce(leftAnim, unsheathedDelay, unsheathedFrames, unshLeft + unshFrames);
+		}
+		if(_right) {
+			setFullAnim(unshRight, unshFrames, unshDelay, unshDelay);
+			if(unsheathed) playOnce(swordRight, unsheathedDelay, unsheathedFrames, unshRight + unshFrames);
+			else playOnce(rightAnim, unsheathedDelay, unsheathedFrames, unshRight + unshFrames);
+		}
+		if(_up) {
+			setFullAnim(unshUp, unshFrames, unshDelay, unshDelay);
+			if(unsheathed) playOnce(swordUp, unsheathedDelay, unsheathedFrames, unshUp + unshFrames);
+			else playOnce(upAnim, unsheathedDelay, unsheathedFrames, unshUp + unshFrames);
+		}
+		if(_down) {
+			setFullAnim(unshDown, unshFrames, unshDelay, unshDelay);
+			if(unsheathed) playOnce(swordDown, unsheathedDelay, unsheathedFrames, unshDown + unshFrames);
+			else playOnce(downAnim, unsheathedDelay, unsheathedFrames, unshDown + unshFrames);
+		}
+		if(currentFrame() == leftAnim || currentFrame() == swordLeft) {
+			setFullAnim(unshLeft, unshFrames, unshDelay, unshDelay);
+			if(unsheathed) playOnce(swordLeft, unsheathedDelay, unsheathedFrames, unshLeft + unshFrames);
+			else playOnce(leftAnim, unsheathedDelay, unsheathedFrames, unshLeft + unshFrames);
+		}
+		if(currentFrame() == rightAnim || currentFrame() == swordRight) {
+			setFullAnim(unshRight, unshFrames, unshDelay, unshDelay);
+			if(unsheathed) playOnce(swordRight, unsheathedDelay, unsheathedFrames, unshRight + unshFrames);
+			else playOnce(rightAnim, unsheathedDelay, unsheathedFrames, unshRight + unshFrames);
+		}
+		if(currentFrame() == upAnim || currentFrame() == swordUp) {
+			setFullAnim(unshUp, unshFrames, unshDelay, unshDelay);
+			if(unsheathed) playOnce(swordUp, unsheathedDelay, unsheathedFrames, unshUp + unshFrames);
+			else playOnce(upAnim, unsheathedDelay, unsheathedFrames, unshUp + unshFrames);
+		}
+		if(currentFrame() == downAnim || currentFrame() == swordDown) {
+			setFullAnim(unshDown, unshFrames, unshDelay, unshDelay);
+			if(unsheathed) playOnce(swordDown, unsheathedDelay, unsheathedFrames, unshDown + unshFrames);
+			else playOnce(downAnim, unsheathedDelay, unsheathedFrames, unshDown + unshFrames);
+		}
 	}
 	
 	public boolean isUnsheathed() { return unsheathed; }
