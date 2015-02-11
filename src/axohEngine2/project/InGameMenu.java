@@ -30,7 +30,7 @@ public class InGameMenu {
 	
 	//Starting stat variables
 	private int level = 1;
-	private int maxHealth = 50;
+	private int maxHealth = 35;
 	private int currHealth = maxHealth;
 	private int magic = 5;
 	private int attack = 8;
@@ -100,9 +100,10 @@ public class InGameMenu {
 		shownEquipment = new Item[100];
 	}
 	
-	public void update(OPTION option, int sectionLocation){
+	public void update(OPTION option, int sectionLocation, int health){
 		_option = option;
 		sectionLoc = sectionLocation;
+		currHealth = health;
 		levelUp();
 	}
 	
@@ -297,7 +298,6 @@ public class InGameMenu {
 	//Remember to update the item check inder Item.java when adding a new group of items. All are handled seperately
 	public void useItem() { 
 		for(int i = 0; i < items.size(); i++){
-			System.out.println(shownItems[sectionLoc].getName());
 			if(shownItems[itemLocation + sectionLoc].getName() == items.get(i).getName()) {
 				
 				if(items.get(i).checkItem() == 1); //TODO: What to do with key items?

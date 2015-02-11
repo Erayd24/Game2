@@ -212,7 +212,6 @@ public class AnimatedSprite extends Sprite {
 	    			setAnimTo(nextAnim);
 	    			delay = nextDelay;
 	    			setTotalFrames(nextTotal);
-	    			System.out.println("Running");
 	    		}
 	    		if(currentFrame() == getSpriteNumber() - 1 + totalFrames()) {
 	    			currFrame = getSpriteNumber();

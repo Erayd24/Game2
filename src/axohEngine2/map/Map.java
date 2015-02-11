@@ -4,6 +4,10 @@ import java.awt.Graphics2D;
 
 import javax.swing.JFrame;
 
+import axohEngine2.entities.Mob;
+import axohEngine2.project.TYPE;
+
+
 
 public class Map {
 	
@@ -40,6 +44,24 @@ public class Map {
 	
 	public Tile accessTile(int index) {
 		return mapTiles[index];
+	}
+	
+	//Get a tile based on a location and direction of a mob
+	//playerX and playerY only matter if the mob in the first parameter is a player, otherwise they dont matter
+	public Tile getFrontTile(Mob mob, int playerX, int playerY){
+		System.out.println(playerX + " sprite size ");
+		int xx = (int) (Math.abs(mob.getXLoc()%spriteSize));
+		int yy = (int) (Math.abs(mob.getYLoc()%spriteSize));
+		if(mob.getType() == TYPE.PLAYER){
+			xx = Math.abs(playerX%spriteSize);
+			yy = Math.abs(playerY%spriteSize);
+		}
+		System.out.println(xx + "ufiusfhsidu");
+		if(mob.facingLeft) return mapTiles[(xx - 1) + yy * mapWidth];
+		if(mob.facingRight) return mapTiles[(xx + 1) + yy * mapWidth];
+		if(mob.facingUp) return mapTiles[xx + (yy - 1) * mapWidth];
+		if(mob.facingDown) return mapTiles[xx + (yy + 1) * mapWidth];
+		return mapTiles[xx + yy * mapWidth];
 	}
 	
 	public int getWidth() { return mapWidth; }

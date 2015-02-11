@@ -123,7 +123,7 @@ public class Judgement extends Game {
 		playerMob.loadMultAnim(32, 48, 40, 56, 3, 8);
 		playerMob.loadSwordAnim(9, 1, 17, 25, 12, 4, 20, 28, 3, 8, 3, 6);
 		playerMob.loadUnsheathAnim(8, 0, 16, 24, 1, 10);
-		playerMob.setHealth(35);
+		playerMob.setHealth(35); //If you change the starting max health, dont forget to change it in inGameMenu.java max health also
 		sprites().add(playerMob);
 		
 		//*****Set up first map and tiles******************************************************************
@@ -151,7 +151,7 @@ public class Judgement extends Game {
 	void gameTimedUpdate() {
 		checkInput();
 		if(state == STATE.TITLE) title.update(option, titleLocation); //Title Menu update
-		if(state == STATE.INGAMEMENU) inMenu.update(option, sectionLoc); //In Game Menu update
+		if(state == STATE.INGAMEMENU) inMenu.update(option, sectionLoc, playerMob.health()); //In Game Menu update
 		updateData(currentMap, currentOverlay, playerX, playerY); //Update the current file data for saving later
 		System.out.println(frameRate());
 		if(waitOn) wait--;
@@ -171,6 +171,8 @@ public class Judgement extends Game {
 			g2d.drawString("Health: " + inMenu.getHealth(), CENTERX - 780, CENTERY - 350);
 			g2d.setColor(Color.BLUE);
 			g2d.drawString("Magic: " + inMenu.getMagic(), CENTERX - 280, CENTERY - 350);
+			g2d.setColor(Color.YELLOW);
+			g2d.drawString("NPC health: " + currentOverlay.accessTile(98).mob().health(), CENTERX + 200, CENTERY - 350);
 		}
 		if(state == STATE.INGAMEMENU){
 			inMenu.render(this, g2d, inX, inY);
@@ -235,6 +237,12 @@ public class Judgement extends Game {
 
 		if(spr1.spriteType() == TYPE.PLAYER && state == STATE.GAME){
 			if(spr2 instanceof Mob) ((Mob) spr2).stop();
+			if(((Mob) spr1).attacking() && currentOverlay.getFrontTile((Mob) spr1, playerX, playerY).getBounds().intersects(spr2.getBounds())){
+				((Mob) spr2).takeDamage(25);
+				System.out.println("inssiiiiide");
+				//TODO: inside of take damage should be a number dependant on the current weapon equipped, change later
+			}
+			
 			playerX -= shiftX;
 			playerY -= shiftY;
 		}

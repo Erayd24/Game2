@@ -28,6 +28,12 @@ public class Mob extends AnimatedSprite{
 	private boolean wasUp = false;
 	private boolean wasDown = false;
 	
+	public boolean facingLeft = false;
+	public boolean facingRight = false;;
+	public boolean facingUp = false;;
+	public boolean facingDown = false;;
+
+	
 	private boolean randUp = false;
 	private boolean randDown = false;
 	private boolean randLeft = false;
@@ -58,6 +64,7 @@ public class Mob extends AnimatedSprite{
 	public void setHealth(int health) { this.health = health; }
 	public void setAi(TYPE ai) { this.ai = ai; }
 	public void setName(String name) { super._name = name; }
+	public TYPE getType() { return ai; }
 	public void setSpeed(int speed) { this.speed = speed; }
 	public void resetMovement() {
 		randRight = false;
@@ -170,12 +177,14 @@ public class Mob extends AnimatedSprite{
 			if(!_left) setAnimTo(leftAnim);
 			startAnim();
 			_left = true;
+			facingLeft = true; facingRight = false; facingUp = false; facingDown = false;
 		} else if(xa > 0) { //right
 			xx += xa; 
 			
 			if(!_right) setAnimTo(rightAnim);
 			startAnim();
 			_right = true;
+			facingLeft = false; facingRight = true; facingUp = false; facingDown = false;
 		}
 			
 		if(ya < 0) {  //up
@@ -184,12 +193,14 @@ public class Mob extends AnimatedSprite{
 			if(!_up) setAnimTo(upAnim);
 			startAnim();
 			_up = true;
+			facingLeft = false; facingRight = false; facingUp = true; facingDown = false;
 		} else if(ya > 0) { //down
 			yy += ya; 
 			
 			if(!_down) setAnimTo(downAnim);
 			startAnim();
 			_down = true;
+			facingLeft = false; facingRight = false; facingUp = false; facingDown = true;
 		}
 	}
 	
@@ -205,6 +216,7 @@ public class Mob extends AnimatedSprite{
 				toggleRight(false);
 				toggleHead(false);
 				wasLeft = false;
+				facingLeft = true; facingRight = false; facingUp = false; facingDown = false;
 			}
 			
 			if(!_left) {
@@ -219,6 +231,7 @@ public class Mob extends AnimatedSprite{
 			}
 			startAnim();
 			_left = true;
+			facingLeft = true; facingRight = false; facingUp = false; facingDown = false;
 		} 
 		if (right) {
 			if(left || up || down) wasRight = true;
@@ -230,6 +243,7 @@ public class Mob extends AnimatedSprite{
 				toggleRight(false);
 				toggleHead(false);
 				wasRight = false;
+				facingLeft = false; facingRight = true; facingUp = false; facingDown = false;
 			}
 			
 			if(!_right) {
@@ -244,6 +258,7 @@ public class Mob extends AnimatedSprite{
 			}
 			startAnim();
 			_right = true;
+			facingLeft = false; facingRight = true; facingUp = false; facingDown = false;
 		} 
 		if (up) {
 			if(left || right || down) wasUp = true;
@@ -255,6 +270,7 @@ public class Mob extends AnimatedSprite{
 				toggleRight(true);
 				toggleHead(true);
 				wasUp = false;
+				facingLeft = false; facingRight = false; facingUp = true; facingDown = false;
 			}
 			
 			if(!_up) {
@@ -269,6 +285,7 @@ public class Mob extends AnimatedSprite{
 			}
 			startAnim();
 			_up = true;
+			facingLeft = false; facingRight = false; facingUp = true; facingDown = false;
 		} 
 		if (down) {
 			if(left || up || right) wasDown = true;
@@ -280,6 +297,7 @@ public class Mob extends AnimatedSprite{
 				toggleRight(true);
 				toggleHead(true);
 				wasDown = false;
+				facingLeft = false; facingRight = false; facingUp = false; facingDown = true;
 			}
 			
 			if(!_down) {
@@ -294,12 +312,14 @@ public class Mob extends AnimatedSprite{
 			}
 			startAnim();
 			_down = true;
+			facingLeft = false; facingRight = false; facingUp = false; facingDown = true;
 		}
 		
 		if(!left) _left = false;
 		if(!right) _right = false;
 		if(!up) _up = false;
 		if(!down) _down = false;
+		if(!playOnce) attacking = false;
 		
 		if(!left && !right && !up && !down) {
 			stopAnim();
@@ -309,42 +329,22 @@ public class Mob extends AnimatedSprite{
 	//Check to see if a mob is currently attacking or change the state of whether it is attacking or not
 	public void changeSheath() {
 		unsheathed = !unsheathed;
-		if(_left) {
+		if(facingLeft) {
 			setFullAnim(unshLeft, unshFrames, unshDelay, unshDelay);
 			if(unsheathed) playOnce(swordLeft, unsheathedDelay, unsheathedFrames, unshLeft + unshFrames);
 			else playOnce(leftAnim, unsheathedDelay, unsheathedFrames, unshLeft + unshFrames);
 		}
-		if(_right) {
+		if(facingRight) {
 			setFullAnim(unshRight, unshFrames, unshDelay, unshDelay);
 			if(unsheathed) playOnce(swordRight, unsheathedDelay, unsheathedFrames, unshRight + unshFrames);
 			else playOnce(rightAnim, unsheathedDelay, unsheathedFrames, unshRight + unshFrames);
 		}
-		if(_up) {
+		if(facingUp) {
 			setFullAnim(unshUp, unshFrames, unshDelay, unshDelay);
 			if(unsheathed) playOnce(swordUp, unsheathedDelay, unsheathedFrames, unshUp + unshFrames);
 			else playOnce(upAnim, unsheathedDelay, unsheathedFrames, unshUp + unshFrames);
 		}
-		if(_down) {
-			setFullAnim(unshDown, unshFrames, unshDelay, unshDelay);
-			if(unsheathed) playOnce(swordDown, unsheathedDelay, unsheathedFrames, unshDown + unshFrames);
-			else playOnce(downAnim, unsheathedDelay, unsheathedFrames, unshDown + unshFrames);
-		}
-		if(currentFrame() == leftAnim || currentFrame() == swordLeft) {
-			setFullAnim(unshLeft, unshFrames, unshDelay, unshDelay);
-			if(unsheathed) playOnce(swordLeft, unsheathedDelay, unsheathedFrames, unshLeft + unshFrames);
-			else playOnce(leftAnim, unsheathedDelay, unsheathedFrames, unshLeft + unshFrames);
-		}
-		if(currentFrame() == rightAnim || currentFrame() == swordRight) {
-			setFullAnim(unshRight, unshFrames, unshDelay, unshDelay);
-			if(unsheathed) playOnce(swordRight, unsheathedDelay, unsheathedFrames, unshRight + unshFrames);
-			else playOnce(rightAnim, unsheathedDelay, unsheathedFrames, unshRight + unshFrames);
-		}
-		if(currentFrame() == upAnim || currentFrame() == swordUp) {
-			setFullAnim(unshUp, unshFrames, unshDelay, unshDelay);
-			if(unsheathed) playOnce(swordUp, unsheathedDelay, unsheathedFrames, unshUp + unshFrames);
-			else playOnce(upAnim, unsheathedDelay, unsheathedFrames, unshUp + unshFrames);
-		}
-		if(currentFrame() == downAnim || currentFrame() == swordDown) {
+		if(facingDown) {
 			setFullAnim(unshDown, unshFrames, unshDelay, unshDelay);
 			if(unsheathed) playOnce(swordDown, unsheathedDelay, unsheathedFrames, unshDown + unshFrames);
 			else playOnce(downAnim, unsheathedDelay, unsheathedFrames, unshDown + unshFrames);
@@ -355,42 +355,28 @@ public class Mob extends AnimatedSprite{
 	public boolean attacking() { return attacking; }	
 	public void attack() {
 		attacking = true;
-		if(_left || _right || _up || _down){
-			if(_left) {
+			if(facingLeft) {
 				setFullAnim(attackLeft, attackFrames, attackDelay, attackDelay);
 				playOnce(swordLeft, unsheathedDelay, unsheathedFrames, attackLeft + attackFrames);
 			}
-			if(_right) {
+			if(facingRight) {
 				setFullAnim(attackRight, attackFrames, attackDelay, attackDelay);
 				playOnce(swordRight, unsheathedDelay, unsheathedFrames, attackRight + attackFrames);
 			}
-			if(_up) {
+			if(facingUp) {
 				setFullAnim(attackUp, attackFrames, attackDelay, attackDelay);
 				playOnce(swordUp, unsheathedDelay, unsheathedFrames, attackUp + attackFrames);
 			}
-			if(_down) {
+			if(facingDown) {
 				setFullAnim(attackDown, attackFrames, attackDelay, attackDelay);
 				playOnce(swordDown, unsheathedDelay, unsheathedFrames, attackDown + attackFrames);
 			}
-		} else {
-			if(currentFrame() == swordLeft) {
-				setFullAnim(attackLeft, attackFrames, attackDelay, attackDelay);
-				playOnce(swordLeft, unsheathedDelay, unsheathedFrames, attackLeft + attackFrames);
-			}
-			if(currentFrame() == swordRight) {
-				setFullAnim(attackRight, attackFrames, attackDelay, attackDelay);
-				playOnce(swordRight, unsheathedDelay, unsheathedFrames, attackRight + attackFrames);
-			}
-			if(currentFrame() == swordUp) {
-				setFullAnim(attackUp, attackFrames, attackDelay, attackDelay);
-				playOnce(swordUp, unsheathedDelay, unsheathedFrames, attackUp + attackFrames);
-			}
-			if(currentFrame() == swordDown) {
-				setFullAnim(attackDown, attackFrames, attackDelay, attackDelay);
-				playOnce(swordDown, unsheathedDelay, unsheathedFrames, attackDown + attackFrames);
-			}
-		}
 	}
+	
+	public void takeDamage(int damage){
+		health -= damage - random.nextInt(damage%5);
+	}
+	public int health() { return health; }
 	
 	public double getXLoc() { return entity.getX(); }
 	public double getYLoc() { return entity.getY(); }
