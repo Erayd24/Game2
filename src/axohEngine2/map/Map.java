@@ -48,14 +48,16 @@ public class Map {
 	
 	//Get a tile based on a location and direction of a mob
 	//playerX and playerY only matter if the mob in the first parameter is a player, otherwise they dont matter
-	public Tile getFrontTile(Mob mob, int playerX, int playerY){
-		int xx = (int) Math.floor(Math.abs(mob.getXLoc())/(spriteSize/mapTiles[0].getScale()));
-		int yy = (int) Math.floor(Math.abs(mob.getYLoc())/(spriteSize/mapTiles[0].getScale()));
+	public Tile getFrontTile(Mob mob, int playerX, int playerY, int centerX, int centerY){
+		int xx = (int) Math.floor(Math.abs(mob.getXLoc())/spriteSize);
+		int yy = (int) Math.floor(Math.abs(mob.getYLoc())/spriteSize);
 		if(mob.getType() == TYPE.PLAYER){
-			xx = (int) Math.floor(Math.abs(playerX)/(spriteSize/mapTiles[0].getScale())); //width
-			yy = (int) Math.floor(Math.abs(playerY)/(spriteSize/mapTiles[0].getScale())); //height
+			if(playerX < 0) xx = (int) Math.floor(Math.abs(playerX - centerX)/spriteSize); //width ADD CENTERX AND CENTERY if Negative
+			if(playerX > 0) xx = (int) Math.floor((playerX + centerX)/spriteSize);
+			if(playerY < 0) yy = (int) Math.floor(Math.abs(playerY - centerY)/spriteSize); //height
+			if(playerY > 0) yy = (int) Math.floor((playerY + centerY)/spriteSize); //height
 		}
-		System.out.println((xx + " xx " + yy + " yy " + mapWidth) + " ufiusfhsidu " + spriteSize);
+		System.out.println((xx + " xx " + yy + " yy ") + " ufiusfhsidu " + spriteSize);
 		if(mob.facingLeft) return mapTiles[(xx - 1) + yy * mapWidth]; //left tile
 		if(mob.facingRight) return mapTiles[(xx + 1) + yy * mapWidth]; //right
 		if(mob.facingUp) return mapTiles[xx + (yy - 1) * mapWidth]; //up

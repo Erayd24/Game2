@@ -236,7 +236,7 @@ public class Judgement extends Game {
 
 		if(spr1.spriteType() == TYPE.PLAYER && state == STATE.GAME){
 			if(spr2 instanceof Mob) ((Mob) spr2).stop();
-			if(((Mob) spr1).attacking() && currentOverlay.getFrontTile((Mob) spr1, playerX, playerY).getBounds().intersects(spr2.getBounds())){
+			if(((Mob) spr1).attacking() && currentOverlay.getFrontTile((Mob) spr1, playerX, playerY, CENTERX, CENTERY).getBounds().intersects(spr2.getBounds())){
 				((Mob) spr2).takeDamage(25);
 				System.out.println("inssiiiiide");
 				//TODO: inside of take damage should be a number dependant on the current weapon equipped, change later
