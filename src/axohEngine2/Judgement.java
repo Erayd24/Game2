@@ -92,8 +92,6 @@ public class Judgement extends Game {
 		state = STATE.TITLE;
 		option = OPTION.NONE;
 		scale = 4;
-		playerX = -40;
-		playerY = 0;
 		playerSpeed = 3;
 		
 		//****Initialize spriteSheets*********************************************************************
@@ -155,6 +153,7 @@ public class Judgement extends Game {
 		updateData(currentMap, currentOverlay, playerX, playerY); //Update the current file data for saving later
 		System.out.println(frameRate());
 		if(waitOn) wait--;
+		System.out.println(playerX + " playerX " + playerY + "playerY ");
 	}
 	
 	//Obtain the graphics passed down by the super class Game and render objects on the screen here
@@ -715,6 +714,7 @@ public class Judgement extends Game {
 			 }
 			 playerX = data().getPlayerX();
 			 playerY = data().getPlayerY();
+			 System.out.println("running");
 			 sprites().add(playerMob);
 			 for(int i = 0; i < currentMap.getWidth() * currentMap.getHeight(); i++){
 					addTile(currentMap.accessTile(i));

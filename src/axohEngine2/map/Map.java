@@ -31,8 +31,8 @@ public class Map {
 	
 	public void render(JFrame frame, Graphics2D g2d, int xx, int yy) {
 		int xt = xx;
-			for(int y = 0; y < mapHeight; y++) {
-				for(int x = 0; x < mapWidth; x++) {
+		for(int y = 0; y < mapHeight; y++) {
+			for(int x = 0; x < mapWidth; x++) {
 				mapTiles[x + y * mapWidth].renderTile(xx, yy, g2d, frame);
 				if(mapTiles[x + y * mapWidth].hasMob()) mapTiles[x + y * mapWidth].mob().renderMob(xx, yy);
 				xx = xx + spriteSize;
@@ -49,19 +49,18 @@ public class Map {
 	//Get a tile based on a location and direction of a mob
 	//playerX and playerY only matter if the mob in the first parameter is a player, otherwise they dont matter
 	public Tile getFrontTile(Mob mob, int playerX, int playerY){
-		System.out.println(playerX + " sprite size ");
-		int xx = (int) (Math.abs(mob.getXLoc()%spriteSize));
-		int yy = (int) (Math.abs(mob.getYLoc()%spriteSize));
+		int xx = (int) Math.floor(Math.abs(mob.getXLoc())/(spriteSize/mapTiles[0].getScale()));
+		int yy = (int) Math.floor(Math.abs(mob.getYLoc())/(spriteSize/mapTiles[0].getScale()));
 		if(mob.getType() == TYPE.PLAYER){
-			xx = Math.abs(playerX%spriteSize);
-			yy = Math.abs(playerY%spriteSize);
+			xx = (int) Math.floor(Math.abs(playerX)/(spriteSize/mapTiles[0].getScale())); //width
+			yy = (int) Math.floor(Math.abs(playerY)/(spriteSize/mapTiles[0].getScale())); //height
 		}
-		System.out.println(xx + "ufiusfhsidu");
-		if(mob.facingLeft) return mapTiles[(xx - 1) + yy * mapWidth];
-		if(mob.facingRight) return mapTiles[(xx + 1) + yy * mapWidth];
-		if(mob.facingUp) return mapTiles[xx + (yy - 1) * mapWidth];
-		if(mob.facingDown) return mapTiles[xx + (yy + 1) * mapWidth];
-		return mapTiles[xx + yy * mapWidth];
+		System.out.println((xx + " xx " + yy + " yy " + mapWidth) + " ufiusfhsidu " + spriteSize);
+		if(mob.facingLeft) return mapTiles[(xx - 1) + yy * mapWidth]; //left tile
+		if(mob.facingRight) return mapTiles[(xx + 1) + yy * mapWidth]; //right
+		if(mob.facingUp) return mapTiles[xx + (yy - 1) * mapWidth]; //up
+		if(mob.facingDown) return mapTiles[xx + (yy + 1) * mapWidth]; //down
+		return mapTiles[xx + yy * mapWidth]; //This line should never run, it's here for formality
 	}
 	
 	public int getWidth() { return mapWidth; }
