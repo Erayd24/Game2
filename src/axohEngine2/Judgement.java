@@ -93,9 +93,16 @@ public class Judgement extends Game {
 	//This method is called only once by the Game class, for startup
 	//Initialize all variables here
 	void gameStartUp() {
+		/****************************************************************
+		 * The "camera" is the mapX and mapY variables. These variables 
+		 * can be changed in order to move the map around, simulating the
+		 * camera. The player is moved around ONLY when at an edge of a map,
+		 * otherwise it simply stays at the center of the screen as the "camera"
+		 * is moved around
+		 ****************************************************************/
 		state = STATE.TITLE;
 		option = OPTION.NONE;
-		startPosX = -400;
+		startPosX = -400; //TODO: Make a method that takes a tile index and spits back an x or y coordinate of that tile
 		startPosY = -400;
 		mapX = startPosX;
 		mapY = startPosY;
@@ -161,8 +168,7 @@ public class Judgement extends Game {
 		updateData(currentMap, currentOverlay, playerX, playerY); //Update the current file data for saving later
 		System.out.println(frameRate());
 		if(waitOn) wait--;
-		System.out.println(mapX + "adidiuasjdoia" + playerX);
-		System.out.println(playerX + " playerX " + playerY + "playerY " + CENTERY);
+		System.out.println(playerX + " playerX " + playerY + " playerY ");
 	}
 	
 	//Obtain the graphics passed down by the super class Game and render objects on the screen here

@@ -1,6 +1,7 @@
 package axohEngine2.entities;
 
 import java.awt.Graphics2D;
+import java.util.LinkedList;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -10,6 +11,7 @@ import axohEngine2.project.TYPE;
 public class Mob extends AnimatedSprite{
 	
 	private Random random = new Random();
+	private LinkedList<Attack> attacks;
 	private boolean hostile;
 	private int health;
 	private TYPE ai;
@@ -32,7 +34,6 @@ public class Mob extends AnimatedSprite{
 	public boolean facingRight = false;;
 	public boolean facingUp = false;;
 	public boolean facingDown = false;;
-
 	
 	private boolean randUp = false;
 	private boolean randDown = false;
@@ -47,6 +48,7 @@ public class Mob extends AnimatedSprite{
 	
 	public Mob(JFrame frame, Graphics2D g2d, SpriteSheet sheet, int spriteNumber, TYPE ai, String name, boolean hostility) {
 		super(frame, g2d, sheet, spriteNumber, name);
+		attacks = new LinkedList<Attack>();
 		this.frame = frame;
 		this.g2d = g2d;
 		this.ai = ai;
@@ -372,6 +374,12 @@ public class Mob extends AnimatedSprite{
 				playOnce(swordDown, unsheathedDelay, unsheathedFrames, attackDown + attackFrames);
 			}
 	}
+	
+	public void addAttack() {
+		
+	}
+	
+	public LinkedList<Attack> attacks() { return attacks; }
 	
 	public void takeDamage(int damage){
 		health -= damage - random.nextInt(damage%5);
