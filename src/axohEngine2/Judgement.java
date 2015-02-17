@@ -40,8 +40,12 @@ public class Judgement extends Game {
 	
 	//player variables and scale
 	private int scale;
+	private int mapX;
+	private int mapY;
 	private int playerX;
 	private int playerY;
+	private int startPosX;
+	private int startPosY;
 	private int playerSpeed;
 	
 	//Map and collision variables
@@ -91,6 +95,10 @@ public class Judgement extends Game {
 	void gameStartUp() {
 		state = STATE.TITLE;
 		option = OPTION.NONE;
+		startPosX = -400;
+		startPosY = -400;
+		mapX = startPosX;
+		mapY = startPosY;
 		scale = 4;
 		playerSpeed = 3;
 		
@@ -153,7 +161,8 @@ public class Judgement extends Game {
 		updateData(currentMap, currentOverlay, playerX, playerY); //Update the current file data for saving later
 		System.out.println(frameRate());
 		if(waitOn) wait--;
-		System.out.println(playerX + " playerX " + playerY + "playerY ");
+		System.out.println(mapX + "adidiuasjdoia" + playerX);
+		System.out.println(playerX + " playerX " + playerY + "playerY " + CENTERY);
 	}
 	
 	//Obtain the graphics passed down by the super class Game and render objects on the screen here
@@ -163,9 +172,9 @@ public class Judgement extends Game {
 		g2d.setFont(simple);
 		
 		if(state == STATE.GAME) {
-			currentMap.render(this, g2d, playerX, playerY);
-			currentOverlay.render(this, g2d, playerX, playerY);
-			playerMob.renderMob(CENTERX, CENTERY);
+			currentMap.render(this, g2d, mapX, mapY);
+			currentOverlay.render(this, g2d, mapX, mapY);
+			playerMob.renderMob(CENTERX - playerX, CENTERY - playerY);
 			g2d.setColor(Color.GREEN);
 			g2d.drawString("Health: " + inMenu.getHealth(), CENTERX - 780, CENTERY - 350);
 			g2d.setColor(Color.BLUE);
@@ -238,12 +247,12 @@ public class Judgement extends Game {
 			if(spr2 instanceof Mob) ((Mob) spr2).stop();
 			if(((Mob) spr1).attacking() && currentOverlay.getFrontTile((Mob) spr1, playerX, playerY, CENTERX, CENTERY).getBounds().intersects(spr2.getBounds())){
 				((Mob) spr2).takeDamage(25);
-				System.out.println("inssiiiiide");
 				//TODO: inside of take damage should be a number dependant on the current weapon equipped, change later
 			}
-			
-			playerX -= shiftX;
-			playerY -= shiftY;
+			if(playerX != 0) playerX -= shiftX;
+			if(playerY != 0) playerY -= shiftY;
+			if(playerX == 0) mapX -= shiftX;
+			if(playerY == 0) mapY -= shiftY;
 		}
 	}
 	
@@ -313,8 +322,10 @@ public class Judgement extends Game {
 		}
 		
 		if(spr.spriteType() == TYPE.PLAYER && tile.solid() && state == STATE.GAME) {
-			playerX -= shiftX;
-			playerY -= shiftY;
+			if(playerX != 0) playerX -= shiftX;
+			if(playerY != 0) playerY -= shiftY;
+			if(playerX == 0) mapX -= shiftX;
+			if(playerY == 0) mapY -= shiftY;
 			return;
 		}
 		if(spr.spriteType() != TYPE.PLAYER && tile.solid() && state == STATE.GAME){
@@ -331,10 +342,22 @@ public class Judgement extends Game {
 	// so the map moves around the player sprite which is why the x and y variables
 	// are opposites. If you want to move right, you subtract from X.
 	void movePlayer(int xa, int ya) {
-		if(xa > 0) playerX += xa; //left
-		if(xa < 0) playerX += xa; //right
-		if(ya > 0) playerY += ya; //up
-		if(ya < 0) playerY += ya; //down
+		if(xa > 0) {
+			if(mapX + xa < currentMap.getMinX() && playerX < playerSpeed && playerX > -playerSpeed) mapX += xa;
+			else playerX += xa; //left
+		}
+		if(xa < 0) {
+			if(mapX + xa > currentMap.getMaxX(SCREENWIDTH) && playerX < playerSpeed && playerX > -playerSpeed) mapX += xa;
+			else playerX += xa; //right
+		}
+		if(ya > 0) {
+			if(mapY + ya < currentMap.getMinY() && playerY < playerSpeed && playerY > -playerSpeed) mapY += ya;
+			else playerY += ya; //up
+		}
+		if(ya < 0) {
+			if(mapY + ya > currentMap.getMaxY(SCREENHEIGHT) && playerY < playerSpeed && playerY > -playerSpeed) mapY += ya;
+			else playerY += ya; //down
+		}
 	}
 	
 	//Main

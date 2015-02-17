@@ -46,13 +46,23 @@ public class Map {
 		return mapTiles[index];
 	}
 	
+	//These next two methods, max or min X or Y are meant to return their respective constraints the map can go to
+	//Gives back the maximum negative number the map can move to
+	//maxX is far right border while minX is far left border
+	public int getMaxX(int screenWidth) { return -1 * (mapWidth * spriteSize - screenWidth); }
+	public int getMinX() { return 0; }
+	
+	//maxY is bottom edge while minY is top edge
+	public int getMaxY(int screenHeight) { return -1 * (mapHeight * spriteSize - screenHeight); }
+	public int getMinY() { return 0; }
+	
 	//Get a tile based on a location and direction of a mob
 	//playerX and playerY only matter if the mob in the first parameter is a player, otherwise they dont matter
 	public Tile getFrontTile(Mob mob, int playerX, int playerY, int centerX, int centerY){
 		int xx = (int) Math.floor(Math.abs(mob.getXLoc())/spriteSize);
 		int yy = (int) Math.floor(Math.abs(mob.getYLoc())/spriteSize);
 		if(mob.getType() == TYPE.PLAYER){
-			if(playerX < 0) xx = (int) Math.floor(Math.abs(playerX - centerX)/spriteSize); //width ADD CENTERX AND CENTERY if Negative
+			if(playerX < 0) xx = (int) Math.floor(Math.abs(playerX - centerX)/spriteSize); //width what about the black spaces
 			if(playerX > 0) xx = (int) Math.floor((playerX + centerX)/spriteSize);
 			if(playerY < 0) yy = (int) Math.floor(Math.abs(playerY - centerY)/spriteSize); //height
 			if(playerY > 0) yy = (int) Math.floor((playerY + centerY)/spriteSize); //height
