@@ -20,25 +20,15 @@ public class Mob extends AnimatedSprite{
 	private int speed = 2;
 	private boolean attacking;
 	private boolean unsheathed = false;
-	
-	private boolean _left = false;
-	private boolean _right = false;
-	private boolean _up = false;
-	private boolean _down = false;
-	private boolean wasRight = false;
+
+	private boolean wasRight = false; //Which direction the player was pressing in order to correct animations
 	private boolean wasLeft = false;
 	private boolean wasUp = false;
 	private boolean wasDown = false;
-	
-	public boolean facingLeft = false;
-	public boolean facingRight = false;;
-	public boolean facingUp = false;;
-	public boolean facingDown = false;;
-	
-	private boolean randUp = false;
-	private boolean randDown = false;
-	private boolean randLeft = false;
-	private boolean randRight = false;
+
+	private DIRECTION moveDir; //Which direction the player is moving
+	private DIRECTION direction; //Which way the player is facing
+	private DIRECTION randomDir;
 	
 	private boolean waitOn = false;
 	private int wait;
@@ -69,24 +59,15 @@ public class Mob extends AnimatedSprite{
 	public TYPE getType() { return ai; }
 	public void setSpeed(int speed) { this.speed = speed; }
 	public void resetMovement() {
-		randRight = false;
-		randLeft = false;
-		randUp = false;
-		randDown = false;
+		randomDir = DIRECTION.NONE;
 		wait = 0;
 		waitOn = false;
-		_left = false;
-		_right = false;
-		_up = false;
-		_down = false;
+		moveDir = DIRECTION.NONE;
 	}
 	
 	public void stop() {
 		if(ai == TYPE.RANDOMPATH){
-			randRight = false;
-			randUp = false;
-			randDown = false;
-			randLeft = false;
+			randomDir = DIRECTION.NONE;
 			waitOn = true;
 			wait = 100 + random.nextInt(200);
 			stopAnim();
@@ -118,33 +99,27 @@ public class Mob extends AnimatedSprite{
 		
 		if(wait <= 0) {
 			waitOn = false;
-			randRight = false;
-			randUp = false;
-			randDown = false;
-			randLeft = false;
-			_left = false;
-			_right = false;
-			_up = false;
-			_down = false;
+			randomDir = DIRECTION.NONE;
+			moveDir = DIRECTION.NONE;
 		}
 		
 		if(r == 0 && !waitOn) { //right
-			randRight = true;
+			randomDir = DIRECTION.RIGHT;
 			waitOn = true;
 			wait = random.nextInt(200);
 		}
 		if(r == 1 && !waitOn) { //left
-			randLeft = true;
+			randomDir = DIRECTION.LEFT;
 			waitOn = true;
 			wait = random.nextInt(200);
 		}
 		if(r == 2 && !waitOn) { //up
-			randUp = true;
+			randomDir = DIRECTION.UP;
 			waitOn = true;
 			wait = random.nextInt(200);
 		}
 		if(r == 3 && !waitOn) { //down
-			randDown = true;
+			randomDir = DIRECTION.DOWN;
 			waitOn = true;
 			wait = random.nextInt(200);
 		}
@@ -154,60 +129,53 @@ public class Mob extends AnimatedSprite{
 			stopAnim();
 		}
 		
-		if(randRight) xa = speed;
-		if(randLeft) xa = -speed;
-		if(randUp) ya = speed;
-		if(randDown) ya = -speed;
+		if(randomDir == DIRECTION.RIGHT) xa = speed; startAnim();
+		if(randomDir == DIRECTION.LEFT) xa = -speed; startAnim();
+		if(randomDir == DIRECTION.UP) ya = speed; startAnim();
+		if(randomDir == DIRECTION.DOWN) ya = -speed; startAnim();
 		
-		if(randRight || randDown || randUp || randLeft) startAnim();
 		move(xa, ya);
 		if(waitOn) wait--;
 	}
 	
 	private void search() {
-		
 	}
 	
 	private void chase() {
-		
 	}
 	
 	private void move(int xa, int ya) { 
 		if(xa < 0) { //left
 			xx += xa; 
 				
-			if(!_left) setAnimTo(leftAnim);
+			if(moveDir != DIRECTION.LEFT) setAnimTo(leftAnim);
 			startAnim();
-			_left = true;
-			facingLeft = true; facingRight = false; facingUp = false; facingDown = false;
+			moveDir = DIRECTION.LEFT;
 		} else if(xa > 0) { //right
 			xx += xa; 
 			
-			if(!_right) setAnimTo(rightAnim);
+			if(moveDir != DIRECTION.RIGHT) setAnimTo(rightAnim);
 			startAnim();
-			_right = true;
-			facingLeft = false; facingRight = true; facingUp = false; facingDown = false;
+			moveDir = DIRECTION.RIGHT;
 		}
 			
 		if(ya < 0) {  //up
 			yy += ya;
 
-			if(!_up) setAnimTo(upAnim);
+			if(moveDir != DIRECTION.UP) setAnimTo(upAnim);
 			startAnim();
-			_up = true;
-			facingLeft = false; facingRight = false; facingUp = true; facingDown = false;
+			moveDir = DIRECTION.UP;
 		} else if(ya > 0) { //down
 			yy += ya; 
 			
-			if(!_down) setAnimTo(downAnim);
+			if(moveDir != DIRECTION.DOWN) setAnimTo(downAnim);
 			startAnim();
-			_down = true;
-			facingLeft = false; facingRight = false; facingUp = false; facingDown = true;
+			moveDir = DIRECTION.DOWN;
 		}
+		if(xa == 0 && ya == 0) stopAnim();
 	}
 	
 	public void updatePlayer(boolean left, boolean right, boolean up, boolean down) {
-				
 		if(left) {
 			if(right || up || down) wasLeft = true;
 			if(wasLeft && !up && !down && !right) {
@@ -218,10 +186,10 @@ public class Mob extends AnimatedSprite{
 				toggleRight(false);
 				toggleHead(false);
 				wasLeft = false;
-				facingLeft = true; facingRight = false; facingUp = false; facingDown = false;
+				direction = DIRECTION.LEFT;
 			}
 			
-			if(!_left) {
+			if(moveDir != DIRECTION.LEFT) {
 				if(!unsheathed) setAnimTo(leftAnim);
 				if(unsheathed) setAnimTo(swordLeft);
 				if(hasMultBounds) {
@@ -232,8 +200,8 @@ public class Mob extends AnimatedSprite{
 				}
 			}
 			startAnim();
-			_left = true;
-			facingLeft = true; facingRight = false; facingUp = false; facingDown = false;
+			moveDir = DIRECTION.LEFT;
+			direction = DIRECTION.LEFT;
 		} 
 		if (right) {
 			if(left || up || down) wasRight = true;
@@ -245,10 +213,10 @@ public class Mob extends AnimatedSprite{
 				toggleRight(false);
 				toggleHead(false);
 				wasRight = false;
-				facingLeft = false; facingRight = true; facingUp = false; facingDown = false;
+				direction = DIRECTION.RIGHT;
 			}
 			
-			if(!_right) {
+			if(moveDir != DIRECTION.RIGHT) {
 				if(!unsheathed) setAnimTo(rightAnim);
 				if(unsheathed) setAnimTo(swordRight);
 				if(hasMultBounds) {
@@ -259,8 +227,8 @@ public class Mob extends AnimatedSprite{
 				}
 			}
 			startAnim();
-			_right = true;
-			facingLeft = false; facingRight = true; facingUp = false; facingDown = false;
+			moveDir = DIRECTION.RIGHT;
+			direction = DIRECTION.RIGHT;
 		} 
 		if (up) {
 			if(left || right || down) wasUp = true;
@@ -272,10 +240,10 @@ public class Mob extends AnimatedSprite{
 				toggleRight(true);
 				toggleHead(true);
 				wasUp = false;
-				facingLeft = false; facingRight = false; facingUp = true; facingDown = false;
+				direction = DIRECTION.UP;
 			}
 			
-			if(!_up) {
+			if(moveDir != DIRECTION.UP) {
 				if(!unsheathed) setAnimTo(upAnim);
 				if(unsheathed) setAnimTo(swordUp);
 				if(hasMultBounds) {
@@ -286,8 +254,8 @@ public class Mob extends AnimatedSprite{
 				}
 			}
 			startAnim();
-			_up = true;
-			facingLeft = false; facingRight = false; facingUp = true; facingDown = false;
+			moveDir = DIRECTION.UP;
+			direction = DIRECTION.UP;
 		} 
 		if (down) {
 			if(left || up || right) wasDown = true;
@@ -299,10 +267,10 @@ public class Mob extends AnimatedSprite{
 				toggleRight(true);
 				toggleHead(true);
 				wasDown = false;
-				facingLeft = false; facingRight = false; facingUp = false; facingDown = true;
+				direction = DIRECTION.DOWN;
 			}
 			
-			if(!_down) {
+			if(moveDir != DIRECTION.DOWN) {
 				if(!unsheathed) setAnimTo(downAnim);
 				if(unsheathed) setAnimTo(swordDown);
 				if(hasMultBounds) {
@@ -313,16 +281,11 @@ public class Mob extends AnimatedSprite{
 				}
 			}
 			startAnim();
-			_down = true;
-			facingLeft = false; facingRight = false; facingUp = false; facingDown = true;
+			moveDir = DIRECTION.DOWN;
+			direction = DIRECTION.DOWN;
 		}
 		
-		if(!left) _left = false;
-		if(!right) _right = false;
-		if(!up) _up = false;
-		if(!down) _down = false;
 		if(!playOnce) attacking = false;
-		
 		if(!left && !right && !up && !down) {
 			stopAnim();
 		}
@@ -331,22 +294,22 @@ public class Mob extends AnimatedSprite{
 	//Check to see if a mob is currently attacking or change the state of whether it is attacking or not
 	public void changeSheath() {
 		unsheathed = !unsheathed;
-		if(facingLeft) {
+		if(direction == DIRECTION.LEFT) {
 			setFullAnim(unshLeft, unshFrames, unshDelay, unshDelay);
 			if(unsheathed) playOnce(swordLeft, unsheathedDelay, unsheathedFrames, unshLeft + unshFrames);
 			else playOnce(leftAnim, unsheathedDelay, unsheathedFrames, unshLeft + unshFrames);
 		}
-		if(facingRight) {
+		if(direction == DIRECTION.RIGHT) {
 			setFullAnim(unshRight, unshFrames, unshDelay, unshDelay);
 			if(unsheathed) playOnce(swordRight, unsheathedDelay, unsheathedFrames, unshRight + unshFrames);
 			else playOnce(rightAnim, unsheathedDelay, unsheathedFrames, unshRight + unshFrames);
 		}
-		if(facingUp) {
+		if(direction == DIRECTION.UP) {
 			setFullAnim(unshUp, unshFrames, unshDelay, unshDelay);
 			if(unsheathed) playOnce(swordUp, unsheathedDelay, unsheathedFrames, unshUp + unshFrames);
 			else playOnce(upAnim, unsheathedDelay, unsheathedFrames, unshUp + unshFrames);
 		}
-		if(facingDown) {
+		if(direction == DIRECTION.DOWN) {
 			setFullAnim(unshDown, unshFrames, unshDelay, unshDelay);
 			if(unsheathed) playOnce(swordDown, unsheathedDelay, unsheathedFrames, unshDown + unshFrames);
 			else playOnce(downAnim, unsheathedDelay, unsheathedFrames, unshDown + unshFrames);
@@ -357,28 +320,25 @@ public class Mob extends AnimatedSprite{
 	public boolean attacking() { return attacking; }	
 	public void attack() {
 		attacking = true;
-			if(facingLeft) {
+			if(direction == DIRECTION.LEFT) {
 				setFullAnim(attackLeft, attackFrames, attackDelay, attackDelay);
 				playOnce(swordLeft, unsheathedDelay, unsheathedFrames, attackLeft + attackFrames);
 			}
-			if(facingRight) {
+			if(direction == DIRECTION.RIGHT) {
 				setFullAnim(attackRight, attackFrames, attackDelay, attackDelay);
 				playOnce(swordRight, unsheathedDelay, unsheathedFrames, attackRight + attackFrames);
 			}
-			if(facingUp) {
+			if(direction == DIRECTION.UP) {
 				setFullAnim(attackUp, attackFrames, attackDelay, attackDelay);
 				playOnce(swordUp, unsheathedDelay, unsheathedFrames, attackUp + attackFrames);
 			}
-			if(facingDown) {
+			if(direction == DIRECTION.DOWN) {
 				setFullAnim(attackDown, attackFrames, attackDelay, attackDelay);
 				playOnce(swordDown, unsheathedDelay, unsheathedFrames, attackDown + attackFrames);
 			}
 	}
-	
-	public void addAttack() {
-		
-	}
-	
+
+	//List of attacks a mob could have
 	public LinkedList<Attack> attacks() { return attacks; }
 	
 	public void takeDamage(int damage){

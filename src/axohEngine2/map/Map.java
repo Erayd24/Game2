@@ -59,7 +59,7 @@ public class Map {
 	//Get a tile based on a location and direction of a mob
 	//playerX and playerY only matter if the mob in the first parameter is a player, otherwise they dont matter
 	//TODO: This method doesn't actually work, don't use it
-	public Tile getFrontTile(Mob mob, int playerX, int playerY, int centerX, int centerY){
+	/*public Tile getFrontTile(Mob mob, int playerX, int playerY, int centerX, int centerY){
 		int xx = (int) Math.floor(Math.abs(mob.getXLoc())/spriteSize);
 		int yy = (int) Math.floor(Math.abs(mob.getYLoc())/spriteSize);
 		if(mob.getType() == TYPE.PLAYER){
@@ -74,7 +74,7 @@ public class Map {
 		if(mob.facingUp) return mapTiles[xx + (yy - 1) * mapWidth]; //up
 		if(mob.facingDown) return mapTiles[xx + (yy + 1) * mapWidth]; //down
 		return mapTiles[xx + yy * mapWidth]; //This line should never run, it's here for formality
-	}
+	}*/
 	
 	public int getWidth() { return mapWidth; }
 	public int getHeight() { return mapHeight; }

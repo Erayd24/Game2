@@ -251,10 +251,10 @@ public class Judgement extends Game {
 
 		if(spr1.spriteType() == TYPE.PLAYER && state == STATE.GAME){
 			if(spr2 instanceof Mob) ((Mob) spr2).stop();
-			if(((Mob) spr1).attacking() && currentOverlay.getFrontTile((Mob) spr1, playerX, playerY, CENTERX, CENTERY).getBounds().intersects(spr2.getBounds())){
+			/*if(((Mob) spr1).attacking() && currentOverlay.getFrontTile((Mob) spr1, playerX, playerY, CENTERX, CENTERY).getBounds().intersects(spr2.getBounds())){
 				((Mob) spr2).takeDamage(25);
 				//TODO: inside of take damage should be a number dependant on the current weapon equipped, change later
-			}
+			}*/
 			if(playerX != 0) playerX -= shiftX;
 			if(playerY != 0) playerY -= shiftY;
 			if(playerX == 0) mapX -= shiftX;
@@ -339,7 +339,6 @@ public class Judgement extends Game {
 				((Mob) spr).setLoc((int)shiftX, (int)shiftY);
 				((Mob) spr).resetMovement();
 			}
-			
 		}
 	}
 	
