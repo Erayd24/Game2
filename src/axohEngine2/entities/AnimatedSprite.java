@@ -88,7 +88,7 @@ public class AnimatedSprite extends Sprite {
         tempDelay = delay;
     }
 
-    public void loadMultAnim(int spriteNumLeft, int spriteNumRight, int spriteNumUp, int spriteNumDown, int frames, int delay) {
+    public void setMoveAnim(int spriteNumLeft, int spriteNumRight, int spriteNumUp, int spriteNumDown, int frames, int delay) {
 		leftAnim = spriteNumLeft;
 		rightAnim = spriteNumRight;
 		upAnim = spriteNumUp;
@@ -131,11 +131,11 @@ public class AnimatedSprite extends Sprite {
     	unshDelay = delay;
     }
     
-    public void setFullAnim(int startFrame, int totalFrames, int delay, int tempDelay){
+    public void setFullAnim(int startFrame, int totalFrames, int delay){
     	setAnimTo(startFrame);
 		setTotalFrames(totalFrames);
 		setDelay(delay);
-		setTempDelay(tempDelay);
+		setTempDelay(delay);
     }
     
     public void setFrame(int frame) { 
@@ -159,7 +159,7 @@ public class AnimatedSprite extends Sprite {
     
     public void startAnim() { animating = true; }
     public boolean animating() { return animating; }
-    public void playOnce(int nextAnimFrame, int nextAnimDelay, int nextAnimTotal, int endingFrame) { 
+    public void playOnce(int nextAnimFrame, int nextAnimTotal, int nextAnimDelay, int endingFrame) { 
     	playOnce = true; 
     	nextAnim = nextAnimFrame;
     	endFrame = endingFrame - 1;

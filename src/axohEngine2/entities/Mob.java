@@ -19,7 +19,8 @@ public class Mob extends AnimatedSprite{
 	private int yy;
 	private int speed = 2;
 	private boolean attacking;
-	private boolean unsheathed = false;
+	private boolean takenOut = false;
+	private Attack currentAttack;
 
 	private boolean wasRight = false; //Which direction the player was pressing in order to correct animations
 	private boolean wasLeft = false;
@@ -52,12 +53,12 @@ public class Mob extends AnimatedSprite{
 	}
 	
 	public String getName() { return super._name; }
-	
+	public TYPE getType() { return ai; }
 	public void setHealth(int health) { this.health = health; }
 	public void setAi(TYPE ai) { this.ai = ai; }
 	public void setName(String name) { super._name = name; }
-	public TYPE getType() { return ai; }
 	public void setSpeed(int speed) { this.speed = speed; }
+	
 	public void resetMovement() {
 		randomDir = DIRECTION.NONE;
 		wait = 0;
@@ -83,9 +84,6 @@ public class Mob extends AnimatedSprite{
 		}
 		if(ai == TYPE.CHASE) {
 			chase();
-		}
-		if(ai == TYPE.PLAYER) {
-			//TODO: Do I need this?
 		}
 		if(hostile && health < 0) {
 			setAlive(false);
@@ -179,19 +177,19 @@ public class Mob extends AnimatedSprite{
 		if(left) {
 			if(right || up || down) wasLeft = true;
 			if(wasLeft && !up && !down && !right) {
-				if(!unsheathed) setAnimTo(leftAnim);
-				if(unsheathed) setAnimTo(swordLeft);
 				toggleLeg(true);
 				toggleLeft(false);
 				toggleRight(false);
 				toggleHead(false);
 				wasLeft = false;
 				direction = DIRECTION.LEFT;
+				if(!takenOut) setAnimTo(leftAnim);
+				if(takenOut) setAnimTo(currentAttack.getMoveAnim(direction));
 			}
 			
 			if(moveDir != DIRECTION.LEFT) {
-				if(!unsheathed) setAnimTo(leftAnim);
-				if(unsheathed) setAnimTo(swordLeft);
+				if(!takenOut) setAnimTo(leftAnim);
+				if(takenOut) setAnimTo(currentAttack.getMoveAnim(DIRECTION.LEFT));
 				if(hasMultBounds) {
 					toggleLeg(true);
 					toggleLeft(false);
@@ -206,19 +204,19 @@ public class Mob extends AnimatedSprite{
 		if (right) {
 			if(left || up || down) wasRight = true;
 			if(wasRight && !up && !down && !left) {
-				if(!unsheathed) setAnimTo(rightAnim);
-				if(unsheathed) setAnimTo(swordRight);
 				toggleLeg(true);
 				toggleLeft(false);
 				toggleRight(false);
 				toggleHead(false);
 				wasRight = false;
 				direction = DIRECTION.RIGHT;
+				if(!takenOut) setAnimTo(rightAnim);
+				if(takenOut) setAnimTo(currentAttack.getMoveAnim(direction));
 			}
 			
 			if(moveDir != DIRECTION.RIGHT) {
-				if(!unsheathed) setAnimTo(rightAnim);
-				if(unsheathed) setAnimTo(swordRight);
+				if(!takenOut) setAnimTo(rightAnim);
+				if(takenOut) setAnimTo(currentAttack.getMoveAnim(DIRECTION.RIGHT));
 				if(hasMultBounds) {
 					toggleLeg(true);
 					toggleLeft(false);
@@ -233,19 +231,19 @@ public class Mob extends AnimatedSprite{
 		if (up) {
 			if(left || right || down) wasUp = true;
 			if(wasUp && !right && !down && !left) {
-				if(!unsheathed) setAnimTo(upAnim);
-				if(unsheathed) setAnimTo(swordUp);
 				toggleLeg(false);
 				toggleLeft(true);
 				toggleRight(true);
 				toggleHead(true);
 				wasUp = false;
 				direction = DIRECTION.UP;
+				if(!takenOut) setAnimTo(upAnim);
+				if(takenOut) setAnimTo(currentAttack.getMoveAnim(direction));
 			}
 			
 			if(moveDir != DIRECTION.UP) {
-				if(!unsheathed) setAnimTo(upAnim);
-				if(unsheathed) setAnimTo(swordUp);
+				if(!takenOut) setAnimTo(upAnim);
+				if(takenOut) setAnimTo(currentAttack.getMoveAnim(DIRECTION.UP));
 				if(hasMultBounds) {
 					toggleLeg(false);
 					toggleLeft(true);
@@ -260,19 +258,19 @@ public class Mob extends AnimatedSprite{
 		if (down) {
 			if(left || up || right) wasDown = true;
 			if(wasDown && !up && !right && !left) {
-				if(!unsheathed) setAnimTo(downAnim);
-				if(unsheathed) setAnimTo(swordDown);
 				toggleLeg(false);
 				toggleLeft(true);
 				toggleRight(true);
 				toggleHead(true);
 				wasDown = false;
 				direction = DIRECTION.DOWN;
+				if(!takenOut) setAnimTo(downAnim);
+				if(takenOut) setAnimTo(currentAttack.getMoveAnim(direction));
 			}
 			
 			if(moveDir != DIRECTION.DOWN) {
-				if(!unsheathed) setAnimTo(downAnim);
-				if(unsheathed) setAnimTo(swordDown);
+				if(!takenOut) setAnimTo(downAnim);
+				if(takenOut) setAnimTo(currentAttack.getMoveAnim(DIRECTION.DOWN));
 				if(hasMultBounds) {
 					toggleLeg(false);
 					toggleLeft(true);
@@ -292,58 +290,44 @@ public class Mob extends AnimatedSprite{
 	}
 	
 	//Check to see if a mob is currently attacking or change the state of whether it is attacking or not
-	public void changeSheath() {
-		unsheathed = !unsheathed;
-		if(direction == DIRECTION.LEFT) {
-			setFullAnim(unshLeft, unshFrames, unshDelay, unshDelay);
-			if(unsheathed) playOnce(swordLeft, unsheathedDelay, unsheathedFrames, unshLeft + unshFrames);
-			else playOnce(leftAnim, unsheathedDelay, unsheathedFrames, unshLeft + unshFrames);
-		}
-		if(direction == DIRECTION.RIGHT) {
-			setFullAnim(unshRight, unshFrames, unshDelay, unshDelay);
-			if(unsheathed) playOnce(swordRight, unsheathedDelay, unsheathedFrames, unshRight + unshFrames);
-			else playOnce(rightAnim, unsheathedDelay, unsheathedFrames, unshRight + unshFrames);
-		}
-		if(direction == DIRECTION.UP) {
-			setFullAnim(unshUp, unshFrames, unshDelay, unshDelay);
-			if(unsheathed) playOnce(swordUp, unsheathedDelay, unsheathedFrames, unshUp + unshFrames);
-			else playOnce(upAnim, unsheathedDelay, unsheathedFrames, unshUp + unshFrames);
-		}
-		if(direction == DIRECTION.DOWN) {
-			setFullAnim(unshDown, unshFrames, unshDelay, unshDelay);
-			if(unsheathed) playOnce(swordDown, unsheathedDelay, unsheathedFrames, unshDown + unshFrames);
-			else playOnce(downAnim, unsheathedDelay, unsheathedFrames, unshDown + unshFrames);
+	public void inOutItem() {
+		takenOut = !takenOut;
+		setFullAnim(currentAttack.getInOutAnim(direction), currentAttack.getInOutTotal(), currentAttack.getInOutDelay());
+		if(takenOut) playOnce(currentAttack.getMoveAnim(direction), currentAttack.getMoveTotal(), currentAttack.getMoveDelay(), currentAttack.getInOutAnim(direction) + currentAttack.getInOutTotal());
+		else {
+			if(direction == DIRECTION.LEFT) playOnce(leftAnim, walkFrames, walkDelay, currentAttack.getInOutAnim(direction) + currentAttack.getInOutTotal());
+			if(direction == DIRECTION.RIGHT) playOnce(rightAnim, walkFrames, walkDelay, currentAttack.getInOutAnim(direction) + currentAttack.getInOutTotal());
+			if(direction == DIRECTION.UP) playOnce(upAnim, walkFrames, walkDelay, currentAttack.getInOutAnim(direction) + currentAttack.getInOutTotal());
+			if(direction == DIRECTION.DOWN) playOnce(downAnim, walkFrames, walkDelay, currentAttack.getInOutAnim(direction) + currentAttack.getInOutTotal());
 		}
 	}
 	
-	public boolean isUnsheathed() { return unsheathed; }
+	public boolean isTakenOut() { return takenOut; }
 	public boolean attacking() { return attacking; }	
 	public void attack() {
 		attacking = true;
-			if(direction == DIRECTION.LEFT) {
-				setFullAnim(attackLeft, attackFrames, attackDelay, attackDelay);
-				playOnce(swordLeft, unsheathedDelay, unsheathedFrames, attackLeft + attackFrames);
-			}
-			if(direction == DIRECTION.RIGHT) {
-				setFullAnim(attackRight, attackFrames, attackDelay, attackDelay);
-				playOnce(swordRight, unsheathedDelay, unsheathedFrames, attackRight + attackFrames);
-			}
-			if(direction == DIRECTION.UP) {
-				setFullAnim(attackUp, attackFrames, attackDelay, attackDelay);
-				playOnce(swordUp, unsheathedDelay, unsheathedFrames, attackUp + attackFrames);
-			}
-			if(direction == DIRECTION.DOWN) {
-				setFullAnim(attackDown, attackFrames, attackDelay, attackDelay);
-				playOnce(swordDown, unsheathedDelay, unsheathedFrames, attackDown + attackFrames);
-			}
+		setFullAnim(currentAttack.getAttackAnim(direction), currentAttack.getAttackTotal(), currentAttack.getAttackDelay());
+		playOnce(currentAttack.getMoveAnim(direction), currentAttack.getMoveTotal(), currentAttack.getMoveDelay(), currentAttack.getAttackAnim(direction) + currentAttack.getAttackTotal());
 	}
 
 	//List of attacks a mob could have
 	public LinkedList<Attack> attacks() { return attacks; }
+	public void addAttack(String name, int magicDam, int strengthDam){ attacks.add(new Attack(name, magicDam, strengthDam)); }
+	public Attack getAttack(String name) {
+		for(int i = 0; i < attacks.size(); i++){
+			if(attacks.get(i).getName().equals(name)) return attacks.get(i);
+		}
+		return null;
+	}
+	
+	//Set the current attack, available to the player for use
+	public void setCurrentAttack(String name) { currentAttack = getAttack(name); }
+	public Attack getCurrentAttack() { return currentAttack; }
 	
 	public void takeDamage(int damage){
 		health -= damage - random.nextInt(damage%5);
 	}
+	
 	public int health() { return health; }
 	
 	public double getXLoc() { return entity.getX(); }

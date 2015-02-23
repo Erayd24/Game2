@@ -217,7 +217,7 @@ public class MapDatabase {
 		//Set up Monsters and NPCs
 		npc = new Mob(frame, g2d, mainCharacter, 40, TYPE.RANDOMPATH, "npc", false);
 		npc.setMultBounds(6, 50, 92, 37, 88, 62, 92, 62, 96);
-		npc.loadMultAnim(32, 48, 40, 56, 3, 8);
+		npc.setMoveAnim(32, 48, 40, 56, 3, 8);
 		npc.setHealth(60);
 		
 		cityO.accessTile(98).addMob(npc);

@@ -133,7 +133,7 @@ public class Attack {
 	//Use these three getters to return info on the moving animation
 	public int getMoveTotal() { return totalAnimFrames; }
 	public int getMoveDelay() { return animDelay; }
-	public int getMovingAnim(DIRECTION direction){
+	public int getMoveAnim(DIRECTION direction){
 		if(direction == DIRECTION.UP){
 			return animUp;
 		}

@@ -133,9 +133,12 @@ public class Judgement extends Game {
 		//****Initialize Mobs*****************************************************************************
 		playerMob = new Mob(this, graphics(), mainCharacter, 40, TYPE.PLAYER, "mainC", true);
 		playerMob.setMultBounds(6, 50, 95, 37, 88, 62, 92, 62, 96);
-		playerMob.loadMultAnim(32, 48, 40, 56, 3, 8);
-		playerMob.loadSwordAnim(9, 1, 17, 25, 12, 4, 20, 28, 3, 8, 3, 6);
-		playerMob.loadUnsheathAnim(8, 0, 16, 24, 1, 10);
+		playerMob.setMoveAnim(32, 48, 40, 56, 3, 8);
+		playerMob.addAttack("sword", 0, 5);
+		playerMob.getAttack("sword").addMovingAnim(17, 25, 9, 1, 3, 8);
+		playerMob.getAttack("sword").addAttackAnim(20, 28, 12, 4, 3, 6);
+		playerMob.getAttack("sword").addInOutAnim(16, 24, 8, 0, 1, 10);
+		playerMob.setCurrentAttack("sword"); //Starting attack
 		playerMob.setHealth(35); //If you change the starting max health, dont forget to change it in inGameMenu.java max health also
 		sprites().add(playerMob);
 		
@@ -407,7 +410,7 @@ public class Judgement extends Game {
 			}
 			
 			if(keySpace) {
-				playerMob.changeSheath();
+				playerMob.inOutItem();
 				inputWait = 10;
 			}
 		}
@@ -720,7 +723,7 @@ public class Judgement extends Game {
 	}
 
 	void gameMouseUp() {
-		if(getMouseButtons(1) == true && playerMob.isUnsheathed()) {
+		if(getMouseButtons(1) == true && playerMob.isTakenOut()) {
 			playerMob.attack();
 		}
 	}
