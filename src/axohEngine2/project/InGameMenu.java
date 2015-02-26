@@ -210,7 +210,7 @@ public class InGameMenu {
 				continue;
 			}
 			g2d.setColor(Color.YELLOW);
-			if(!list.isEmpty()) g2d.drawLine(670, 410 + sectionLoc * 110, 670 + array[itemLocation + sectionLoc].getName().length() * 37, 410 + sectionLoc * 110);
+			if(!list.isEmpty()) g2d.drawLine(670, 410 + sectionLoc * 110, 670 + array[i].getName().length() * 37, 410 + sectionLoc * 110);
 			g2d.setColor(Color.BLACK);
 			g2d.drawString(array[i].getName(), 670, 400 + y * 110);
 			g2d.drawString(" x " + new Integer(counts[i]).toString(), 700 + array[i].getName().length() * 37,  400 + y * 110);
