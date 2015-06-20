@@ -253,28 +253,33 @@ public class AnimatedSprite extends Sprite {
     	animating = true;
     }
     
+    //Setters for frames and images
     public void setDelay(int delay) { this.delay = delay; }
-    public int delay() { return delay; }
     public void setTempDelay(int delay) { tempDelay = delay; }
     public void setTotalFrames(int total) { totFrames = total; }
     public void setAnimating(boolean state) { animating = state; }
     public void setAnimImage(Image image) { animImage.setImage(image); }
     
+    //Image and frame Getters
+    public int delay() { return delay; }
     public int totalFrames() { return totFrames; }
     public int currentFrame() { return currFrame; }
     public Image getAnimImage() { return animImage.getImage(); }
     
+    //Sprite and image data getters
     public SpriteSheet getSheet() { return super.sheet; }
     public int getSpriteNumber() { return super.spriteNumber; }
     public int getSpriteSize() { return super.spriteSize; }
     public int getScale() { return super.scale; }
     
+    //Setters for image data and sprites
     public void setSheet(SpriteSheet sheet) { super.sheet = sheet; }
     public void setSpriteSize(int spriteSize) { super.spriteSize = spriteSize; }
     public void setScale(int scale) { super.scale = scale; }
     public void setSpriteNumber(int spriteNumber) { super.spriteNumber = spriteNumber; }
     
-    public void setAnimSprite() {
+    //Used in the constructor to set an animated sprite's data using other given data
+    private void setAnimSprite() {
     	animImage.setImage(setSprite(getSheet(), getSpriteNumber())); 
     	setScale(getSheet().getScale());
     	setSpriteSize(getSheet().getSpriteSize() * getScale());
@@ -282,16 +287,34 @@ public class AnimatedSprite extends Sprite {
     	currFrame = getSpriteNumber();
     }
 
+    /***********************************************************
+     * Render the current image in the animation sequence
+     * 
+     * @param frame - JFrame the image is rendered on to (Window)
+     * @param g2d - Graphiics2D object used for showing that image
+     * @param x -int position on the x axis in the room
+     * @param y - int position on the y axis in the room
+     ************************************************************/
     public void render(JFrame frame, Graphics2D g2d, int x, int y) {
     	entity.setX(x);
     	entity.setY(y);
 		g2d.drawImage(getAnimImage(), x, y, getSpriteSize(), getSpriteSize(), frame);	
     }
     
+    /**********************************************************************************
+     * The core method which updates the current image in the animation sequence
+     * 
+     * A variable, tempDelay counts down each system update, when it hits 0, the 
+     * next image in the sequence becomes the image being shown as the sprites image.
+     * tempDelay then reverts back to the variable Delay and keeps running unless excplicitly 
+     * told not to. If another variable, animating, is set to false, this whole loop stops.
+     * A check is also run if playOnce is set to true to find if the sequence has reached
+     * its desired end and should now revert to another animation.
+     **********************************************************************************/
     public void updateFrame() {
     	if(animating) {
 	    	tempDelay--;
-	    	if(tempDelay % delay == 0) {
+	    	if(tempDelay == 0) {
 	    		if(playOnce && currentFrame() == endFrame) {
 	    			playOnce = false;
 	    			setAnimTo(nextAnim);
@@ -308,6 +331,6 @@ public class AnimatedSprite extends Sprite {
 		    	tempDelay = delay;
 		    	animImage.setImage(setSprite(getSheet(), currentFrame())); 
 	    	}
-    	}
-    }
+    	}//end animating boolean check
+    }//end updateFrame()
 }
