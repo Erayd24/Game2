@@ -1,3 +1,17 @@
+/**********************************************************************
+ * @author Travis R. Dewitt
+ * @version 0.8
+ * Date: June 15, 2015
+ * 
+ * Title: Midi 
+ * Description: Construct a Midi file sound object.
+ * This is merely some framework and is currently unused in the given game, Judgement.
+ * 
+ * This class should work, however is it untested.
+ * 
+ * This work is licensed under a Attribution-NonCommercial 4.0 International
+ * CC BY-NC-ND license. http://creativecommons.org/licenses/by-nc/4.0/
+ *********************************************************************/
 package axohEngine2.sound;
 
 import java.io.IOException;

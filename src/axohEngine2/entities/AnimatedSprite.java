@@ -1,5 +1,19 @@
+/****************************************************************************************************
+ * @author Travis R. Dewitt
+ * @version 1.4
+ * Date: June 19, 2015
+ * 
+ * Title: Animated Sprite
+ * Description: A class used to hold the logic related to objects which update the images over time to
+ * simulate a moving image. 
+ *  
+ * This work is licensed under a Attribution-NonCommercial 4.0 International
+ * CC BY-NC-ND license. http://creativecommons.org/licenses/by-nc/4.0/
+ ****************************************************************************************************/
+//Package
 package axohEngine2.entities;
 
+//Import
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -8,12 +22,29 @@ import javax.swing.JFrame;
 
 public class AnimatedSprite extends Sprite {
 
+	/*************************
+	 * Variables
+	 *************************/
+	//animImage - Object that holds variouse image related data like x, y and size
 	private ImageEntity animImage;
 	
+	//image - A BufferedImage java class object which is needed to display images to the window
+	//tempSurface - A surface used to render a graphic before displaying it to the user
+	//_name - A String indicating the name of the animating image
     BufferedImage image;
     Graphics2D tempSurface;
     public String _name;
     
+    //currFrame - The current frame being displayed in the string of total possible images in the animation
+    //totFrames - The total number of images used in the animation
+    //delay - Time in between each frame change
+    //tempDelay - A variable that can be subtracted from which when it hits zero can change the frame and revert back to the delay number
+    //animating - Boolean that when false, stops the image from animating to the next frame
+    //playOnce - Boolean which makes an animation play only once and then stop
+    //nextAnim - The animation to switch to after playOnce has run
+    //nextDelay - The next Delay for the next animation after playOnce
+    //endFrame - The frame playOnce hits to switch to a different animation
+    //nextTotal - Next total amount of frames for the next animation to switch to after playOnce
     private int currFrame;
     private int totFrames;
     private int delay;
@@ -25,6 +56,7 @@ public class AnimatedSprite extends Sprite {
     public int endFrame;
     public int nextTotal;
     
+    //Moving specific animation variables (Starting, total and delay frames)
 	public int leftAnim;
 	public int rightAnim;
 	public int upAnim;
@@ -32,20 +64,7 @@ public class AnimatedSprite extends Sprite {
 	public int walkFrames;
 	public int walkDelay;
 	
-	//For unsheathing/ed and attacking
-	public int swordLeft;
-	public int swordRight;
-	public int swordUp;
-	public int swordDown;
-	public int attackLeft;
-	public int attackRight;
-	public int attackUp;
-	public int attackDown;
-	public int unsheathedFrames;
-	public int attackFrames;
-	public int unsheathedDelay;
-	public int attackDelay;
-	
+	//For unsheathing TODO:(Needs to be moved to the Attack class)
 	public int unshLeft;
 	public int unshRight;
 	public int unshUp;
@@ -53,6 +72,16 @@ public class AnimatedSprite extends Sprite {
 	public int unshFrames;
 	public int unshDelay;
 
+	/***********************************************************************
+	 * Constructor
+	 * Detail out a personal Animated Sprite
+	 * 
+	 * @param frame - The JFrame window to display animations
+	 * @param g2d - The Graphics2D object which displays images
+	 * @param sheet - The spriteSheet which holds the image frames
+	 * @param spriteNumber - The number pertaining to a frame on the spriteSheet
+	 * @param name - The name of the animation, not used in logic
+	 ************************************************************************/
     public AnimatedSprite(JFrame frame, Graphics2D g2d, SpriteSheet sheet, int spriteNumber, String name) {
         super(frame, g2d);
         animImage = new ImageEntity(frame);
@@ -67,7 +96,17 @@ public class AnimatedSprite extends Sprite {
         setSpriteNumber(spriteNumber);
         setAnimSprite();
     }
-        
+    
+    /*********************************************************
+     * Load an image in to the system for display
+     * This method isn't currently used anywhere, instead there is one 
+     * in the imageEntity class which loads images.
+     * TODO: Is this method needed? Should this be phased out?
+     * 
+     * @param filename - A String file name for the image location 
+     * @param width - Int width in pixels of the image
+     * @param height - Int height in pixels of the image
+     *********************************************************/
     public void load(String filename, int width, int height) {
         //load animation bitmap
         animImage.load(filename);
@@ -78,6 +117,13 @@ public class AnimatedSprite extends Sprite {
         setImage(image);
     }
     
+    /*****************************************
+     * Load a default animation for a tile or sprite
+     * starting at the current sprites spritenumber
+     * 
+     * @param frames - Total frames in the animation
+     * @param delay - Delay between when a frame advances
+     *****************************************/
     public void loadAnim(int frames, int delay) {
     	currFrame = getSpriteNumber();
         if(frames > 0) {
@@ -88,6 +134,18 @@ public class AnimatedSprite extends Sprite {
         tempDelay = delay;
     }
 
+    /****************************************************************
+     * Set movement animations for an animated Mob or object
+     * and loads the animation so loadAnim() doesn't need to be run as well
+     * for each animation
+     * 
+     * @param spriteNumLeft - Starting frame for this animation
+     * @param spriteNumRight - Starting frame for this animation
+     * @param spriteNumUp - Starting frame for this animation
+     * @param spriteNumDown - Starting frame for this animation
+     * @param frames - Total frames in the aniamtions
+     * @param delay - Delay between frames for these animations
+     ****************************************************************/
     public void setMoveAnim(int spriteNumLeft, int spriteNumRight, int spriteNumUp, int spriteNumDown, int frames, int delay) {
 		leftAnim = spriteNumLeft;
 		rightAnim = spriteNumRight;
@@ -105,23 +163,17 @@ public class AnimatedSprite extends Sprite {
         tempDelay = delay;
 	}
     
-    //This is for animations pertaining to attacking, it may say sword but it can also be arrows or anything
-    public void loadSwordAnim(int unsheathLeft, int unsheathRight, int unsheathUp, int unsheathDown, int swipeLeft, int swipeRight, int swipeUp, int swipeDown, int unsheathFrames, int unsheathDelay, int attackingFrames, int attackingDelay) {
-    	swordLeft = unsheathLeft;
-    	swordRight = unsheathRight;
-    	swordUp = unsheathUp;
-    	swordDown = unsheathDown;
-    	attackLeft = swipeLeft;
-    	attackRight = swipeRight;
-    	attackUp = swipeUp;
-    	attackDown = swipeDown;
-    	unsheathedFrames = unsheathFrames;
-    	unsheathedDelay = unsheathDelay;
-    	attackFrames = attackingFrames;
-    	attackDelay = attackingDelay;
-    }
-    
-    //This is specifically for animations pertaining to taking out weapons
+    /*********************************************************************
+     * This is specifically for animations pertaining to taking out weapons
+     * TODO: Move this to Attack
+     * 
+     * @param left - Starting animation frame
+     * @param right - Starting animation frame
+     * @param up - Starting animation frame
+     * @param down - Starting animation frame
+     * @param frames - Total frames
+     * @param delay - Delay between frames
+     *********************************************************************/
     public void loadUnsheathAnim(int left, int right, int up, int down, int frames, int delay){
     	unshLeft = left;
     	unshRight = right;
@@ -131,6 +183,13 @@ public class AnimatedSprite extends Sprite {
     	unshDelay = delay;
     }
     
+    /*************************************************************************
+     * Load an animation from a specific point to a specific point without any additional method calls
+     * 
+     * @param startFrame - Self explained
+     * @param totalFrames - Self explained
+     * @param delay - Delay between frames
+     **************************************************************************/
     public void setFullAnim(int startFrame, int totalFrames, int delay){
     	setAnimTo(startFrame);
 		setTotalFrames(totalFrames);
@@ -138,17 +197,29 @@ public class AnimatedSprite extends Sprite {
 		setTempDelay(delay);
     }
     
+    /***********************************************************
+     * Chnage the animation to a specific frame in the sequence
+     * 
+     * @param frame - The Int frame in the animation sequence to change to
+     ***********************************************************/
     public void setFrame(int frame) { 
     	currFrame = frame; 
 		animImage.setImage(setSprite(getSheet(), currentFrame()));
     }
     
+    /*********************************************************
+     * Change the current animation to another animation with all of the same
+     * properties like delay and total frames
+     * 
+     * @param frame - The starting frame of the new animation
+     *********************************************************/
     public void setAnimTo(int frame) {
     	currFrame = frame;
     	setSpriteNumber(frame);
 		animImage.setImage(setSprite(getSheet(), currentFrame()));
     }
     
+    //Stop the animation from moving on from the current frame
     public void stopAnim() {
     	if(!playOnce){
 	    	animating = false; 
@@ -157,8 +228,22 @@ public class AnimatedSprite extends Sprite {
     	}
     }
     
+    //Start the animation moving
     public void startAnim() { animating = true; }
+    
+    /*************************************************************
+     * @return animating - Boolean of if an animation is running
+     *************************************************************/
     public boolean animating() { return animating; }
+    
+    /*****************************************************************
+     * Method which makes sure an animation plays once and then switches to a new one
+     * 
+     * @param nextAnimFrame - The next animation starting frame
+     * @param nextAnimTotal - The next animation total frames
+     * @param nextAnimDelay - The next animation delay
+     * @param endingFrame - The final frame to hit in the current animation which triggers the change
+     *****************************************************************/
     public void playOnce(int nextAnimFrame, int nextAnimTotal, int nextAnimDelay, int endingFrame) { 
     	playOnce = true; 
     	nextAnim = nextAnimFrame;

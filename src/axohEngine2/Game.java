@@ -5,6 +5,10 @@
  * 
  * Title: Axoh Engine
  * Description: This class contains all of the algorithms necessary for constructing a 2D video game.
+ * 
+ * 
+ * This work is licensed under a Attribution-NonCommercial 4.0 International
+ * CC BY-NC-ND license. http://creativecommons.org/licenses/by-nc/4.0/
  ******************************************************************************/
 
 //Packages

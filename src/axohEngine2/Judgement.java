@@ -8,6 +8,9 @@
  * Description: This class extends 'Game.java' in order to run a 2D game with specificly defined
  *  sprites, animatons, and actions.
  *  
+ * 
+ * This work is licensed under a Attribution-NonCommercial 4.0 International
+ * CC BY-NC-ND license. http://creativecommons.org/licenses/by-nc/4.0/
  ****************************************************************************************************/
 //Package name
 package axohEngine2;

@@ -1,3 +1,16 @@
+/**********************************************************************
+ * @author Travis R. Dewitt
+ * @version 0.8
+ * Date: June 15, 2015
+ * 
+ * Title: Point2D 
+ * Description: Construct X and Y coordinate. This is merely some framework and is 
+ * currently unused in the given game, Judgement.
+ * 
+ * This work is licensed under a Attribution-NonCommercial 4.0 International
+ * CC BY-NC-ND license. http://creativecommons.org/licenses/by-nc/4.0/
+ *********************************************************************/
+
 package axohEngine2.util;
 
 public class Point2D extends Object {
