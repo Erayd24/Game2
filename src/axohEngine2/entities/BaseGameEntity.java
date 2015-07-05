@@ -1,18 +1,36 @@
+/****************************************************************************************************
+ * @author Travis R. Dewitt
+ * @version 1.0
+ * Date: June 27, 2015
+ * 
+ * 
+ * Title: Base Game Entity
+ * Description: Basic variable class that every Sprite inherits from. This class contains various
+ *  variables related to a sprites positioning and status.
+ * 
+ * This work is licensed under a Attribution-NonCommercial 4.0 International
+ * CC BY-NC-ND license. http://creativecommons.org/licenses/by-nc/4.0/
+ ****************************************************************************************************/
 package axohEngine2.entities;
 
 public class BaseGameEntity extends Object {
 	
-	protected boolean alive;
-	protected double x, y;
-	protected double velX, velY;
-	protected double moveAngle, faceAngle;
+	/********************
+	 * Variables
+	 ********************/
+	protected boolean alive; //Life boolean
+	protected double x, y; //Position
+	protected double velX, velY; //Physical movement
+	protected double moveAngle, faceAngle; //Facing degree
 	
+	//Getters
 	public boolean isAlive() { return alive; }
 	public double getX() { return x; }
 	public double getY() { return y; }
 	public double getVelX() { return velX; }
 	public double getVelY() { return velY; }
 	
+	//Setters: i is an increase
 	public void setAlive(boolean alive) { this.alive = alive; }
 	public void setX(double x) { this.x = x; }
 	public void incX(double i) { this.x += i; }
@@ -27,7 +45,13 @@ public class BaseGameEntity extends Object {
 	public void setFaceAngle(double angle) { this.faceAngle = angle; }
 	public void inFaceAngle(double i) { this.faceAngle += i; }
 	
-	//Constructor
+	/*************************************************************************************
+	 * Constructor
+	 * 
+	 * This constructor is never called explicitly as it only contains variables 
+	 * and no useful methods. It is instead called each time an imageEntity or higher
+	 * parent is instantiated.
+	 **************************************************************************************/
 	protected BaseGameEntity() {
 		setAlive(false);
 		setX(0.0);
