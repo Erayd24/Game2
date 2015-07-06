@@ -417,6 +417,10 @@ public class Mob extends AnimatedSprite{
 	 *********************************************************/
 	public void addAttack(String name, int magicDam, int strengthDam){ attacks.add(new Attack(name, magicDam, strengthDam)); }
 	
+	/*******************************************************************
+	 * @param name - String name of the attack to retrieve from the Mob
+	 * @return - An Attack that is wanted
+	 *******************************************************************/
 	public Attack getAttack(String name) {
 		for(int i = 0; i < attacks.size(); i++){
 			if(attacks.get(i).getName().equals(name)) return attacks.get(i);
@@ -424,16 +428,34 @@ public class Mob extends AnimatedSprite{
 		return null;
 	}
 	
-	//Set the current attack, available to the player for use
+	/***************************************************
+	 * @param name - String name of the attack for the Mob to use now
+	 ***************************************************/
 	public void setCurrentAttack(String name) { currentAttack = getAttack(name); }
+	
+	/***************************************************
+	 * @return - Attack datatype which refers to the currently being used attack
+	 ***************************************************/
 	public Attack getCurrentAttack() { return currentAttack; }
 	
-	public void takeDamage(int damage){
-		health -= damage - random.nextInt(damage%5);
-	}
+	/****************************************************
+	 * Lower this mobs health by a damage as well by a modifier from 0 to 
+	 * a random int of a maximum value of the damage parameter % 5.
+	 * @param damage - An int used to lower this mobs health
+	 *****************************************************/
+	public void takeDamage(int damage){ health -= damage - random.nextInt(damage%5); }
 	
+	/***************************************************
+	 * @return - Getter for the current health the mob is at
+	 ***************************************************/
 	public int health() { return health; }
 	
+	/***************************************************
+	 * Get the x or y location of the mob in the room or
+	 * set a new x or y location relative to it's current position
+	 * 
+	 * @return - x or y int of location
+	 ***************************************************/
 	public double getXLoc() { return entity.getX(); }
 	public double getYLoc() { return entity.getY(); }
 	public void setLoc(int x, int y) { //Relative to current position
@@ -441,6 +463,12 @@ public class Mob extends AnimatedSprite{
 		yy = yy + y;
 	}
 
+	/**********************************************
+	 * Render the Mob in the game room at anx and y location
+	 * 
+	 * @param x - Int x position
+	 * @param y - Int y position
+	 ***********************************************/
 	public void renderMob(int x, int y) {
 		g2d.drawImage(getImage(), x + xx, y + yy, getSpriteSize(), getSpriteSize(), frame);
 		entity.setX(x + xx);

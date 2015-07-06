@@ -1,5 +1,25 @@
+/****************************************************************************************************
+ * @author Travis R. Dewitt
+ * @version 1.2
+ * Date: July 5, 2015
+ * 
+ * Title: InGameMenu
+ * Description: A class which contains all relative player information. With this, a menu can be displayed,
+ * items and descriptions can be chosen, the game can be saved and items can be stored. Player stats are
+ * carried here as well. Think of this class as a backpack.
+ * 
+ * Much of this class is still yet to be populated. As new items are created for your game, this class needs
+ * to be updated to handle those items. Item.java will also have methods which need to be updated for correct handling.
+ * 
+ * Methods that will need constant updating: countItems(), setItems(), levelUp() and useItem()
+ * 
+ * This work is licensed under a Attribution-NonCommercial 4.0 International
+ * CC BY-NC-ND license. http://creativecommons.org/licenses/by-nc/4.0/
+ ****************************************************************************************************/
+//Package
 package axohEngine2.project;
 
+//Imports
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.LinkedList;
@@ -11,13 +31,29 @@ import axohEngine2.entities.ImageEntity;
 
 public class InGameMenu {
 
+	/**************
+	 * Variables
+	 **************/
+	//_background - Image used to display the menu background
 	private ImageEntity _background;
 	
+	//_option - An enum which holds the choice made at certain times
+	//SCREENWIDTH, SCREENHEIGHT - width and height of the JFrame window
+	//random - A random number generator
 	private OPTION _option;
 	private int SCREENWIDTH;
 	private int SCREENHEIGHT;
 	private Random random = new Random();
 	
+	//items - A list of items contained in the menu
+	//equipment - A list of equipment contained in the menu
+	//counts - An array of totals of items grouped together currently in inventory
+	//shownEquipment - An array of items, specifically equipment, which is being shown on screen
+	//shownItems - An array of items which are being shown on screen
+	//itemLocation - Reference below comment
+	//sectionLoc - Reference below comment
+	//totalItems - A number that counts the total different items in the inventory, not duplicates
+	//totalEquipment - same as totalItems but for equipment types
 	private LinkedList<Item> items;
 	private LinkedList<Item> equipment;
 	private int[] counts;
@@ -40,7 +76,9 @@ public class InGameMenu {
 	private int nextExp = 25;
 	
 	/********************************************************************************************
-	 * The Items algorithms need an explanation, starting with the countItems() method: The purpose
+	 * The Items algorithms need an explanation, starting with:
+	 *  
+	 *  countItems(): The purpose
 	 *  of this method is to count how many of each item is in the list of avaiable items to the 
 	 *  player. Each index coincides with an item count of your choice. Because this count method is
 	 *  updated each time an item is obtained, the count for every item is set to 0 first, Then 
@@ -51,15 +89,15 @@ public class InGameMenu {
 	 *  this method is to make sure only specific items are being shown in the menu and specifically not
 	 *  duplicates. It populates an array of showable items if it exists, otherwise it skips over 
 	 *  repeated names. The totalItems is only added to when a shownItems index is not null. This is
-	 *  because some indexes may not be used.
+	 *  because some indexes may not be used because items can be obtained out of order.
 	 *  
 	 *  loadNextItems(): itemLocation, is the variable that is the start number for the items to be
-	 *  displayed on screen, used in the main for loop. This method runs a check, starting wherever
+	 *  displayed on screen, used in the main FOR loop. This method runs a check, starting wherever
 	 *  the fourth item + 1 is found in the showItems array. This way the fourth item isn't counted for
 	 *  when the check to make sure a fifth item exists to be displayed. 
 	 *  
 	 *  loadOldItems(): Simply subtract one from the current itemLocation if it isn't 0. These last two
-	 *  methods are only called when the current cursor location kept track by the game itself, it near
+	 *  methods are only called when the current cursor location, kept track by the game itself, is near
 	 *  the top or the bottom of the screen. 0 or 3.
 	 *  
 	 *  Main Rendering algorithm: A for loop begins at the current itemLocation and ends when it reaches
@@ -68,9 +106,9 @@ public class InGameMenu {
 	 *  no index out of bounds errors occur and stops the loop if they may. Any time the loop is stopped,
 	 *  'y' is set back to 0 for the next rendering. The highlight line is then drawn only if the items
 	 *  list is not empty. This starts at the current sectionLoc which is calculated based on up and
-	 *  down movement in the menu, and ends at the end of the length of the current item name. Then the
-	 *  current item name is drawn along with it's count and image next to it. The count is rendered
-	 *  by changing the count[] index and changing it to an Integer, then making it in to a string. The
+	 *  down movement in the menu and ends at the end of the length of the current item name. Then the
+	 *  current item name is drawn along with its count and image next to it. The count is rendered
+	 *  by changing the count[] index and changing it to an INTEGER, then making it in to a STRING. The count
 	 *  number render location is dependant on the length of the name of the item. The reason why a 
 	 *  seperate variable 'y' is used to move down the rendered text is because 'i' could be very large
 	 *  depending on if some items aren't obtained yet, which would mean their index would be null and 
@@ -88,7 +126,14 @@ public class InGameMenu {
 	 *  
 	 ********************************************************************************************/
 	
-	//Change count[] and shownItem[] size to adjust for even more items in game
+	/*****************************************************************
+	 * Constructor
+	 * Change count[] and shownItem[] size to adjust for even more items in game
+	 * 
+	 * @param background - ImageEntity to be used for the menu background
+	 * @param screenWidth - Width of the Jframe
+	 * @param screenHeight - Height of the JFrame
+	 ******************************************************************/
 	public InGameMenu(ImageEntity background, int screenWidth, int screenHeight) {
 		_background = background;
 		SCREENWIDTH = screenWidth;
@@ -100,6 +145,13 @@ public class InGameMenu {
 		shownEquipment = new Item[100];
 	}
 	
+	/*******************************************************************
+	 * Update some variables based on choices elsewhere in the engine
+	 * 
+	 * @param option - OPTION enum which is the current choice
+	 * @param sectionLocation - current choice, an int
+	 * @param health - Player health int
+	 *******************************************************************/
 	public void update(OPTION option, int sectionLocation, int health){
 		_option = option;
 		sectionLoc = sectionLocation;
@@ -107,12 +159,18 @@ public class InGameMenu {
 		levelUp();
 	}
 	
+	/*************************************************************
+	 * Add an item in to the menu backpack
+	 * 
+	 * @param item - Item type to be added to the backpack
+	 *************************************************************/
 	public void addItem(Item item) {
 		items.add(item);
 		countItems();
 		setItems();
 	}
 	
+	//Reference addItem()
 	public void addEquipment(Item item) {
 		equipment.add(item);
 		countItems();
@@ -120,6 +178,7 @@ public class InGameMenu {
 	}
 	
 	//Each new item and equipment for the game needs to be added to what needs to be counted
+	//Reference blue code block above methods
 	private void countItems() {
 		for(int i = 0; i < counts.length; i++){
 			counts[i] = 0;
@@ -134,7 +193,7 @@ public class InGameMenu {
 	}
 	
 	//Each new item will need to be added here as well.
-	//This is to make a list of what items are being shown
+	//Reference blue code block above methods
 	private void setItems() {
 		totalItems = 0;
 		totalEquipment = 0;
@@ -155,6 +214,7 @@ public class InGameMenu {
 		}
 	}
 	
+	//Reference blue code block above methods
 	public void render(JFrame frame, Graphics2D g2d, int inX, int inY) {
 		g2d.drawImage(_background.getImage(), 0, 0, SCREENWIDTH, SCREENHEIGHT, frame);
 		g2d.setColor(Color.BLACK);
@@ -199,6 +259,7 @@ public class InGameMenu {
 		}
 	}
 	
+	//Reference blue code block above methods
 	public void renderItems(JFrame frame, Graphics2D g2d, Item[] array, LinkedList<Item> list) {
 		int start = getStart(itemLocation, array);
 		int y = 0;
@@ -220,6 +281,7 @@ public class InGameMenu {
 	}
 	
 	//What needs to be done to level a character up, this is checked for at every update.
+	//Edit this section to change how the stats change each time a player levels up
 	private void levelUp(){
 		if(experience >= nextLevel){
 			level++;
@@ -248,9 +310,16 @@ public class InGameMenu {
 		}
 	}
 	
+	//Add an int, exp to the total in the backpack
 	public void getExp(int exp) { experience += exp; }
 	
-	//Return the starting location after a certain amount of items are counted
+	/*********************************************************
+	 * Return the starting location after a certain amount of items are counted
+	 * 
+	 * @param amount - Int pertaining to how many items to move through before returning
+	 * @param array - The array to get a position in(For size)
+	 * @return - position to start in the array given an offset
+	 *********************************************************/
 	private int getStart(int amount, Item[] array){
 		int found = 0;
 		for(int i = 0; i < array.length; i++){
@@ -264,6 +333,7 @@ public class InGameMenu {
 		return 0;
 	}
 	
+	//Move variables around for correct rendering based on keyboard actions
 	public void loadNextItems() {
 		int start = 0;
 		start = getStart(4, shownItems);
@@ -275,6 +345,7 @@ public class InGameMenu {
 		}
 	}
 	
+	//Reference loadNextEquipment()
 	public void loadNextEquipment() {
 		int start = 0;
 		start = getStart(4, shownEquipment);
@@ -287,15 +358,20 @@ public class InGameMenu {
 	}
 	
 	//This works with items and equipment
+	//Move back up the list of items to show already passed by items or equipment
 	public void loadOldItems() {
 		if(itemLocation > 0) itemLocation--;
 	}
 	
+	//Getters for totalItems and totalEquipment
 	public int getTotalItems() { return totalItems; }
 	public int getTotalEquipment() { return totalEquipment; }
+	
+	//Setter for itemLocation - Reference blue code block above methods for description of variable
 	public void setItemLoc(int location) { itemLocation = location; }
 	
-	//Remember to update the item check inder Item.java when adding a new group of items. All are handled seperately
+	//Remember to update the item check under Item.java when adding a new group of items. All are handled seperately.
+	//This method uses up an item based on its characteristics
 	public void useItem() { 
 		for(int i = 0; i < items.size(); i++){
 			if(shownItems[itemLocation + sectionLoc].getName() == items.get(i).getName()) {
@@ -322,9 +398,11 @@ public class InGameMenu {
 		}
 	}
 	
+	//Getters for currently selected item number, health and magic
 	public int checkCount() { return counts[itemLocation + sectionLoc]; }
 	public int getHealth() { return currHealth; }
-	
 	public int getMagic() { return magic; }
+	
+	//Setter for magic stat
 	public void setmagic(int magic) { this.magic = magic; }
 }
