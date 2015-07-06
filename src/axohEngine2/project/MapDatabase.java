@@ -1,5 +1,19 @@
+/****************************************************************************************************
+ * @author Travis R. Dewitt
+ * @version 1.0
+ * Date: July 5, 2015
+ * 
+ * Title: Map Database
+ * Description: A data handling class used for large projects. This class contains all of the spritesheets,
+ * tiles, events, items, mobs and map creations since they all interlock together.
+ * 
+ * This work is licensed under a Attribution-NonCommercial 4.0 International
+ * CC BY-NC-ND license. http://creativecommons.org/licenses/by-nc/4.0/
+ ****************************************************************************************************/
+//Package
 package axohEngine2.project;
 
+//Imports
 import java.awt.Graphics2D;
 
 import javax.swing.JFrame;
@@ -25,7 +39,7 @@ public class MapDatabase {
 	Map houses;
 	Map housesO;
 	
-	//Tiles
+	//Tiles - Names are defined in the constructor for better identification
 	Tile d;
 	Tile g;
 	Tile f;
@@ -50,9 +64,19 @@ public class MapDatabase {
 	//NPC's and Monsters
 	Mob npc;
 	
+	//Array of maps
 	public Map[] maps;
 	
+	/****************************************************************
+	 * Constructor
+	 * Instantiate all variables for the game
+	 * 
+	 * @param frame - JFrame Window for the map to be displayed on
+	 * @param g2d - Graphics2D object needed to display images
+	 * @param scale - Number to be multiplied by each image for correct on screen display
+	 *******************************************************************/
 	public MapDatabase(JFrame frame, Graphics2D g2d, int scale) {
+		//Currently a maximum of 200 maps possible(Can be changed if needed)
 		maps = new Map[200];
 		
 		//Set up spriteSheets
@@ -220,9 +244,16 @@ public class MapDatabase {
 		npc.setMoveAnim(32, 48, 40, 56, 3, 8);
 		npc.setHealth(60);
 		
+		//Add the mobs to their tile home
 		cityO.accessTile(98).addMob(npc);
 	}
 	
+	/************************************************************
+	 * Get a map back  based on its index in the array of maps
+	 * 
+	 * @param index - Position in the maps array
+	 * @return - Map
+	 *************************************************************/
 	public Map getMap(int index) {
 		return maps[index];
 	}
