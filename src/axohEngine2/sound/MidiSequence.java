@@ -63,15 +63,14 @@ public class MidiSequence {
 	}
 	
 	//Constructor that accepts a filename
-	public boolean MidiSequence(String midifile) {
+	public MidiSequence(String midifile) {
 		try {
 			//load the midi file in to the sequencer
 			filename = midifile;
 			song = MidiSystem.getSequence(getURL(filename));
 			sequencer.setSequence(song);
 			sequencer.open();
-			return true;
-		} catch(InvalidMidiDataException e) { return false; } catch(MidiUnavailableException e) { return false; } catch(IOException e) { return false; }
+		} catch(InvalidMidiDataException e) { } catch(MidiUnavailableException e) { } catch(IOException e) { }
 	}
 	
 	//Play the midi sequence
